@@ -1,33 +1,44 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import ButtonAppBar from "./components/ButtonAppBar/ButtonAppBar.tsx";
+//import Notification from "./components/Notification/Notification.tsx";
+//import Popup from "./components/Popup/Popup.tsx";
+import {Route, Routes} from "react-router-dom";
+import {selectUserIsLogin} from "./store/reducers/userSlice.ts";
+import {useAppSelector} from "./hooks.ts";
+import StartPage from "./components/StartPage/StartPage.tsx";
+import Game from "./components/Game/Game.tsx";
 
 function App() {
-  const [count, setCount] = useState(0)
+
+  const isLogin = useAppSelector(selectUserIsLogin);
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <ButtonAppBar
+        buttonText={isLogin ? 'Выйти' : 'Войти'}
+        buttonHandler={()=>{}}
+        games={[]}
+        //buttonHandler={isLogin ? () => dispatch(logout()) : ()=>{} }
+        //games={games}
+      />
+      {/*<Notification*/}
+      {/*  text={notification?.text}*/}
+      {/*  status={notification?.status}*/}
+      {/*  onClose={(event, reason) => {*/}
+      {/*    if (reason === 'clickaway') {*/}
+      {/*      return;*/}
+      {/*    }*/}
+      {/*    dispatch(hideNotificationAction())*/}
+      {/*  }}*/}
+      {/*  isOpen={!!notification}*/}
+      {/*/>*/}
+
+      {/*<Popup onClose={()=>dispatch(hidePopupAction())} data={popup} open={!!popup} />*/}
+
+      <Routes>
+        <Route path='/' element={<StartPage />}/>
+        <Route path='/game/:gameId?' element={<Game />}/>
+      </Routes>
     </>
   )
 }
