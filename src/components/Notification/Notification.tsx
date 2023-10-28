@@ -1,12 +1,12 @@
 import * as React from 'react';
 import Snackbar from '@mui/material/Snackbar';
-import {useEffect} from "react";
 import {Alert, AlertColor} from "@mui/material";
+import {useEffect} from "react";
 
 interface NotificationProps {
     text: string,
     isOpen: boolean,
-    onClose: (event: any, reason: any) => void,
+    onClose: () => void,
     status:  AlertColor | undefined,
 }
 export default function Notification(props: NotificationProps) {

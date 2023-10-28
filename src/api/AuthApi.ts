@@ -30,8 +30,8 @@ class AuthAPI extends BaseAPI {
     return this.http.post('/logout');
   }
 
-  read(): Promise<unknown> {
-    return this.http.get('/user');
+  read(id: number, token: string): Promise<unknown> {
+    return this.http.get(`/user/${id}`, {authorization: `Bearer ${token}`});
   }
 
   create = undefined;

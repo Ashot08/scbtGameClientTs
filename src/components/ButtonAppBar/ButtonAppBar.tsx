@@ -28,7 +28,6 @@ interface ButtonAppBarProps {
 export default function ButtonAppBar(props: ButtonAppBarProps) {
 
     const [anchorEl, setAnchorEl] = useState(null);
-
     const [open, setOpen] = useState(false);
     const handleClose = () => {
         setAnchorEl(null);

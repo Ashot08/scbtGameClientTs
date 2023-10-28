@@ -11,6 +11,9 @@ type Options = {
   data?: any;
 };
 
+type headers = {'Content-Type': string, 'Authorization' ?: string};
+
+
 export default class Fetch {
   static API_URL = 'http://localhost:3001';
 
@@ -20,8 +23,11 @@ export default class Fetch {
     this.endpoint = `${Fetch.API_URL}${endpoint}`;
   }
 
-  public get<Response>(path = '/'): Promise<Response> {
-    return this.request<Response>(this.endpoint + path);
+  public get<Response>(path = '/', data?: unknown): Promise<Response> {
+    return this.request<Response>(this.endpoint + path,{
+      method: Method.Get,
+      data,
+    });
   }
 
   public post<Response = void>(path: string, data?: unknown): Promise<Response> {
@@ -53,15 +59,28 @@ export default class Fetch {
 
   private async request<Response>(url: string, options: Options = { method: Method.Get }):
     Promise<Response> {
+
     const { method, data } = options;
 
-    return fetch(url, {
+    const headers: headers = {
+      'Content-Type': 'application/json;charset=utf-8',
+    }
+    if (data.authorization) {
+      headers['Authorization'] = data.authorization;
+    }
+    const fetchOptions: RequestInit = {
       method,
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-      },
-      body: JSON.stringify(data),
-    }).then(res => res.json())
+      headers,
+    }
+
+    if(method !== Method.Delete && method !== Method.Get) {
+      fetchOptions.body = JSON.stringify(data);
+    }
+
+    return fetch(url, fetchOptions).then(res => res.json()).catch(e => {
+      console.log(e)
+    })
+
 
   }
 }

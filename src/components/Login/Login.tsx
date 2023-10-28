@@ -1,11 +1,12 @@
 import {useState} from 'react';
 import Button from '@mui/material/Button';
 import {TextField} from "@mui/material";
-import AuthController from "../../controllers/AuthController.ts";
 import {useAppDispatch} from "../../hooks.ts";
+import {login} from "../../store/reducers/userSlice.ts";
 import {show} from "../../store/reducers/notificationSlice.ts";
 
 function Login () {
+    const [submitDisabled, setSubmitDisabled] = useState(false);
     const [playerUsernameInput, setPlayerUsernameInput] = useState('');
     const [playerPasswordInput, setPlayerPasswordInput] = useState('');
     const dispatch = useAppDispatch();
@@ -18,11 +19,13 @@ function Login () {
             <form onSubmit={
                 (e) => {
                     e.preventDefault();
-                    AuthController.login({
+                    setSubmitDisabled(true);
+                    dispatch(login({
                         username: playerUsernameInput,
                         password: playerPasswordInput,
-                    }).then(res => {
-                        dispatch(show({text: res.text, status: res.status}))
+                    })).then((res: any) => {
+                        dispatch(show({text: res.payload.text, status: res.payload.status}));
+                        setSubmitDisabled(false);
                     });
                 }
             }>
@@ -52,7 +55,7 @@ function Login () {
                 />
                 <br/>
                 <br/>
-                <Button sx={{width: '100%'}} type="submit" variant="contained">Войти</Button>
+                <Button sx={{width: '100%'}} type="submit" variant="contained" disabled={submitDisabled}>Войти</Button>
             </form>
 
         </>

@@ -3,7 +3,7 @@ import ButtonAppBar from "./components/ButtonAppBar/ButtonAppBar.tsx";
 import Notification from "./components/Notification/Notification.tsx";
 //import Popup from "./components/Popup/Popup.tsx";
 import {Route, Routes} from "react-router-dom";
-import {selectUserIsLogin} from "./store/reducers/userSlice.ts";
+import {logout, selectUserIsLogin, setUser} from "./store/reducers/userSlice.ts";
 import {useAppDispatch, useAppSelector} from "./hooks.ts";
 import StartPage from "./components/StartPage/StartPage.tsx";
 import Game from "./components/Game/Game.tsx";
@@ -13,21 +13,43 @@ import {
   selectNotificationStatus,
   selectNotificationText
 } from "./store/reducers/notificationSlice.ts";
+import AuthController from "./controllers/AuthController.ts";
+import {useEffect, useState} from "react";
+import Token from "./utils/Token.ts";
 
 function App() {
   const dispatch = useAppDispatch();
-
   const notificationText = useAppSelector(selectNotificationText);
   const notificationIsShown = useAppSelector(selectNotificationIsShown);
   const notificationStatus = useAppSelector(selectNotificationStatus);
-
+  const [loading, setLoading] = useState(false);
   const isLogin = useAppSelector(selectUserIsLogin);
+  const auth = () => {
+    if(Token.getToken()) {
+      setLoading(true);
+      AuthController.fetchUser().then((res) => {
+        console.log(res);
+        if(res.user.id){
+          dispatch(setUser(res));
+        }
+      }).catch(e => console.log(e))
+        .finally(() => {
+          setLoading(false);
+        })
+    }
+  }
+
+  useEffect(() => {
+    auth();
+  }, []);
+
 
   return (
     <>
+
       <ButtonAppBar
         buttonText={isLogin ? 'Выйти' : 'Войти'}
-        buttonHandler={()=>{}}
+        buttonHandler={()=>{ dispatch(logout()) }}
         games={[]}
         //buttonHandler={isLogin ? () => dispatch(logout()) : ()=>{} }
         //games={games}
@@ -35,22 +57,30 @@ function App() {
       <Notification
         text={notificationText}
         status={notificationStatus}
-        onClose={(event: any, reason: any) => {
-          if (reason === 'clickaway') {
-            console.log(event);
-            return;
-          }
+        onClose={() => {
           dispatch(hide());
         }}
         isOpen={notificationIsShown}
       />
 
       {/*<Popup onClose={()=>dispatch(hidePopupAction())} data={popup} open={!!popup} />*/}
-
-      <Routes>
-        <Route path='/' element={<StartPage />}/>
-        <Route path='/game/:gameId?' element={<Game />}/>
-      </Routes>
+      {loading ?
+        <div style={
+          {
+            position: 'absolute',
+            display: 'flex',
+            width: '100%',
+            height: '100%',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }
+        }>Loading...</div>
+        :
+        <Routes>
+          <Route path='/' element={<StartPage />}/>
+          <Route path='/game/:gameId?' element={<Game />}/>
+        </Routes>
+      }
     </>
   )
 }
