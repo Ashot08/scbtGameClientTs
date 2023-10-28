@@ -6,7 +6,7 @@ import {Alert, AlertColor} from "@mui/material";
 interface NotificationProps {
     text: string,
     isOpen: boolean,
-    onClose: () => void,
+    onClose: (event: any, reason: any) => void,
     status:  AlertColor | undefined,
 }
 export default function Notification(props: NotificationProps) {

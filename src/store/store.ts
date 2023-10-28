@@ -1,9 +1,11 @@
 import {Action, configureStore, ThunkAction} from '@reduxjs/toolkit';
 import userReducer from "./reducers/userSlice.ts";
+import notificationReducer from "./reducers/notificationSlice.ts";
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
+    notification: notificationReducer,
   }
 });
 export type RootState = ReturnType<typeof store.getState>;

@@ -32,7 +32,7 @@ function Account () {
         >
           {activeTabNumber === 0 && (
             <Box sx={{ p: 3 }}>
-              <Typography><Login /></Typography>
+              <Login />
             </Box>
           )}
         </div>
@@ -45,7 +45,7 @@ function Account () {
         >
           {activeTabNumber === 1 && (
             <Box sx={{ p: 3 }}>
-              <Typography><Register /></Typography>
+              <Register />
             </Box>
           )}
         </div>

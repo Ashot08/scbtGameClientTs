@@ -1,14 +1,25 @@
 import './App.css'
 import ButtonAppBar from "./components/ButtonAppBar/ButtonAppBar.tsx";
-//import Notification from "./components/Notification/Notification.tsx";
+import Notification from "./components/Notification/Notification.tsx";
 //import Popup from "./components/Popup/Popup.tsx";
 import {Route, Routes} from "react-router-dom";
 import {selectUserIsLogin} from "./store/reducers/userSlice.ts";
-import {useAppSelector} from "./hooks.ts";
+import {useAppDispatch, useAppSelector} from "./hooks.ts";
 import StartPage from "./components/StartPage/StartPage.tsx";
 import Game from "./components/Game/Game.tsx";
+import {
+  hide,
+  selectNotificationIsShown,
+  selectNotificationStatus,
+  selectNotificationText
+} from "./store/reducers/notificationSlice.ts";
 
 function App() {
+  const dispatch = useAppDispatch();
+
+  const notificationText = useAppSelector(selectNotificationText);
+  const notificationIsShown = useAppSelector(selectNotificationIsShown);
+  const notificationStatus = useAppSelector(selectNotificationStatus);
 
   const isLogin = useAppSelector(selectUserIsLogin);
 
@@ -21,17 +32,18 @@ function App() {
         //buttonHandler={isLogin ? () => dispatch(logout()) : ()=>{} }
         //games={games}
       />
-      {/*<Notification*/}
-      {/*  text={notification?.text}*/}
-      {/*  status={notification?.status}*/}
-      {/*  onClose={(event, reason) => {*/}
-      {/*    if (reason === 'clickaway') {*/}
-      {/*      return;*/}
-      {/*    }*/}
-      {/*    dispatch(hideNotificationAction())*/}
-      {/*  }}*/}
-      {/*  isOpen={!!notification}*/}
-      {/*/>*/}
+      <Notification
+        text={notificationText}
+        status={notificationStatus}
+        onClose={(event: any, reason: any) => {
+          if (reason === 'clickaway') {
+            console.log(event);
+            return;
+          }
+          dispatch(hide());
+        }}
+        isOpen={notificationIsShown}
+      />
 
       {/*<Popup onClose={()=>dispatch(hidePopupAction())} data={popup} open={!!popup} />*/}
 

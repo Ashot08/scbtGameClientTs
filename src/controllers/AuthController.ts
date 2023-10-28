@@ -1,16 +1,18 @@
 import AuthAPI, {SignInData} from "../api/AuthApi.ts";
 
 class AuthController {
+
   async login(payload: SignInData) {
     try {
       const user: any = await AuthAPI.signIn(payload);
       if(!user.token){
         console.log('no user', user);
-        return;
+        return {token: null, text: user.message, status: 'error'};
       }
-      alert(user.token);
+      return {token: user.token, text: 'Вы успешно залогинены', status: 'success'}
+
     } catch (e) {
-      console.log(e);
+      return {text: 'Login Error', status: 'error'}
     }
   }
 

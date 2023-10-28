@@ -2,25 +2,28 @@ import {useState} from 'react';
 import Button from '@mui/material/Button';
 import {TextField} from "@mui/material";
 import AuthController from "../../controllers/AuthController.ts";
+import {useAppDispatch} from "../../hooks.ts";
+import {show} from "../../store/reducers/notificationSlice.ts";
 
 function Login () {
     const [playerUsernameInput, setPlayerUsernameInput] = useState('');
     const [playerPasswordInput, setPlayerPasswordInput] = useState('');
-    function setPlayerData(data: any){
-        console.log(data);
-        //dispatch(login(data));
-    }
+    const dispatch = useAppDispatch();
+    // function setPlayerData(data: any){
+    //     dispatch(login(data));
+    // }
 
     return (
         <>
-
             <form onSubmit={
                 (e) => {
                     e.preventDefault();
                     AuthController.login({
                         username: playerUsernameInput,
                         password: playerPasswordInput,
-                    }).then(res => console.log(res));
+                    }).then(res => {
+                        dispatch(show({text: res.text, status: res.status}))
+                    });
                 }
             }>
 
