@@ -7,8 +7,8 @@ import Token from "../../utils/Token.ts";
 export interface UserState {
   isLogin: boolean,
   username: string,
-  name: string,
-  email: string,
+  name?: string,
+  email?: string,
 }
 
 const initialState :UserState = {
@@ -58,8 +58,8 @@ export const userSlice = createSlice({
     setUser: (state, action) => {
       state.isLogin = true;
       state.username = action.payload.username;
-      state.name = action.payload.name;
-      state.email = action.payload.email;
+      state.name = action.payload.name || '';
+      state.email = action.payload.email || '';
     },
   },
   extraReducers: (builder) => {
@@ -67,8 +67,8 @@ export const userSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.isLogin = !!action.payload.username;
         state.username = action.payload.username;
-        state.name = action.payload.name;
-        state.email = action.payload.email;
+        state.name = action.payload.name || '';
+        state.email = action.payload.email || '';
       })
       .addCase(logout.fulfilled, (state) => {
         state.isLogin = false;

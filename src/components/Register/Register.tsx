@@ -65,7 +65,7 @@ function Register () {
         <br/>
         <TextField
           sx={{width: '100%', mb: 1}}
-          required={true}
+          required={false}
           onInput={(e: any) => setPlayerNameInput(e.target.value)}
           id="name-input"
           label="Ваше имя"
@@ -77,7 +77,7 @@ function Register () {
         <br/>
         <TextField
           sx={{width: '100%', mb: 1}}
-          required={true}
+          required={false}
           onInput={(e: any) => setPlayerEmailInput(e.target.value)}
           id="name-input"
           label="Ваше email"
