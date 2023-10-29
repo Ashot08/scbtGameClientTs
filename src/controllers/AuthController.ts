@@ -1,4 +1,4 @@
-import AuthAPI, {SignInData} from "../api/AuthApi.ts";
+import AuthAPI, {SignInData, SignUpData} from "../api/AuthApi.ts";
 import Token from "../utils/Token.ts";
 
 
@@ -31,34 +31,27 @@ class AuthController {
     }
   }
 
-  // async signup(req: any, res: any) {
-  //   try {
-  //     const validationErrors = validationResult(req);
-  //
-  //     if (!validationErrors.isEmpty()) {
-  //       return res.status(400).json({ message: 'Ошибка при валидации данных', validationErrors });
-  //     }
-  //
-  //     const { username, password } = req.body;
-  //     const alreadyExistUser = await User.read({ username });
-  //
-  //     if (alreadyExistUser?.id) {
-  //       return res.json({ message: 'Пользователь уже существует' });
-  //     }
-  //
-  //     const hashPassword = bcrypt.hashSync(password, 5);
-  //     const user = {...req.body, password: hashPassword};
-  //
-  //     const result: RunResult = await User.create(user);
-  //
-  //     if (result.lastID) {
-  //       const token = generateAccessToken(result.lastID);
-  //       return res.json({ message: 'Пользователь успешно зарегистрирован', result, token });
-  //     }
-  //   } catch (e) {
-  //     return res.status(400).json({ message: 'Registration error' });
-  //   }
-  // }
+  async signup(payload: SignUpData) {
+    try {
+      //return res.status(400).json({ message: 'Ошибка при валидации данных', validationErrors });
+      const response: any = await AuthAPI.signUp(payload);
+
+      if(response.validationErrors){
+        return {token: null, text: 'Registration error', status: 'error', errors: response.validationErrors.errors}
+      }
+
+      if(!response.token) {
+        return {token: null, text: response.message, status: 'error'}
+      }
+
+      if(response.result.lastID) {
+        return {token: response.token, id: response.result.lastID, text: response.message, status: 'success'}
+      }
+      return {token: null, text: 'Registration error', status: 'error'}
+    } catch (e) {
+      return {token: null, text: 'Registration error', status: 'error'}
+    }
+  }
 
   async fetchUser() {
     try {

@@ -1,23 +1,54 @@
 import {useState} from 'react';
 import Button from '@mui/material/Button';
 import {TextField} from "@mui/material";
+import {setUser, signup} from "../../store/reducers/userSlice.ts";
+import {show} from "../../store/reducers/notificationSlice.ts";
+import {useAppDispatch} from "../../hooks.ts";
+import Token from "../../utils/Token.ts";
+import AuthController from "../../controllers/AuthController.ts";
 
 function Register () {
   const [playerUsernameInput, setPlayerUsernameInput] = useState('');
   const [playerNameInput, setPlayerNameInput] = useState('');
   const [playerEmailInput, setPlayerEmailInput] = useState('');
   const [playerPasswordInput, setPlayerPasswordInput] = useState('');
-  function setPlayerData(data: any){
-    console.log(data);
-    //dispatch(login(data));
-  }
+  const [submitDisabled, setSubmitDisabled] = useState(false);
+  const dispatch = useAppDispatch();
 
   return (
     <>
       <form onSubmit={
         (e) => {
           e.preventDefault();
-          setPlayerData({id: Math.random(), name: playerNameInput})
+          setSubmitDisabled(true);
+          dispatch(signup({
+            username: playerUsernameInput,
+            password: playerPasswordInput,
+            email: playerEmailInput,
+            name: playerNameInput,
+          }))
+            .then((res: any) => {
+              if(res.payload.errors) {
+                for(const i of res.payload.errors){
+                  dispatch(show({text: i.msg, status: res.payload.status}));
+                }
+              }else{
+                dispatch(show({text: res.payload.text, status: res.payload.status}));
+              }
+              return res;
+            })
+            .then(() => {
+              if (Token.getToken()) {
+                AuthController.fetchUser().then((res) => {
+                  if (res.user.id) {
+                    dispatch(setUser(res));
+                  }
+                }).catch(e => console.log(e))
+              }
+            })
+            .finally(() => {
+            setSubmitDisabled(false);
+          });
         }
       }>
         <TextField
@@ -61,7 +92,7 @@ function Register () {
           required={true}
           onInput={(e: any) => setPlayerPasswordInput(e.target.value)}
           id="name-input"
-          label="Ваше пароль"
+          label="Ваш пароль"
           variant="outlined"
           type="password"
           name={'password'}
@@ -69,7 +100,7 @@ function Register () {
         />
         <br/>
         <br/>
-        <Button sx={{width: '100%'}} type="submit" variant="contained">Регистрация</Button>
+        <Button sx={{width: '100%'}} type="submit" variant="contained" disabled={submitDisabled}>Регистрация</Button>
       </form>
     </>
   )

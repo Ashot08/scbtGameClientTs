@@ -10,9 +10,6 @@ function Login () {
     const [playerUsernameInput, setPlayerUsernameInput] = useState('');
     const [playerPasswordInput, setPlayerPasswordInput] = useState('');
     const dispatch = useAppDispatch();
-    // function setPlayerData(data: any){
-    //     dispatch(login(data));
-    // }
 
     return (
         <>
@@ -25,6 +22,7 @@ function Login () {
                         password: playerPasswordInput,
                     })).then((res: any) => {
                         dispatch(show({text: res.payload.text, status: res.payload.status}));
+                    }).finally(() => {
                         setSubmitDisabled(false);
                     });
                 }

@@ -1,7 +1,7 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {RootState} from "../store.ts";
 import AuthController from "../../controllers/AuthController.ts";
-import {SignInData} from "../../api/AuthApi.ts";
+import {SignInData, SignUpData} from "../../api/AuthApi.ts";
 import Token from "../../utils/Token.ts";
 
 export interface UserState {
@@ -22,6 +22,19 @@ export const login = createAsyncThunk(
   'user/login',
   async (data: SignInData) => {
     const result = await AuthController.login(data);
+
+    if(result.token) {
+      Token.setToken(result.token, result.id);
+    }
+
+    return result;
+  }
+);
+
+export const signup = createAsyncThunk(
+  'user/signup',
+  async (data: SignUpData) => {
+    const result = await AuthController.signup(data);
 
     if(result.token) {
       Token.setToken(result.token, result.id);
