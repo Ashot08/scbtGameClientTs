@@ -20,6 +20,15 @@ class GameController {
     }
   }
 
+  async getGameState(payload: any) {
+    console.log(payload);
+    try {
+      return {text: 'Registration error', status: 'error'}
+    } catch (e) {
+      return {text: 'Registration error', status: 'error'}
+    }
+  }
+
 }
 
 export default new GameController();

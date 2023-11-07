@@ -11,6 +11,7 @@ export interface GameState {
   playersCount?: number,
   moderator?: number,
   creationDate?: string,
+  players?: any,
 }
 
 const initialState :GameState = {
@@ -36,11 +37,13 @@ export const gameSlice = createSlice({
       state.playersCount = action.payload.playersCount;
       state.moderator = action.payload.moderator;
       state.creationDate = action.payload.creationDate;
+      state.players = action.payload.players;
     },
   },
 });
 
 export const selectGameIsLoaded = (state: RootState) => state.game.isLoaded;
+export const selectGame = (state: RootState) => state.game;
 
 export const { setGame,  } = gameSlice.actions;
 export default gameSlice.reducer;

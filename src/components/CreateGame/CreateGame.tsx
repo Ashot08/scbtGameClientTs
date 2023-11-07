@@ -17,6 +17,8 @@ import {createGame} from "../../store/reducers/gameSlice.ts";
 import Token from "../../utils/Token.ts";
 import {show} from "../../store/reducers/notificationSlice.ts";
 import {useNavigate} from "react-router-dom";
+import {showPopup} from "../../store/reducers/popupSlice.ts";
+import {GameQR} from "../GameQR/GameQR.tsx";
 
 export const CreateGame = () => {
   const [playersCount, setPlayersCount] = useState(3);
@@ -58,7 +60,13 @@ export const CreateGame = () => {
             dispatch(show({text: i.msg, status: res.payload.status}));
           }
         }else{
+
+
           dispatch(show({text: res.payload.text, status: res.payload.status}));
+          dispatch(showPopup({
+            title: 'Игра создана',
+            content: <GameQR gameId={res.payload.game_id} />
+          }))
           if(res.payload.game_id) {
             navigate(`/game/${res.payload.game_id}`);
           }

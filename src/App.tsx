@@ -16,21 +16,25 @@ import {
 import AuthController from "./controllers/AuthController.ts";
 import {useEffect, useState} from "react";
 import Token from "./utils/Token.ts";
+import {hidePopup, selectPopupContent, selectPopupIsShown} from "./store/reducers/popupSlice.ts";
+import Popup from "./components/Popup/Popup.tsx";
 
 function App() {
   const dispatch = useAppDispatch();
   const notificationText = useAppSelector(selectNotificationText);
   const notificationIsShown = useAppSelector(selectNotificationIsShown);
   const notificationStatus = useAppSelector(selectNotificationStatus);
+  const popupContent = useAppSelector(selectPopupContent);
+  const popupIsShown = useAppSelector(selectPopupIsShown);
+
   const [loading, setLoading] = useState(false);
   const isLogin = useAppSelector(selectUserIsLogin);
   const auth = () => {
     if(Token.getToken()) {
       setLoading(true);
       AuthController.fetchUser().then((res) => {
-        console.log(res);
         if(res.user.id){
-          dispatch(setUser(res));
+          dispatch(setUser(res.user));
         }
       }).catch(e => console.log(e))
         .finally(() => {
@@ -63,7 +67,8 @@ function App() {
         isOpen={notificationIsShown}
       />
 
-      {/*<Popup onClose={()=>dispatch(hidePopupAction())} data={popup} open={!!popup} />*/}
+      {<Popup onClose={()=>dispatch(hidePopup())} data={popupContent} open={popupIsShown} />}
+
       {loading ?
         <div style={
           {
@@ -78,7 +83,7 @@ function App() {
         :
         <Routes>
           <Route path='/' element={<StartPage />}/>
-          <Route path='/game/:gameId?' element={<Game />}/>
+          <Route path='/game/:gameId?' element={<Game />} />
         </Routes>
       }
     </>
