@@ -12,13 +12,14 @@ import {
 import List from "@mui/material/List";
 import Button from "@mui/material/Button";
 import {useState} from "react";
-import {useAppDispatch} from "../../hooks.ts";
+import {useAppDispatch, useAppSelector} from "../../hooks.ts";
 import {createGame} from "../../store/reducers/gameSlice.ts";
 import Token from "../../utils/Token.ts";
 import {show} from "../../store/reducers/notificationSlice.ts";
 import {useNavigate} from "react-router-dom";
 import {showPopup} from "../../store/reducers/popupSlice.ts";
 import {GameQR} from "../GameQR/GameQR.tsx";
+import {selectUserLogin, selectUserName} from "../../store/reducers/userSlice.ts";
 
 export const CreateGame = () => {
   const [playersCount, setPlayersCount] = useState(3);
@@ -81,9 +82,8 @@ export const CreateGame = () => {
 
 
   }
-  const player = {
-    name: 'oleg',
-  }
+  const player = useAppSelector(selectUserLogin);
+  const playerName = useAppSelector(selectUserName);
 
   return (
     <>
@@ -101,7 +101,7 @@ export const CreateGame = () => {
               type="text"
               name={'name'}
               placeholder={'Добро пожаловать'}
-              value={player.name}
+              value={playerName ? playerName : player}
               disabled={true}
             />
             <FormControl sx={{my: 2}} fullWidth>

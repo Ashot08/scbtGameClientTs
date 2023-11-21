@@ -12,6 +12,8 @@ export interface GameState {
   moderator?: number,
   creationDate?: string,
   players?: any,
+  turns?: any,
+  moderatorMode?: boolean | string
 }
 
 const initialState :GameState = {
@@ -38,6 +40,8 @@ export const gameSlice = createSlice({
       state.moderator = action.payload.moderator;
       state.creationDate = action.payload.creationDate;
       state.players = action.payload.players;
+      state.moderatorMode = action.payload.moderatorMode;
+      state.turns = action.payload.turns;
     },
   },
 });

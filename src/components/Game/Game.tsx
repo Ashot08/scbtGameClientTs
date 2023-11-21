@@ -1,62 +1,33 @@
 import {useParams} from "react-router-dom";
 import './game.css';
 import {useAppDispatch, useAppSelector} from "../../hooks.ts";
-import {selectUserLogin, selectUserName} from "../../store/reducers/userSlice.ts";
+import {selectUserIsLogin, selectUserLogin, selectUserName} from "../../store/reducers/userSlice.ts";
 import Token from "../../utils/Token.ts";
 
 // import RouletteMobile from "../RouletteMobile/RouletteMobile.jsx";
 // import {mobileCheck} from "../../utils/mobileCheck.js";
-import {io} from "socket.io-client";
-import {show} from "../../store/reducers/notificationSlice.ts";
-import {useEffect, useRef} from "react";
-import {selectGame, setGame} from "../../store/reducers/gameSlice.ts";
+
 import BasicCard from "../Card/BasicCard.tsx";
 import List from "@mui/material/List";
 import {ListItem, ListItemButton, ListItemIcon, ListItemText, TextField} from "@mui/material";
 import {GameQR} from "../GameQR/GameQR.tsx";
 import {showPopup} from "../../store/reducers/popupSlice.ts";
 import FaceIcon from '@mui/icons-material/Face';
-import Login from "../Login/Login.tsx";
 import Button from "@mui/material/Button";
+import Account from "../Account/Account.tsx";
+import useGame from "../../hooks/useGame.ts";
+import CasinoIcon from '@mui/icons-material/Casino';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import DangerousIcon from '@mui/icons-material/Dangerous';
 
 function Game() {
   const dispatch = useAppDispatch();
   const params = useParams();
   const player = useAppSelector(selectUserLogin);
-  const game = useAppSelector(selectGame);
-  const userId = Token.getToken().id;
-  const socket: any = useRef();
-
-  useEffect(() => {
-    ws();
-  }, []);
-
-  const ws = () => {
-    socket.current = io("ws://localhost:3001");
-
-    socket.current.on("connect", () => {
-      dispatch(show({text: 'Соединение установлено', status: 'success'}));
-      socket.current.emit('get_state', params.gameId);
-    });
-
-    socket.current.on("update_state", (state) => {
-      dispatch(show({text: 'Обновлен стейт', status: 'success'}));
-      dispatch(setGame({
-        isLoaded: true,
-        title: state.gameState.gameInfo.title,
-        status: state.gameState.gameInfo.status,
-        playersCount: state.gameState.gameInfo.players_count,
-        moderator: state.gameState.gameInfo.moderator,
-        creationDate: state.gameState.gameInfo.creation_date,
-        players: state.gameState.players,
-      }))
-    });
-
-    socket.current.on("disconnect", () => {
-      dispatch(show({text: 'Соединение разорвано', status: 'error'}))
-    });
-  }
-
+  const playerName = useAppSelector(selectUserName);
+  const isLogin = useAppSelector(selectUserIsLogin);
+  const userId = Token.getToken()?.id;
+  const {game, joinGame} = useGame(params.gameId);
 
   const onGetGameLink = () => {
       dispatch(showPopup({
@@ -66,10 +37,15 @@ function Game() {
       ));
   }
 
-  const joinGame = (e: any) => {
-    e.preventDefault();
-    socket.current.emit('join_game', params.gameId, userId);
+  const getActivePlayer = () => {
+    if(Array.isArray(game.turns) && Array.isArray(game.players) && game.turns.length && game.players.length) {
+      const lastTurn = game.turns.slice(-1);
+      return game.players.find((el: any) => {console.log(lastTurn); return el.id === lastTurn[0].player_id});
+    }
+    return {name: '-'};
   }
+  const onHideQuestion = () => {console.log('hide')}
+  const onGetQuestion = () => {console.log('get')}
 
   return (
     <>
@@ -79,8 +55,8 @@ function Game() {
           {
             (
               game.status &&
-              player &&
-              (game.players.find((p: any) => p.username == player || game.moderator == userId) )
+              isLogin &&
+              (game.players.find((p: any) => p.username == player || game.moderatorMode === '1') )
             )
               ?
               <>
@@ -96,14 +72,14 @@ function Game() {
                                 id={`Ожидает, когда наберется ${game.playersCount} игроков (сейчас ${game.players.length} из ${game.playersCount})`}
                                 content={
                                   <List>{
-                                    (game.players.map((p) => {
+                                    (game.players.map((p: any) => {
                                       return(
                                         <ListItem key={p.id} disablePadding>
                                           <ListItemButton>
                                             <ListItemIcon>
                                               <FaceIcon/>
                                             </ListItemIcon>
-                                            <ListItemText primary={p.name}/>
+                                            <ListItemText primary={p.name ? p.name : p.username}/>
                                           </ListItemButton>
                                         </ListItem>
                                       )
@@ -116,19 +92,69 @@ function Game() {
                         </div>
                     </div>
                 }
+
+                {(game.status === 'in_process')
+                  &&
+                   <aside className={'game_state'}>
+                        <ul>
+                          {game.moderator == userId && <li><strong>Режим модератора:</strong> ON</li>}
+                            <li><strong>Игрок:</strong> {playerName ? playerName : player}</li>
+                            <li>
+                                <strong>Игра:</strong> {game.title} ({params.id})
+                                <button style={{marginLeft: 5}} onClick={onGetGameLink} >Ссылка на игру</button>
+                            </li>
+                          {/*<li><strong>Статус:</strong> {game.status}</li>*/}
+                            <li><strong>Сейчас ходит:</strong> { getActivePlayer().name || getActivePlayer().username }</li>
+                          {/*{game.result && <li><strong>Результат предыдущего:</strong> {game.players[game.result.turn].name} - {game.result.prize}</li> }*/}
+
+                            <li>
+                                <strong>Игроки:</strong>
+                                <ul className={'game_state_players'}>
+                                  {game.players.map((p) => {
+                                    return (
+                                      <li key={'players' + p.id}>
+                                        {(getActivePlayer().id === p.id) && <CasinoIcon sx={{ width: 15 }} /> }
+                                        {p.name ? p.name : p.username}
+                                        {/*{(game.players[0].id == p.id) && game.answersStat.map( (a) => { return a ? <CheckCircleOutlineIcon sx={{color: 'green'}} /> : <DangerousIcon sx={{color: 'red'}} /> }) }*/}
+                                      </li>
+                                    )
+                                  })}
+                                </ul>
+
+                            </li>
+
+                        </ul>
+                    {
+                      ( getActivePlayer().id === userId || game.moderator == userId )
+                      &&
+                        <div>
+                          {
+                            // game.question.show
+                            //   ?
+                            //   <button onClick={onHideQuestion} className={'button'}>Перейти к рулетке</button>
+                            //   :
+                            //   <button onClick={onGetQuestion} className={'button'}>Взять вопрос</button>
+                          }
+                        </div>
+                    }
+
+                    </aside>
+                }
+
+                {(game.status === 'finished') && <BasicCard name={ 'Игра ' + game.title } id={'Завершена'} />}
               </>
               :
               <div className={'game_desk game_desk_centered'}>
                 <div>
                   <>
                     <h1>ИГРА {game && game.title}</h1>
-                    {player && <BasicCard name={player} id={'id: ' + userId} />}
+                    {isLogin && <BasicCard name={playerName || player} id={'id: ' + userId} />}
                   </>
 
-                  {(!player)
+                  {(!isLogin)
                     ?
                     <div >
-                      <Login />
+                      <Account />
                     </div>
 
                     :
@@ -138,7 +164,7 @@ function Game() {
                         <ListItem sx={{justifyContent: 'center'}} divider>
                           <div>
                             <h4>Присоединиться к игре</h4>
-                            <form onSubmit={joinGame} action="">
+                            <form onSubmit={(e) => {e.preventDefault(); joinGame(userId);}} action="">
 
                               <div>
                                 <label htmlFor="">
