@@ -40,7 +40,7 @@ function Game() {
   const getActivePlayer = () => {
     if(Array.isArray(game.turns) && Array.isArray(game.players) && game.turns.length && game.players.length) {
       const lastTurn = game.turns.slice(-1);
-      return game.players.find((el: any) => {console.log(lastTurn); return el.id === lastTurn[0].player_id});
+      return game.players.find((el: any) => {return el.id === lastTurn[0].player_id});
     }
     return {name: '-'};
   }
@@ -95,50 +95,68 @@ function Game() {
 
                 {(game.status === 'in_process')
                   &&
-                   <aside className={'game_state'}>
-                        <ul>
-                          {game.moderator == userId && <li><strong>Режим модератора:</strong> ON</li>}
-                            <li><strong>Игрок:</strong> {playerName ? playerName : player}</li>
-                            <li>
-                                <strong>Игра:</strong> {game.title} ({params.id})
-                                <button style={{marginLeft: 5}} onClick={onGetGameLink} >Ссылка на игру</button>
-                            </li>
-                          {/*<li><strong>Статус:</strong> {game.status}</li>*/}
-                            <li><strong>Сейчас ходит:</strong> { getActivePlayer().name || getActivePlayer().username }</li>
-                          {/*{game.result && <li><strong>Результат предыдущего:</strong> {game.players[game.result.turn].name} - {game.result.prize}</li> }*/}
+                    <>
+                        <aside className={'game_state'}>
+                            <ul>
+                              {game.moderator == userId && <li><strong>Режим модератора:</strong> ON</li>}
+                                <li><strong>Игрок:</strong> {playerName ? playerName : player}</li>
+                                <li>
+                                    <strong>Игра:</strong> {game.title} ({params.id})
+                                    <button style={{marginLeft: 5}} onClick={onGetGameLink}>Ссылка на игру</button>
+                                </li>
+                              {/*<li><strong>Статус:</strong> {game.status}</li>*/}
+                                <li><strong>Сейчас
+                                    ходит:</strong> {getActivePlayer().name || getActivePlayer().username}</li>
+                              {/*{game.result && <li><strong>Результат предыдущего:</strong> {game.players[game.result.turn].name} - {game.result.prize}</li> }*/}
 
-                            <li>
-                                <strong>Игроки:</strong>
-                                <ul className={'game_state_players'}>
-                                  {game.players.map((p) => {
-                                    return (
-                                      <li key={'players' + p.id}>
-                                        {(getActivePlayer().id === p.id) && <CasinoIcon sx={{ width: 15 }} /> }
-                                        {p.name ? p.name : p.username}
-                                        {/*{(game.players[0].id == p.id) && game.answersStat.map( (a) => { return a ? <CheckCircleOutlineIcon sx={{color: 'green'}} /> : <DangerousIcon sx={{color: 'red'}} /> }) }*/}
-                                      </li>
-                                    )
-                                  })}
-                                </ul>
+                                <li>
+                                    <strong>Игроки:</strong>
+                                    <ul className={'game_state_players'}>
+                                      {game.players.map((p) => {
+                                        return (
+                                          <li key={'players' + p.id}>
+                                            {(getActivePlayer().id === p.id) && <CasinoIcon sx={{width: 15}}/>}
+                                            {p.name ? p.name : p.username}
+                                            {/*{(game.players[0].id == p.id) && game.answersStat.map( (a) => { return a ? <CheckCircleOutlineIcon sx={{color: 'green'}} /> : <DangerousIcon sx={{color: 'red'}} /> }) }*/}
+                                          </li>
+                                        )
+                                      })}
+                                    </ul>
 
-                            </li>
+                                </li>
 
-                        </ul>
-                    {
-                      ( getActivePlayer().id === userId || game.moderator == userId )
-                      &&
-                        <div>
+                            </ul>
+                          {
+                            (getActivePlayer().id === userId || game.moderator == userId)
+                            &&
+                              <div>
+                                {
+                                  // game.question.show
+                                  //   ?
+                                  //   <button onClick={onHideQuestion} className={'button'}>Перейти к рулетке</button>
+                                  //   :
+                                  //   <button onClick={onGetQuestion} className={'button'}>Взять вопрос</button>
+                                }
+                              </div>
+                          }
+                        </aside>
+
+                        <div className={'game_desk'}>
                           {
                             // game.question.show
                             //   ?
-                            //   <button onClick={onHideQuestion} className={'button'}>Перейти к рулетке</button>
+                            //   <Quiz quizTimer={game.quizTimer} isMyTurn={game.players[game.turn].name == player.name}
+                            //         onGetQuestion={onGetQuestion}/>
                             //   :
-                            //   <button onClick={onGetQuestion} className={'button'}>Взять вопрос</button>
+                            //   <div>
+                            //
+                            //     <Roulette game={game} onNextPlayer={onNextPlayer} doRoll={game.doRoll ?? false}
+                            //               prizeNumber={game.prizeNumber ?? 0} handleSpinClick={onRoulettePressSpin}/>
+                            //
+                            //   </div>
                           }
                         </div>
-                    }
-
-                    </aside>
+                    </>
                 }
 
                 {(game.status === 'finished') && <BasicCard name={ 'Игра ' + game.title } id={'Завершена'} />}
