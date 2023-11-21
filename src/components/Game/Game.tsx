@@ -6,7 +6,7 @@ import Token from "../../utils/Token.ts";
 
 // import RouletteMobile from "../RouletteMobile/RouletteMobile.jsx";
 // import {mobileCheck} from "../../utils/mobileCheck.js";
-
+import Roulette from "../Roulette/Roulette.jsx";
 import BasicCard from "../Card/BasicCard.tsx";
 import List from "@mui/material/List";
 import {ListItem, ListItemButton, ListItemIcon, ListItemText, TextField} from "@mui/material";
@@ -17,8 +17,8 @@ import Button from "@mui/material/Button";
 import Account from "../Account/Account.tsx";
 import useGame from "../../hooks/useGame.ts";
 import CasinoIcon from '@mui/icons-material/Casino';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import DangerousIcon from '@mui/icons-material/Dangerous';
+// import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+// import DangerousIcon from '@mui/icons-material/Dangerous';
 
 function Game() {
   const dispatch = useAppDispatch();
@@ -27,7 +27,7 @@ function Game() {
   const playerName = useAppSelector(selectUserName);
   const isLogin = useAppSelector(selectUserIsLogin);
   const userId = Token.getToken()?.id;
-  const {game, joinGame} = useGame(params.gameId);
+  const {game, joinGame, createRoll} = useGame(params.gameId);
 
   const onGetGameLink = () => {
       dispatch(showPopup({
@@ -44,8 +44,6 @@ function Game() {
     }
     return {name: '-'};
   }
-  const onHideQuestion = () => {console.log('hide')}
-  const onGetQuestion = () => {console.log('get')}
 
   return (
     <>
@@ -99,7 +97,7 @@ function Game() {
                         <aside className={'game_state'}>
                             <ul>
                               {game.moderator == userId && <li><strong>Режим модератора:</strong> ON</li>}
-                                <li><strong>Игрок:</strong> {playerName ? playerName : player}</li>
+                                <li><strong>Игрок:</strong> {playerName || player}</li>
                                 <li>
                                     <strong>Игра:</strong> {game.title} ({params.id})
                                     <button style={{marginLeft: 5}} onClick={onGetGameLink}>Ссылка на игру</button>
@@ -112,7 +110,7 @@ function Game() {
                                 <li>
                                     <strong>Игроки:</strong>
                                     <ul className={'game_state_players'}>
-                                      {game.players.map((p) => {
+                                      {game.players.map((p: any) => {
                                         return (
                                           <li key={'players' + p.id}>
                                             {(getActivePlayer().id === p.id) && <CasinoIcon sx={{width: 15}}/>}
@@ -150,8 +148,7 @@ function Game() {
                             //   :
                             //   <div>
                             //
-                            //     <Roulette game={game} onNextPlayer={onNextPlayer} doRoll={game.doRoll ?? false}
-                            //               prizeNumber={game.prizeNumber ?? 0} handleSpinClick={onRoulettePressSpin}/>
+                                <Roulette userId={userId} activePlayer={getActivePlayer()} handleSpinClick={createRoll} />
                             //
                             //   </div>
                           }

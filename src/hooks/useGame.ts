@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 // получаем класс IO
 import io from 'socket.io-client'
 import {useAppDispatch, useAppSelector} from "../hooks.ts";
 import {selectGame, setGame} from "../store/reducers/gameSlice.ts";
 import {selectUserIsLogin} from "../store/reducers/userSlice.ts";
+import {show} from "../store/reducers/notificationSlice.ts";
 
 // import { useBeforeUnload } from './useBeforeUnload.ts';
 
@@ -49,6 +50,10 @@ const useGame = (roomId: any) => {
       }));
     })
 
+    socketRef.current.on('notification', (notification: any) => {
+      dispatch(show({text: notification.message, status: notification.status}));
+    })
+
     return () => {
       // при размонтировании компонента выполняем отключение сокета
       socketRef.current.disconnect()
@@ -59,7 +64,11 @@ const useGame = (roomId: any) => {
   const joinGame = (playerId: number) => {
     socketRef.current.emit('game:join', {playerId, gameId: roomId});
   }
-  return { game, joinGame }
+
+  const createRoll = () => {
+    socketRef.current.emit('game:create_roll');
+  }
+  return { game, joinGame, createRoll }
 }
 
 export default useGame;
