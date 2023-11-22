@@ -3,6 +3,7 @@ import userReducer from "./reducers/userSlice.ts";
 import gameReducer from "./reducers/gameSlice.ts";
 import popupReducer from "./reducers/popupSlice.ts";
 import notificationReducer from "./reducers/notificationSlice.ts";
+import rouletteReducer from "./reducers/rouletteSlice.ts";
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     notification: notificationReducer,
     game: gameReducer,
     popup: popupReducer,
+    roulette: rouletteReducer,
   }
 });
 export type RootState = ReturnType<typeof store.getState>;

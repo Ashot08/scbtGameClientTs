@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import {useState} from 'react';
 import { Wheel } from 'react-custom-roulette';
 import './Roulette.css';
 import arrowImage from './img/arrow.svg';
 import BasicCard from "../Card/BasicCard.tsx";
-import {useDispatch, useSelector} from "react-redux";
+import {useDispatch} from "react-redux";
 // import {offRollAction} from "../../store/gameReducer.js";
 import {ButtonGroup} from "@mui/material";
 import Button from "@mui/material/Button";
@@ -18,8 +18,9 @@ import groupLetalIcon from './img/icons/group_letal.png';
 import {mobileCheck} from "../../utils/mobileCheck.ts";
 // import RouletteMobile from "../RouletteMobile/RouletteMobile.jsx";
 import {hidePopup, showPopup} from "../../store/reducers/popupSlice.ts";
-import {useAppSelector} from "../../hooks.ts";
+import {useAppDispatch, useAppSelector} from "../../hooks.ts";
 import {selectGame} from "../../store/reducers/gameSlice.ts";
+import {selectIsRoll, selectPrizeNumber, stopRoll} from "../../store/reducers/rouletteSlice.ts";
 
 const data = [
     {
@@ -122,10 +123,10 @@ const data = [
         category: '1',
     },
 ]
-export default function Roulette (props){
-    const [mustSpin, setMustSpin] = useState(false);
-    const [prizeNumber, setPrizeNumber] = useState(0);
-    const dispatch = useDispatch();
+export default function Roulette (props: any){
+    const mustSpin = useAppSelector(selectIsRoll);
+    const prizeNumber = useAppSelector(selectPrizeNumber);
+    const dispatch = useAppDispatch();
     const game = useAppSelector(selectGame);
 
     // useEffect(() => {
@@ -141,10 +142,12 @@ export default function Roulette (props){
     }
 
     const onStopSpinning = () => {
-        const turn = props.game.turn;
+
+
+        if(prizeNumber === undefined) return;
         dispatch(showPopup({
                 title: <>
-                    Ход  <strong>{props.game.players[turn].name}</strong>
+                    Ход  <strong>{props.activePlayer.name || props.activePlayer.username}</strong>
                 </>,
                 content: <BasicCard
                     style={{textAlign: 'center'}}
@@ -168,8 +171,7 @@ export default function Roulette (props){
             }
         ));
         // dispatch(clearAnswersStat());
-        setMustSpin(false);
-        // dispatch(offRollAction());
+        dispatch(stopRoll());
     }
 
     // let audio = document.querySelector("#chatAudio");
@@ -190,7 +192,7 @@ export default function Roulette (props){
                     :
                     <Wheel
                         mustStartSpinning={mustSpin}
-                        prizeNumber={prizeNumber}
+                        prizeNumber={prizeNumber as number}
                         data={data}
                         innerRadius={8}
                         radiusLineWidth={1}

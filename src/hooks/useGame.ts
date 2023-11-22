@@ -5,6 +5,8 @@ import {useAppDispatch, useAppSelector} from "../hooks.ts";
 import {selectGame, setGame} from "../store/reducers/gameSlice.ts";
 import {selectUserIsLogin} from "../store/reducers/userSlice.ts";
 import {show} from "../store/reducers/notificationSlice.ts";
+import {roll} from "../store/reducers/rouletteSlice.ts";
+import {hidePopup} from "../store/reducers/popupSlice.ts";
 
 // import { useBeforeUnload } from './useBeforeUnload.ts';
 
@@ -30,7 +32,7 @@ const useGame = (roomId: any) => {
 
     if(isLogin) {
       // отправляем запрос на получение сообщений
-      socketRef.current.emit('game:getState')
+      socketRef.current.emit('game:getState');
     }
 
     socketRef.current.on('game:updateState', (state: any) => {
@@ -53,6 +55,11 @@ const useGame = (roomId: any) => {
     socketRef.current.on('notification', (notification: any) => {
       dispatch(show({text: notification.message, status: notification.status}));
     })
+
+    socketRef.current.on('game:roll', (result: any) => {
+      dispatch(roll({prizeNumber: result.result.prizeNumber}));
+      dispatch(hidePopup());
+    });
 
     return () => {
       // при размонтировании компонента выполняем отключение сокета
