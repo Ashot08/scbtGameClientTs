@@ -213,7 +213,7 @@ const RouletteMobile = (props) => {
 
             const { id } = prizeList[newPrizeIndex];
 
-            console.log({ icon: 'info', title: `Вращаем..` });
+            console.log({ icon: 'info', title: `Вращаем..`, newPrizeIndex });
         };
         prepare();
     }, [props.prizeNumber, props.mustSpin]);

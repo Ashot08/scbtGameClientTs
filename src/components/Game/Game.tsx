@@ -17,6 +17,9 @@ import Button from "@mui/material/Button";
 import Account from "../Account/Account.tsx";
 import useGame from "../../hooks/useGame.ts";
 import CasinoIcon from '@mui/icons-material/Casino';
+import {selectPlayerName, selectResult} from "../../store/reducers/rouletteSlice.ts";
+import {selectIsActive, selectTimerOn} from "../../store/reducers/quizSlice.ts";
+import {Quiz} from "../Quiz/Quiz.tsx";
 // import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 // import DangerousIcon from '@mui/icons-material/Dangerous';
 
@@ -27,7 +30,11 @@ function Game() {
   const playerName = useAppSelector(selectUserName);
   const isLogin = useAppSelector(selectUserIsLogin);
   const userId = Token.getToken()?.id;
-  const {game, joinGame, createRoll} = useGame(params.gameId);
+  const {game, joinGame, createRoll, goNextTurn} = useGame(params.gameId);
+  const lastRollResult = useAppSelector(selectResult);
+  const lastRollPlayerName = useAppSelector(selectPlayerName);
+  const quizActive = useAppSelector(selectIsActive);
+  const timerOn = useAppSelector(selectTimerOn);
 
   const onGetGameLink = () => {
       dispatch(showPopup({
@@ -39,12 +46,22 @@ function Game() {
 
   const getActivePlayer = () => {
     if(Array.isArray(game.turns) && Array.isArray(game.players) && game.turns.length && game.players.length) {
-      const lastTurn = game.turns.slice(-1);
-      return game.players.find((el: any) => {return el.id === lastTurn[0].player_id});
+      const lastTurn = getLastTurn();
+      return game.players.find((el: any) => {return el.id === lastTurn.player_id});
     }
     return {name: '-'};
   }
 
+  const getLastTurn = () => {
+    return game.turns.slice(-1)[0];
+  }
+
+  const onHideQuestion = () => {
+    console.log('hide')
+  }
+  const onGetQuestion = () => {
+    console.log('show')
+  }
   return (
     <>
 
@@ -102,10 +119,11 @@ function Game() {
                                     <strong>Игра:</strong> {game.title} ({params.id})
                                     <button style={{marginLeft: 5}} onClick={onGetGameLink}>Ссылка на игру</button>
                                 </li>
-                              {/*<li><strong>Статус:</strong> {game.status}</li>*/}
+                                <li><strong>Смена:</strong> {getLastTurn()?.shift}</li>
                                 <li><strong>Сейчас
                                     ходит:</strong> {getActivePlayer().name || getActivePlayer().username}</li>
-                              {/*{game.result && <li><strong>Результат предыдущего:</strong> {game.players[game.result.turn].name} - {game.result.prize}</li> }*/}
+
+                              {lastRollResult && <li><strong>Результат предыдущего:</strong> {lastRollPlayerName} - {lastRollResult}</li> }
 
                                 <li>
                                     <strong>Игроки:</strong>
@@ -129,11 +147,11 @@ function Game() {
                             &&
                               <div>
                                 {
-                                  // game.question.show
-                                  //   ?
-                                  //   <button onClick={onHideQuestion} className={'button'}>Перейти к рулетке</button>
-                                  //   :
-                                  //   <button onClick={onGetQuestion} className={'button'}>Взять вопрос</button>
+                                    quizActive
+                                    ?
+                                    <button onClick={onHideQuestion} className={'button'}>Перейти к рулетке</button>
+                                    :
+                                    <button onClick={onGetQuestion} className={'button'}>Взять вопрос</button>
                                 }
                               </div>
                           }
@@ -141,16 +159,16 @@ function Game() {
 
                         <div className={'game_desk'}>
                           {
-                            // game.question.show
-                            //   ?
-                            //   <Quiz quizTimer={game.quizTimer} isMyTurn={game.players[game.turn].name == player.name}
-                            //         onGetQuestion={onGetQuestion}/>
-                            //   :
-                            //   <div>
-                            //
-                                <Roulette userId={userId} activePlayer={getActivePlayer()} handleSpinClick={createRoll} />
-                            //
-                            //   </div>
+                              quizActive
+                              ?
+                              <Quiz quizTimer={timerOn} isMyTurn={getActivePlayer().username === player}
+                                    onGetQuestion={onGetQuestion}/>
+                              :
+                              <div>
+
+                                <Roulette userId={userId} activePlayer={getActivePlayer()} handleSpinClick={createRoll} onNextPlayer={goNextTurn} />
+
+                              </div>
                           }
                         </div>
                     </>

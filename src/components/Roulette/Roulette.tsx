@@ -20,7 +20,8 @@ import {mobileCheck} from "../../utils/mobileCheck.ts";
 import {hidePopup, showPopup} from "../../store/reducers/popupSlice.ts";
 import {useAppDispatch, useAppSelector} from "../../hooks.ts";
 import {selectGame} from "../../store/reducers/gameSlice.ts";
-import {selectIsRoll, selectPrizeNumber, stopRoll} from "../../store/reducers/rouletteSlice.ts";
+import {selectIsRoll, selectPrizeNumber, setMeta, stopRoll} from "../../store/reducers/rouletteSlice.ts";
+import RouletteMobile from "../RouletteMobile/RouletteMobile.tsx";
 
 const data = [
     {
@@ -172,6 +173,10 @@ export default function Roulette (props: any){
         ));
         // dispatch(clearAnswersStat());
         dispatch(stopRoll());
+        dispatch(setMeta({
+            result: data[prizeNumber].fullName,
+            playerName: props.activePlayer.name || props.activePlayer.username})
+        );
     }
 
     // let audio = document.querySelector("#chatAudio");
@@ -187,8 +192,7 @@ export default function Roulette (props: any){
             <div className="rouletteWrapper">
 
                 {mobileCheck() ?
-                    ''
-                    // <RouletteMobile onStopSpinning={onStopSpinning} mustSpin={mustSpin} prizeNumber={props.prizeNumber} nextTurn={props.game.nextTurn}  />
+                     <RouletteMobile onStopSpinning={onStopSpinning} mustSpin={mustSpin} prizeNumber={prizeNumber}   />
                     :
                     <Wheel
                         mustStartSpinning={mustSpin}

@@ -75,7 +75,11 @@ const useGame = (roomId: any) => {
   const createRoll = () => {
     socketRef.current.emit('game:create_roll');
   }
-  return { game, joinGame, createRoll }
+
+  const goNextTurn = () => {
+    socketRef.current.emit('game:create_turn');
+  }
+  return { game, joinGame, createRoll, goNextTurn }
 }
 
 export default useGame;
