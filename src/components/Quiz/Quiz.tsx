@@ -13,9 +13,11 @@ import {offTimer} from "../../store/reducers/quizSlice.ts";
 
 export const Quiz = (props) => {
     const dispatch = useAppDispatch();
-    const questionNumber = useSelector(state => state.game.game.question.question);
+    // const questionNumber = useSelector(state => state.game.game.question.question);
+    const questionNumber = 1;
     const [answer, setAnswer] = useState('');
     const [answerStatus, setAnswerStatus] = useState('in_process');
+    const [started, setStarted] = useState(false);
 
     let orderNumber = 0;
     if(questionNumber < 150) {
@@ -77,8 +79,18 @@ export const Quiz = (props) => {
     }
 
     return <>
+
+
+
         <div className={'quiz'}>
             <div className={'variants'}>
+                {!started
+                  ?
+                <div>
+                    <p>Готовы отвечать?</p>
+                    <Button onClick={props.startAnswers} disabled={false} variant={'contained'}>Старт!</Button>
+                </div>
+                  :
                 <form style={{textAlign: 'left'}} onSubmit={onSubmit}>
                     <FormControl sx={{width: '100%'}}>
                         <FormLabel id="demo-radio-buttons-group-label">{quiz.questions[questionNumber].question}</FormLabel>
@@ -125,7 +137,7 @@ export const Quiz = (props) => {
 
                     }
                 </form>
-
+                }
             </div>
         </div>
     </>

@@ -18,7 +18,7 @@ import Account from "../Account/Account.tsx";
 import useGame from "../../hooks/useGame.ts";
 import CasinoIcon from '@mui/icons-material/Casino';
 import {selectPlayerName, selectResult} from "../../store/reducers/rouletteSlice.ts";
-import {selectIsActive, selectTimerOn} from "../../store/reducers/quizSlice.ts";
+import {hide, selectIsActive, selectTimerOn, show} from "../../store/reducers/quizSlice.ts";
 import {Quiz} from "../Quiz/Quiz.tsx";
 // import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 // import DangerousIcon from '@mui/icons-material/Dangerous';
@@ -30,7 +30,7 @@ function Game() {
   const playerName = useAppSelector(selectUserName);
   const isLogin = useAppSelector(selectUserIsLogin);
   const userId = Token.getToken()?.id;
-  const {game, joinGame, createRoll, goNextTurn} = useGame(params.gameId);
+  const {game, joinGame, createRoll, goNextTurn, startAnswers} = useGame(params.gameId);
   const lastRollResult = useAppSelector(selectResult);
   const lastRollPlayerName = useAppSelector(selectPlayerName);
   const quizActive = useAppSelector(selectIsActive);
@@ -56,12 +56,19 @@ function Game() {
     return game.turns.slice(-1)[0];
   }
 
-  const onHideQuestion = () => {
-    console.log('hide')
+  const onHideQuiz = () => {
+    dispatch(hide());
   }
+  const onShowQuiz = () => {
+    dispatch(show());
+  }
+
+
+
   const onGetQuestion = () => {
-    console.log('show')
+    console.log('onGetQuestion');
   }
+
   return (
     <>
 
@@ -149,9 +156,9 @@ function Game() {
                                 {
                                     quizActive
                                     ?
-                                    <button onClick={onHideQuestion} className={'button'}>Перейти к рулетке</button>
+                                    <button onClick={onHideQuiz} className={'button'}>Перейти к рулетке</button>
                                     :
-                                    <button onClick={onGetQuestion} className={'button'}>Взять вопрос</button>
+                                    <button onClick={onShowQuiz} className={'button'}>Взять вопрос</button>
                                 }
                               </div>
                           }
@@ -161,7 +168,7 @@ function Game() {
                           {
                               quizActive
                               ?
-                              <Quiz quizTimer={timerOn} isMyTurn={getActivePlayer().username === player}
+                              <Quiz quizTimer={timerOn} startAnswers={startAnswers} isMyTurn={getActivePlayer().username === player}
                                     onGetQuestion={onGetQuestion}/>
                               :
                               <div>

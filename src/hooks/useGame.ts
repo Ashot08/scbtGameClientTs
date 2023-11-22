@@ -53,6 +53,9 @@ const useGame = (roomId: any) => {
     })
 
     socketRef.current.on('notification', (notification: any) => {
+
+      console.log(notification);
+
       dispatch(show({text: notification.message, status: notification.status}));
     })
 
@@ -79,7 +82,12 @@ const useGame = (roomId: any) => {
   const goNextTurn = () => {
     socketRef.current.emit('game:create_turn');
   }
-  return { game, joinGame, createRoll, goNextTurn }
+
+  const startAnswers = () => {
+    socketRef.current.emit('game:start_answers');
+  }
+
+  return { game, joinGame, createRoll, goNextTurn, startAnswers }
 }
 
 export default useGame;
