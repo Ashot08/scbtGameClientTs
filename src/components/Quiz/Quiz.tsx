@@ -1,6 +1,5 @@
 import { quiz } from './quiz';
 import { order } from './order';
-import {useSelector} from "react-redux";
 import {FormControl, FormControlLabel, FormLabel, Radio, RadioGroup} from "@mui/material";
 import Button from "@mui/material/Button";
 import './quiz.css';
@@ -8,16 +7,23 @@ import {useEffect, useState} from "react";
 // import {setAnswersStat} from "../../store/quizReducer.js";
 import Timer from "../Timer/Timer.jsx";
 import {show} from "../../store/reducers/notificationSlice.ts";
-import {useAppDispatch} from "../../hooks.ts";
-import {offTimer} from "../../store/reducers/quizSlice.ts";
+import {useAppDispatch, useAppSelector} from "../../hooks.ts";
+import {offTimer, onTimer} from "../../store/reducers/quizSlice.ts";
+import {selectGame} from "../../store/reducers/gameSlice.ts";
+import {
+    getCurrentAnswer,
+    getCurrentPlayerAnswer,
+    isAnswersModeActive
+} from "../../utils/answers.ts";
 
-export const Quiz = (props) => {
+export const Quiz = (props: any) => {
     const dispatch = useAppDispatch();
+    const game = useAppSelector(selectGame);
     // const questionNumber = useSelector(state => state.game.game.question.question);
-    const questionNumber = 1;
+    const questionNumber = getCurrentAnswer(game)?.question_id;
     const [answer, setAnswer] = useState('');
     const [answerStatus, setAnswerStatus] = useState('in_process');
-    const [started, setStarted] = useState(false);
+
 
     let orderNumber = 0;
     if(questionNumber < 150) {
@@ -32,16 +38,15 @@ export const Quiz = (props) => {
     if(questionNumber < 30) {
         orderNumber = 0;
     }
-    const getQuestion = () => {
-        setAnswer('');
-        setAnswerStatus('in_process');
-        props.onGetQuestion();
-    }
+
     useEffect(() => {
         setAnswerStatus('in_process');
+
+        dispatch(offTimer());
+
     }, [questionNumber]);
 
-    const onSubmit = (e) => {
+    const onSubmit = (e: any) => {
         e.preventDefault();
         const trueAnswer = quiz.questions[questionNumber].answers[ +quiz.questions[questionNumber]['correctAnswer'] - 1 ];
 
@@ -50,12 +55,17 @@ export const Quiz = (props) => {
             return;
         }
 
+        dispatch(onTimer());
+
         if(answer == trueAnswer){
             setAnswerStatus('success');
             dispatch(show({
                 text: `Вы ответили правильно!`,
                 status: 'success'
             }))
+            props.updateAnswer(
+              getCurrentPlayerAnswer(game, props.userId)?.id,
+              'success')
             // dispatch(setAnswersStat(1));
         }else{
             dispatch(show({
@@ -64,6 +74,7 @@ export const Quiz = (props) => {
             }))
             // dispatch(setAnswersStat(0));
             setAnswerStatus('failed');
+            props.updateAnswer(getCurrentPlayerAnswer(game, props.userId)?.id, 'error')
         }
 
     }
@@ -80,17 +91,27 @@ export const Quiz = (props) => {
 
     return <>
 
-
-
         <div className={'quiz'}>
             <div className={'variants'}>
-                {!started
-                  ?
+                {game?.answersMode === 'false'
+                  &&
                 <div>
-                    <p>Готовы отвечать?</p>
-                    <Button onClick={props.startAnswers} disabled={false} variant={'contained'}>Старт!</Button>
-                </div>
-                  :
+                    {game.lastTurnRolls.length
+                      ?
+                      <div>
+                          <h4>Готовы отвечать?</h4>
+                          <Button onClick={props.startAnswers} disabled={false} variant={'contained'}>Старт!</Button>
+                      </div>
+                      :
+                      <div>
+                          <h4>Прежде чем отвечать, нужно покрутить рулетку!</h4>
+                      </div>
+                    }
+
+
+                </div>}
+                {game?.answersMode === 'true'
+                  &&
                 <form style={{textAlign: 'left'}} onSubmit={onSubmit}>
                     <FormControl sx={{width: '100%'}}>
                         <FormLabel id="demo-radio-buttons-group-label">{quiz.questions[questionNumber].question}</FormLabel>
@@ -102,7 +123,7 @@ export const Quiz = (props) => {
                             onChange={(e) => setAnswer(e.target.value)}
                         >
                             {
-                                quiz.questions[questionNumber].answers.map(a => <FormControlLabel sx={
+                                quiz.questions[questionNumber].answers.map((a: any) => <FormControlLabel sx={
                                     {
                                         order: order[orderNumber][quiz.questions[questionNumber].answers.indexOf(a)]
                                     }
@@ -116,14 +137,16 @@ export const Quiz = (props) => {
                         <Button disabled={answerStatus !== 'in_process'} type={'submit'} variant={'contained'}>Ответить</Button>
                     }
 
-                    {props.quizTimer && <Timer expiryTimestamp={time} onExpire={onExpire} />}
+                    {
+                        (getCurrentAnswer(game).status !== 'in_process') && <Timer expiryTimestamp={time} onExpire={onExpire} />
+                    }
 
                     {
                         (answerStatus == 'success')
                         &&
                         <div>
                             <h3>Верно!</h3>
-                            {props.isMyTurn && <Button disabled={props.quizTimer} onClick={getQuestion} variant={'contained'}>Взять ещё один вопрос</Button>}
+                            {props.isMyTurn && !props.timerOn && <Button disabled={props.quizTimer} onClick={props.startAnswers} variant={'contained'}>Взять ещё один вопрос</Button>}
                         </div>
 
                     }
@@ -132,7 +155,7 @@ export const Quiz = (props) => {
                         &&
                         <div>
                             <h3>Ответ неверный!</h3>
-                            {props.isMyTurn && <Button disabled={props.quizTimer} onClick={getQuestion} variant={'contained'}>Взять ещё один вопрос</Button>}
+                            {props.isMyTurn && !props.timerOn && <Button disabled={props.quizTimer} onClick={props.startAnswers} variant={'contained'}>Взять ещё один вопрос</Button>}
                         </div>
 
                     }
@@ -143,21 +166,3 @@ export const Quiz = (props) => {
     </>
 }
 
-
-function shuffle(array) {
-    let currentIndex = array.length,  randomIndex;
-
-    // While there remain elements to shuffle.
-    while (currentIndex > 0) {
-
-        // Pick a remaining element.
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex--;
-
-        // And swap it with the current element.
-        [array[currentIndex], array[randomIndex]] = [
-            array[randomIndex], array[currentIndex]];
-    }
-
-    return array;
-}

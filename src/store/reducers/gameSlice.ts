@@ -13,7 +13,10 @@ export interface GameState {
   creationDate?: string,
   players?: any,
   turns?: any,
-  moderatorMode?: boolean | string
+  answers?: any,
+  lastTurnRolls?: any,
+  moderatorMode?: boolean | string,
+  answersMode?: 'true' | 'false',
 }
 
 const initialState :GameState = {
@@ -42,6 +45,9 @@ export const gameSlice = createSlice({
       state.players = action.payload.players;
       state.moderatorMode = action.payload.moderatorMode;
       state.turns = action.payload.turns;
+      state.answers = action.payload.answers;
+      state.lastTurnRolls = action.payload.lastTurnRolls;
+      state.answersMode = action.payload.answersMode;
     },
   },
 });

@@ -7,6 +7,7 @@ import {selectUserIsLogin} from "../store/reducers/userSlice.ts";
 import {show} from "../store/reducers/notificationSlice.ts";
 import {roll} from "../store/reducers/rouletteSlice.ts";
 import {hidePopup} from "../store/reducers/popupSlice.ts";
+import {hide} from "../store/reducers/quizSlice.ts";
 
 // import { useBeforeUnload } from './useBeforeUnload.ts';
 
@@ -48,7 +49,10 @@ const useGame = (roomId: any) => {
         creationDate: state.state.game.creation_date,
         players: state.state.players,
         turns: state.state.turns,
-        moderatorMode: state.state.moderatorMode,
+        answers: state.state.answers,
+        lastTurnRolls: state.state.lastTurnRolls,
+        moderatorMode: state.state.game.moderator_mode,
+        answersMode: state.state.game.answers_mode,
       }));
     })
 
@@ -87,7 +91,17 @@ const useGame = (roomId: any) => {
     socketRef.current.emit('game:start_answers');
   }
 
-  return { game, joinGame, createRoll, goNextTurn, startAnswers }
+  const stopAnswers = () => {
+    socketRef.current.emit('game:stop_answers');
+    dispatch(hidePopup());
+    dispatch(hide());
+  }
+
+  const updateAnswer = (answerId: number, status: 'success' | 'error') => {
+    socketRef.current.emit('game:update_answer', {answerId, status});
+  }
+
+  return { game, joinGame, createRoll, goNextTurn, startAnswers, updateAnswer, stopAnswers }
 }
 
 export default useGame;

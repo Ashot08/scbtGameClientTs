@@ -24,10 +24,13 @@ export const quizSlice = createSlice({
     offTimer: (state) => {
       state.timerOn = false;
     },
+    onTimer: (state) => {
+      state.timerOn = true;
+    },
   }
 });
 
-export const { show, hide, offTimer} = quizSlice.actions;
+export const { show, hide, offTimer, onTimer} = quizSlice.actions;
 export const selectIsActive = (state: RootState) => state.quiz.isActive;
 export const selectTimerOn = (state: RootState) => state.quiz.timerOn;
 

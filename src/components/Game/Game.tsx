@@ -11,7 +11,7 @@ import BasicCard from "../Card/BasicCard.tsx";
 import List from "@mui/material/List";
 import {ListItem, ListItemButton, ListItemIcon, ListItemText, TextField} from "@mui/material";
 import {GameQR} from "../GameQR/GameQR.tsx";
-import {showPopup} from "../../store/reducers/popupSlice.ts";
+import {hidePopup, showPopup} from "../../store/reducers/popupSlice.ts";
 import FaceIcon from '@mui/icons-material/Face';
 import Button from "@mui/material/Button";
 import Account from "../Account/Account.tsx";
@@ -20,8 +20,10 @@ import CasinoIcon from '@mui/icons-material/Casino';
 import {selectPlayerName, selectResult} from "../../store/reducers/rouletteSlice.ts";
 import {hide, selectIsActive, selectTimerOn, show} from "../../store/reducers/quizSlice.ts";
 import {Quiz} from "../Quiz/Quiz.tsx";
-// import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-// import DangerousIcon from '@mui/icons-material/Dangerous';
+import {getAnswersResults, isAnswersModeActive} from "../../utils/answers.ts";
+import {useEffect} from "react";
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import DangerousIcon from '@mui/icons-material/Dangerous';
 
 function Game() {
   const dispatch = useAppDispatch();
@@ -30,11 +32,17 @@ function Game() {
   const playerName = useAppSelector(selectUserName);
   const isLogin = useAppSelector(selectUserIsLogin);
   const userId = Token.getToken()?.id;
-  const {game, joinGame, createRoll, goNextTurn, startAnswers} = useGame(params.gameId);
+  const {game, joinGame, createRoll, goNextTurn, startAnswers, updateAnswer, stopAnswers} = useGame(params.gameId);
   const lastRollResult = useAppSelector(selectResult);
   const lastRollPlayerName = useAppSelector(selectPlayerName);
   const quizActive = useAppSelector(selectIsActive);
   const timerOn = useAppSelector(selectTimerOn);
+
+  useEffect(() => {
+    if(isAnswersModeActive(game)) {
+      dispatch(show());
+    }
+  }, []);
 
   const onGetGameLink = () => {
       dispatch(showPopup({
@@ -57,17 +65,44 @@ function Game() {
   }
 
   const onHideQuiz = () => {
+    if( (game?.answersMode === 'true' && getActivePlayer().username === player) || (game?.answersMode === 'true' && userId === game.moderator)) {
+      dispatch(showPopup({
+        title: '',
+        content:                             <BasicCard
+          name={'Вы уверены, что хотите завершить ответ?'}
+          id={`Если вы не ответили на вопрос, то будет засчитана ошибка`}
+          content={
+            <List>
+              <ListItem key={'sdfsa'} disablePadding>
+                <ListItemButton onClick={stopAnswers}>
+                  <ListItemIcon>
+                    <CheckCircleOutlineIcon/>
+                  </ListItemIcon>
+                  <Button sx={{my: 2}} type="submit"
+                          variant="contained">Да</Button>
+                </ListItemButton>
+              </ListItem>
+
+              <ListItem key={'sdfsa'} disablePadding>
+                <ListItemButton onClick={()=>dispatch(hidePopup())}>
+                  <ListItemIcon>
+                    <DangerousIcon/>
+                  </ListItemIcon>
+                  <Button sx={{my: 2}} type="submit"
+                          variant="contained">Нет</Button>
+                </ListItemButton>
+              </ListItem>
+            </List>
+          }
+        />,
+      }))
+    }
     dispatch(hide());
   }
   const onShowQuiz = () => {
     dispatch(show());
   }
 
-
-
-  const onGetQuestion = () => {
-    console.log('onGetQuestion');
-  }
 
   return (
     <>
@@ -154,7 +189,7 @@ function Game() {
                             &&
                               <div>
                                 {
-                                    quizActive
+                                    (game?.answersMode === 'true' && getActivePlayer().username === player) || quizActive
                                     ?
                                     <button onClick={onHideQuiz} className={'button'}>Перейти к рулетке</button>
                                     :
@@ -166,15 +201,38 @@ function Game() {
 
                         <div className={'game_desk'}>
                           {
-                              quizActive
+
+                            (game?.answersMode === 'true' || quizActive)
                               ?
                               <Quiz quizTimer={timerOn} startAnswers={startAnswers} isMyTurn={getActivePlayer().username === player}
-                                    onGetQuestion={onGetQuestion}/>
+                                    userId={userId} updateAnswer={updateAnswer} />
                               :
                               <div>
+                                {(getLastTurn()?.shift === 4)
+                                  ?
 
-                                <Roulette userId={userId} activePlayer={getActivePlayer()} handleSpinClick={createRoll} onNextPlayer={goNextTurn} />
+                                  <div style={{marginTop: 20}}>
+                                    <table>
+                                      <tbody>
+                                      <tr>
+                                        <th>Игрок</th>
+                                        <th>Баллы</th>
+                                      </tr>
+                                      {
+                                        game.players.map((p: any) => {
+                                          return <tr>
+                                            <td>{p.name || p.username}</td>
+                                            <td>{getAnswersResults(game)[p.id].length}</td>
+                                          </tr>
+                                        })
+                                      }
+                                      </tbody>
+                                    </table>
+                                  </div>
 
+                                  :
+                                  <Roulette userId={userId} activePlayer={getActivePlayer()} handleSpinClick={createRoll} onNextPlayer={goNextTurn} />
+                                }
                               </div>
                           }
                         </div>

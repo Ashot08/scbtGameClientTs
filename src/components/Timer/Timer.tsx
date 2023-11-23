@@ -1,23 +1,23 @@
 import { useTimer } from 'react-timer-hook';
 import './timer.css';
 
+
+// @ts-expect-error: any
 function Timer({ expiryTimestamp, onExpire }) {
     const {
-        totalSeconds,
+        // totalSeconds,
         seconds,
-        minutes,
-        hours,
-        days,
-        isRunning,
-        start,
-        pause,
-        resume,
-        restart,
+        // minutes,
+        // hours,
+        // days,
+        // isRunning,
+        // start,
+        // pause,
+        // resume,
+        // restart,
+
     } = useTimer({ autoStart: true, expiryTimestamp, onExpire });
 
-    setTimeout(() => {
-        console.log(expiryTimestamp)
-    }, 1000)
 
 
     return (

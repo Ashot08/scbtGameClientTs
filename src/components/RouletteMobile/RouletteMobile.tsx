@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
 import { nanoid } from 'nanoid';
 
-import RoulettePro from 'react-roulette-pro';
+import RoulettePro, {RouletteType} from 'react-roulette-pro';
 import 'react-roulette-pro/dist/index.css';
 
 import reproductionArray from './utills/reproductionArray';
-import getRandomIntInRange from './utills/getRandomIntInRange';
+// import getRandomIntInRange from './utills/getRandomIntInRange';
 
 import sound from './sounds/rickroll.mp3';
 
@@ -17,6 +16,7 @@ import microIcon from "../Roulette/img/icons/micro.png";
 import letalIcon from "../Roulette/img/icons/letal.png";
 import lightIcon from "../Roulette/img/icons/light.png";
 import groupIcon from "../Roulette/img/icons/group.png";
+import {useEffect, useState} from "react";
 
 //
 // const prizes = [
@@ -96,17 +96,17 @@ const prizes = [
     },
 ]
 
-const getDesignOptions = (settings) => {
+const getDesignOptions = (settings: any) => {
     const result = {};
     const keys = Object.keys(settings);
 
-    keys.forEach((key) => {
+    keys.forEach((key: any) => {
         const { forDesign, value } = settings[key];
 
         if (!forDesign) {
             return;
         }
-
+        // @ts-expect-error: key
         result[key] = value;
     });
 
@@ -117,8 +117,8 @@ const getDesignOptions = (settings) => {
 
 
 
-const RouletteMobile = (props) => {
-    const [settings, setSettings] = useState({
+const RouletteMobile = (props: any) => {
+    const [settings] = useState({
         type: {
             name: 'Тип',
             options: ['horizontal', 'vertical'],
@@ -181,12 +181,14 @@ const RouletteMobile = (props) => {
     useEffect(() => {
         const reproducedArray = [
             ...prizes,
+            // @ts-expect-error: prizes type
             ...reproductionArray(prizes, prizes.length * 3),
             ...prizes,
+            // @ts-expect-error: prizes type
             ...reproductionArray(prizes, prizes.length),
         ];
 
-        const list = [...reproducedArray].map((item) => ({
+        const list: any = [...reproducedArray].map((item) => ({
             ...item,
             id: `${item.id}--${nanoid()}`,
         }));
@@ -211,7 +213,7 @@ const RouletteMobile = (props) => {
             const newPrizeIndex = await API.getPrizeIndex();
             setPrizeIndex(newPrizeIndex);
 
-            const { id } = prizeList[newPrizeIndex];
+            // const { id } = prizeList[newPrizeIndex];
 
             console.log({ icon: 'info', title: `Вращаем..`, newPrizeIndex });
         };
@@ -225,7 +227,7 @@ const RouletteMobile = (props) => {
     }
 
     const type = settings.type.value;
-    const design = settings.design.value;
+    // const design = settings.design.value;
     const soundWhileSpinning = settings.soundWhileSpinning.value;
     const stopInCenter = settings.stopInCenter.value;
     const withoutAnimation = settings.withoutAnimation.value;
@@ -240,9 +242,11 @@ const RouletteMobile = (props) => {
         <div className={'mobileRoulette'}>
             <div className={`roulette ${type}`}>
                 <RoulettePro
-                    type={type}
+                    type={type as RouletteType}
                     prizes={prizeList}
                     // design={design}
+
+                    // @ts-expect-error: designOptions type
                     designOptions={designOptions}
                     start={start}
                     prizeIndex={prizeIndex}
@@ -251,7 +255,7 @@ const RouletteMobile = (props) => {
                     classes={{
                         wrapper: 'roulette-pro-wrapper-additional-styles',
                     }}
-                    soundWhileSpinning={soundWhileSpinning ? sound : null}
+                    soundWhileSpinning={soundWhileSpinning ? sound : undefined}
                     options={{ stopInCenter, withoutAnimation }}
                     defaultDesignOptions={{ prizesWithText, hideCenterDelimiter }}
                 />

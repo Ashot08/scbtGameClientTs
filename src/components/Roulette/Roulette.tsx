@@ -1,9 +1,7 @@
-import {useState} from 'react';
 import { Wheel } from 'react-custom-roulette';
 import './Roulette.css';
 import arrowImage from './img/arrow.svg';
 import BasicCard from "../Card/BasicCard.tsx";
-import {useDispatch} from "react-redux";
 // import {offRollAction} from "../../store/gameReducer.js";
 import {ButtonGroup} from "@mui/material";
 import Button from "@mui/material/Button";
@@ -17,7 +15,7 @@ import groupLetalIcon from './img/icons/group_letal.png';
 // import {clearAnswersStat} from "../../store/quizReducer.js";
 import {mobileCheck} from "../../utils/mobileCheck.ts";
 // import RouletteMobile from "../RouletteMobile/RouletteMobile.jsx";
-import {hidePopup, showPopup} from "../../store/reducers/popupSlice.ts";
+import {showPopup} from "../../store/reducers/popupSlice.ts";
 import {useAppDispatch, useAppSelector} from "../../hooks.ts";
 import {selectGame} from "../../store/reducers/gameSlice.ts";
 import {selectIsRoll, selectPrizeNumber, setMeta, stopRoll} from "../../store/reducers/rouletteSlice.ts";

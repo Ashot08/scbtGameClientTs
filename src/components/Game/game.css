@@ -51,6 +51,13 @@
     top: 4px;
     box-shadow: #c0392b 0px 3px 2px,#000 0px 3px 5px;
 }
+.button:disabled:hover {
+    opacity: 0.8;
+    cursor: not-allowed;
+}
+.button:disabled:active {
+    top: 0;
+}
 .game_state > ul{
     order: 2;
     list-style: none;
