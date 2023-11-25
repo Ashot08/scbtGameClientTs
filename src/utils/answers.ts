@@ -65,17 +65,6 @@ export const getCurrentAnswer = (game: GameState) => {
   return null;
 }
 
-export const isAnswersModeActive = (game: GameState) => {
-  let isAnswersModeActive = false;
-  const currentAnswer = getCurrentAnswer(game);
-
-  if(currentAnswer && currentAnswer.status === 'in_process') {
-    isAnswersModeActive = true;
-  }
-
-  return isAnswersModeActive;
-}
-
 export const getAnswersResults = (game: GameState) => {
   const result = [];
 
@@ -90,6 +79,15 @@ export const getAnswersResults = (game: GameState) => {
 
     }
   }
-  console.log(result)
   return result;
 }
+
+// export const isAnswersModeActive = (game: GameState) => {
+//   let isAnswersModeActive = false;
+//   const currentAnswer = getCurrentAnswer(game);
+//
+//   if(currentAnswer && currentAnswer.status === 'in_process') {
+//     isAnswersModeActive = true;
+//   }
+//   return isAnswersModeActive;
+// }

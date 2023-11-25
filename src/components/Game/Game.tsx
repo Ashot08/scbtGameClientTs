@@ -20,10 +20,11 @@ import CasinoIcon from '@mui/icons-material/Casino';
 import {selectPlayerName, selectResult} from "../../store/reducers/rouletteSlice.ts";
 import {hide, selectIsActive, selectTimerOn, show} from "../../store/reducers/quizSlice.ts";
 import {Quiz} from "../Quiz/Quiz.tsx";
-import {getAnswersResults, isAnswersModeActive} from "../../utils/answers.ts";
+import {getAnswersResults, getLastRollMainAnswers} from "../../utils/answers.ts";
 import {useEffect} from "react";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import DangerousIcon from '@mui/icons-material/Dangerous';
+import HourglassTopIcon from '@mui/icons-material/HourglassTop';
 
 function Game() {
   const dispatch = useAppDispatch();
@@ -39,7 +40,7 @@ function Game() {
   const timerOn = useAppSelector(selectTimerOn);
 
   useEffect(() => {
-    if(isAnswersModeActive(game)) {
+    if(game?.answersMode === 'true') {
       dispatch(show());
     }
   }, []);
@@ -179,6 +180,12 @@ function Game() {
                                           <li key={'players' + p.id}>
                                             {(getActivePlayer().id === p.id) && <CasinoIcon sx={{width: 15}}/>}
                                             {p.name ? p.name : p.username}
+                                            {(getActivePlayer().id === p.id) && getLastRollMainAnswers(game)?.map((a) => {
+                                              if(a.status === 'success') return  <CheckCircleOutlineIcon sx={{color: 'green'}} />;
+                                              if(a.status === 'error') return  <DangerousIcon sx={{color: 'red'}} />;
+                                              if(a.status === 'in_process') return  <HourglassTopIcon sx={{color: 'gray'}} />;
+                                            })}
+
                                             {/*{(game.players[0].id == p.id) && game.answersStat.map( (a) => { return a ? <CheckCircleOutlineIcon sx={{color: 'green'}} /> : <DangerousIcon sx={{color: 'red'}} /> }) }*/}
                                           </li>
                                         )
@@ -193,7 +200,12 @@ function Game() {
                             &&
                               <div>
                                 {
-                                    (game?.answersMode === 'true' && getActivePlayer().username === player) || quizActive
+                                    (game?.answersMode === 'true'
+                                      &&
+                                     (getActivePlayer().username === player || userId === game.moderator)
+                                    )
+                                    ||
+                                    quizActive
                                     ?
                                     <button onClick={onHideQuiz} className={'button'}>Перейти к рулетке</button>
                                     :
