@@ -113,7 +113,11 @@ function Game() {
             (
               game.status &&
               isLogin &&
-              (game.players.find((p: any) => p.username == player || game.moderatorMode === '1') )
+              (
+                game.players.find((p: any) => p.username == player
+                  ||
+                  (game.moderatorMode === '1' && userId === game.moderator))
+              )
             )
               ?
               <>
@@ -222,7 +226,7 @@ function Game() {
                                         game.players.map((p: any) => {
                                           return <tr>
                                             <td>{p.name || p.username}</td>
-                                            <td>{getAnswersResults(game)[p.id].length}</td>
+                                            <td>{getAnswersResults(game)[p.id]?.length}</td>
                                           </tr>
                                         })
                                       }

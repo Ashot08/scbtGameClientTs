@@ -9,7 +9,6 @@ class AuthController {
     try {
       const user: any = await AuthAPI.signIn(payload);
       if(!user.token){
-        console.log('no user', user);
         return {
           token: null,
           text: user.message,

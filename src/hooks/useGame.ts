@@ -7,7 +7,7 @@ import {selectUserIsLogin} from "../store/reducers/userSlice.ts";
 import {show} from "../store/reducers/notificationSlice.ts";
 import {roll} from "../store/reducers/rouletteSlice.ts";
 import {hidePopup} from "../store/reducers/popupSlice.ts";
-import {hide} from "../store/reducers/quizSlice.ts";
+import {hide, onTimer} from "../store/reducers/quizSlice.ts";
 
 // import { useBeforeUnload } from './useBeforeUnload.ts';
 
@@ -67,6 +67,11 @@ const useGame = (roomId: any) => {
       dispatch(roll({prizeNumber: result.result.prizeNumber}));
       dispatch(hidePopup());
     });
+
+    socketRef.current.on('answer:startTimer', () => {
+      dispatch(onTimer());
+    });
+
 
     return () => {
       // при размонтировании компонента выполняем отключение сокета

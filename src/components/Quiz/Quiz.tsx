@@ -8,12 +8,11 @@ import {useEffect, useState} from "react";
 import Timer from "../Timer/Timer.jsx";
 import {show} from "../../store/reducers/notificationSlice.ts";
 import {useAppDispatch, useAppSelector} from "../../hooks.ts";
-import {offTimer, onTimer} from "../../store/reducers/quizSlice.ts";
+import {offTimer} from "../../store/reducers/quizSlice.ts";
 import {selectGame} from "../../store/reducers/gameSlice.ts";
 import {
-    getCurrentAnswer,
-    getCurrentPlayerAnswer,
-    isAnswersModeActive
+    getCurrentAnswer, getCurrentPlayerAnswer,
+    getCurrentPlayerProcessAnswer,
 } from "../../utils/answers.ts";
 
 export const Quiz = (props: any) => {
@@ -22,7 +21,8 @@ export const Quiz = (props: any) => {
     // const questionNumber = useSelector(state => state.game.game.question.question);
     const questionNumber = getCurrentAnswer(game)?.question_id;
     const [answer, setAnswer] = useState('');
-    const [answerStatus, setAnswerStatus] = useState('in_process');
+    const [answerStatus, setAnswerStatus] = useState('error');
+    const [answerResultText, setAnswerResultText] = useState('');
 
 
     let orderNumber = 0;
@@ -40,10 +40,7 @@ export const Quiz = (props: any) => {
     }
 
     useEffect(() => {
-        setAnswerStatus('in_process');
-
-        dispatch(offTimer());
-
+        setAnswerStatus(getCurrentPlayerAnswer(game, props.userId)?.status ?? 'in_process');
     }, [questionNumber]);
 
     const onSubmit = (e: any) => {
@@ -55,28 +52,20 @@ export const Quiz = (props: any) => {
             return;
         }
 
-        dispatch(onTimer());
+        const isSuccessAnswer = (answer == trueAnswer);
 
-        if(answer == trueAnswer){
-            setAnswerStatus('success');
-            dispatch(show({
-                text: `Вы ответили правильно!`,
-                status: 'success'
-            }))
+        setAnswerStatus(isSuccessAnswer ? 'success' : 'error');
+        dispatch(show({
+            text: isSuccessAnswer ? `Вы ответили правильно!` : `Вы ошиблись!`,
+            status: isSuccessAnswer ? 'success' : 'error',
+        }));
+        if(getCurrentPlayerProcessAnswer(game, props.userId)) {
             props.updateAnswer(
-              getCurrentPlayerAnswer(game, props.userId)?.id,
-              'success')
-            // dispatch(setAnswersStat(1));
-        }else{
-            dispatch(show({
-                text: `Вы ошиблись!`,
-                status: 'error'
-            }))
-            // dispatch(setAnswersStat(0));
-            setAnswerStatus('failed');
-            props.updateAnswer(getCurrentPlayerAnswer(game, props.userId)?.id, 'error')
+              getCurrentPlayerProcessAnswer(game, props.userId)?.id,
+              isSuccessAnswer ? 'success' : 'error'
+            );
         }
-
+        setAnswerResultText(isSuccessAnswer ? 'Верно!' : 'Вы ошиблись!');
     }
 
     const time = new Date();
@@ -84,8 +73,16 @@ export const Quiz = (props: any) => {
 
     const onExpire = () => {
         dispatch(offTimer());
+        if(getCurrentPlayerProcessAnswer(game, props.userId)) {
+            props.updateAnswer(
+              getCurrentPlayerProcessAnswer(game, props.userId)?.id,
+              'error'
+            );
+            setAnswerResultText('Ответ неверный! (Вы не успели ответить).')
+        }
+
         if(answerStatus !== 'success') {
-            setAnswerStatus('failed')
+            setAnswerStatus('error')
         }
     }
 
@@ -123,42 +120,45 @@ export const Quiz = (props: any) => {
                             onChange={(e) => setAnswer(e.target.value)}
                         >
                             {
-                                quiz.questions[questionNumber].answers.map((a: any) => <FormControlLabel sx={
-                                    {
-                                        order: order[orderNumber][quiz.questions[questionNumber].answers.indexOf(a)]
-                                    }
-                                } key={questionNumber + a} value={a} control={<Radio />} label={a} /> )
+                                quiz.questions[questionNumber].answers.map(
+                                  (a: any) => <FormControlLabel
+                                    disabled={answerStatus !== 'in_process'}
+                                    sx={{order: order[orderNumber][quiz.questions[questionNumber].answers.indexOf(a)]}}
+                                    key={questionNumber + a} value={a} control={<Radio/>}
+                                    label={a}
+                                    // checked={
+                                    //   getCurrentPlayerAnswer(game, props.userId).status === 'success'
+                                    //   &&
+                                    //   (quiz.questions[questionNumber].answers.indexOf(a) === 0)}
+                                  />)
                             }
 
                         </RadioGroup>
                     </FormControl>
 
                     {
-                        <Button disabled={answerStatus !== 'in_process'} type={'submit'} variant={'contained'}>Ответить</Button>
+                      (game?.moderatorMode === '1' && props.userId === game?.moderator)
+                      ?
+                        <div>Игроки находятся в режиме ответов на вопросы...</div>
+                      :
+                      <Button disabled={answerStatus !== 'in_process'} type={'submit'}
+                              variant={'contained'}>Ответить</Button>
                     }
 
                     {
-                        (getCurrentAnswer(game).status !== 'in_process') && <Timer expiryTimestamp={time} onExpire={onExpire} />
+                        props.quizTimer && <Timer expiryTimestamp={time} onExpire={onExpire} />
                     }
 
                     {
-                        (answerStatus == 'success')
+                        (answerStatus !== 'in_process')
                         &&
                         <div>
-                            <h3>Верно!</h3>
+                            <h3>{answerResultText}</h3>
                             {props.isMyTurn && !props.timerOn && <Button disabled={props.quizTimer} onClick={props.startAnswers} variant={'contained'}>Взять ещё один вопрос</Button>}
                         </div>
 
                     }
-                    {
-                        (answerStatus == 'failed')
-                        &&
-                        <div>
-                            <h3>Ответ неверный!</h3>
-                            {props.isMyTurn && !props.timerOn && <Button disabled={props.quizTimer} onClick={props.startAnswers} variant={'contained'}>Взять ещё один вопрос</Button>}
-                        </div>
 
-                    }
                 </form>
                 }
             </div>

@@ -23,11 +23,22 @@ export const getLastRollAnswers = (game: GameState) => {
   return lastRollAnswers;
 }
 
-export const getCurrentPlayerAnswer = (game: GameState, playerId: number) => {
+export const getCurrentPlayerProcessAnswer = (game: GameState, playerId: number) => {
   let result = null;
 
   for(const answer of getLastRollAnswers(game)) {
     if(answer.status === 'in_process' && answer.player_id === playerId) {
+      result = answer;
+    }
+  }
+  return result;
+}
+
+export const getCurrentPlayerAnswer = (game: GameState, playerId: number) => {
+  let result = null;
+
+  for(const answer of getLastRollAnswers(game)) {
+    if(answer.player_id === playerId) {
       result = answer;
     }
   }
@@ -67,22 +78,18 @@ export const isAnswersModeActive = (game: GameState) => {
 
 export const getAnswersResults = (game: GameState) => {
   const result = [];
-  for(const player of game.players) {
 
-    for(const answer of game.answers) {
-      if(answer.status === 'success') {
-        if(!Array.isArray(result[answer.player_id])){
-          result[answer.player_id] = [];
-        }
-        if(!result[answer.player_id].includes(answer.id) && answer.is_countable === 'true') {
-          result[answer.player_id].push(answer.id);
-        }
-
+  for (const answer of game.answers) {
+    if (answer.status === 'success') {
+      if (!Array.isArray(result[answer.player_id])) {
+        result[answer.player_id] = [];
       }
+      if (!result[answer.player_id].includes(answer.id as never) && answer.is_countable === 'true') {
+        result[answer.player_id].push(answer.id as never);
+      }
+
     }
-
   }
-
   console.log(result)
   return result;
 }
