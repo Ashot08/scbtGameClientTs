@@ -56,8 +56,6 @@ class AuthController {
     try {
       const token = Token.getToken();
 
-
-
       if(token.token) {
 
         const response: any = await AuthAPI.read(token.id, token.token);

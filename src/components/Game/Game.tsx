@@ -20,11 +20,12 @@ import CasinoIcon from '@mui/icons-material/Casino';
 import {selectPlayerName, selectResult} from "../../store/reducers/rouletteSlice.ts";
 import {hide, selectIsActive, selectTimerOn, show} from "../../store/reducers/quizSlice.ts";
 import {Quiz} from "../Quiz/Quiz.tsx";
-import {getAnswersResults, getLastRollMainAnswers} from "../../utils/answers.ts";
+import {getAnswersResults, getLastRoll, getLastRollMainAnswers} from "../../utils/answers.ts";
 import {useEffect} from "react";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import DangerousIcon from '@mui/icons-material/Dangerous';
 import HourglassTopIcon from '@mui/icons-material/HourglassTop';
+import {getActivePlayer, getLastTurn} from "../../utils/game.ts";
 
 function Game() {
   const dispatch = useAppDispatch();
@@ -43,7 +44,7 @@ function Game() {
     if(game?.answersMode === 'true') {
       dispatch(show());
     }
-  }, []);
+  }, [game, userId, dispatch]);
 
   const onGetGameLink = () => {
       dispatch(showPopup({
@@ -53,20 +54,8 @@ function Game() {
       ));
   }
 
-  const getActivePlayer = () => {
-    if(Array.isArray(game.turns) && Array.isArray(game.players) && game.turns.length && game.players.length) {
-      const lastTurn = getLastTurn();
-      return game.players.find((el: any) => {return el.id === lastTurn.player_id});
-    }
-    return {name: '-'};
-  }
-
-  const getLastTurn = () => {
-    return game.turns.slice(-1)[0];
-  }
-
   const onHideQuiz = () => {
-    if( (game?.answersMode === 'true' && getActivePlayer().username === player) || (game?.answersMode === 'true' && userId === game.moderator)) {
+    if( (game?.answersMode === 'true' && getActivePlayer(game)?.username === player) || (game?.answersMode === 'true' && userId === game?.moderator)) {
       dispatch(showPopup({
         title: '',
         content:                             <BasicCard
@@ -107,7 +96,6 @@ function Game() {
 
   return (
     <>
-
       <main>
         <div className={'gameWrapper'}>
           {
@@ -166,9 +154,9 @@ function Game() {
                                     <strong>Игра:</strong> {game.title} ({params.id})
                                     <button style={{marginLeft: 5}} onClick={onGetGameLink}>Ссылка на игру</button>
                                 </li>
-                                <li><strong>Смена:</strong> {getLastTurn()?.shift}</li>
+                                <li><strong>Смена:</strong> {getLastTurn(game)?.shift}</li>
                                 <li><strong>Сейчас
-                                    ходит:</strong> {getActivePlayer().name || getActivePlayer().username}</li>
+                                    ходит:</strong> {getActivePlayer(game).name || getActivePlayer(game).username}</li>
 
                               {lastRollResult && <li><strong>Результат предыдущего:</strong> {lastRollPlayerName} - {lastRollResult}</li> }
 
@@ -178,15 +166,13 @@ function Game() {
                                       {game.players.map((p: any) => {
                                         return (
                                           <li key={'players' + p.id}>
-                                            {(getActivePlayer().id === p.id) && <CasinoIcon sx={{width: 15}}/>}
+                                            {(getActivePlayer(game).id === p.id) && <CasinoIcon sx={{width: 15}}/>}
                                             {p.name ? p.name : p.username}
-                                            {(getActivePlayer().id === p.id) && getLastRollMainAnswers(game)?.map((a) => {
+                                            {(getActivePlayer(game).id === p.id) && getLastRollMainAnswers(game)?.map((a) => {
                                               if(a.status === 'success') return  <CheckCircleOutlineIcon sx={{color: 'green'}} />;
                                               if(a.status === 'error') return  <DangerousIcon sx={{color: 'red'}} />;
                                               if(a.status === 'in_process') return  <HourglassTopIcon sx={{color: 'gray'}} />;
                                             })}
-
-                                            {/*{(game.players[0].id == p.id) && game.answersStat.map( (a) => { return a ? <CheckCircleOutlineIcon sx={{color: 'green'}} /> : <DangerousIcon sx={{color: 'red'}} /> }) }*/}
                                           </li>
                                         )
                                       })}
@@ -196,13 +182,13 @@ function Game() {
 
                             </ul>
                           {
-                            (getActivePlayer().id === userId || game.moderator == userId)
+                            (getActivePlayer(game).id === userId || game.moderator == userId)
                             &&
                               <div>
                                 {
                                     (game?.answersMode === 'true'
                                       &&
-                                     (getActivePlayer().username === player || userId === game.moderator)
+                                     (getActivePlayer(game).username === player || userId === game.moderator)
                                     )
                                     ||
                                     quizActive
@@ -220,11 +206,11 @@ function Game() {
 
                             (game?.answersMode === 'true' || quizActive)
                               ?
-                              <Quiz quizTimer={timerOn} startAnswers={startAnswers} isMyTurn={getActivePlayer().username === player}
+                              <Quiz quizTimer={timerOn} startAnswers={startAnswers} isMyTurn={getActivePlayer(game).username === player}
                                     userId={userId} updateAnswer={updateAnswer} />
                               :
                               <div>
-                                {(getLastTurn()?.shift === 4)
+                                {(getLastTurn(game)?.shift === 4 && !getLastRoll(game))
                                   ?
 
                                   <div style={{marginTop: 20}}>
@@ -247,7 +233,7 @@ function Game() {
                                   </div>
 
                                   :
-                                  <Roulette userId={userId} activePlayer={getActivePlayer()} handleSpinClick={createRoll} onNextPlayer={goNextTurn} />
+                                  <Roulette userId={userId} activePlayer={getActivePlayer(game)} handleSpinClick={createRoll} onNextPlayer={goNextTurn} />
                                 }
                               </div>
                           }

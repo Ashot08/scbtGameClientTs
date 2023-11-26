@@ -20,7 +20,6 @@ const useGame = (roomId: any) => {
   const game = useAppSelector(selectGame);
   const dispatch = useAppDispatch();
   const isLogin = useAppSelector(selectUserIsLogin);
-
   const socketRef: any = useRef(null)
 
   useEffect(() => {
@@ -57,15 +56,16 @@ const useGame = (roomId: any) => {
     })
 
     socketRef.current.on('notification', (notification: any) => {
-
-      console.log(notification);
-
       dispatch(show({text: notification.message, status: notification.status}));
     })
 
     socketRef.current.on('game:roll', (result: any) => {
       dispatch(roll({prizeNumber: result.result.prizeNumber}));
       dispatch(hidePopup());
+    });
+
+    socketRef.current.on('game:stopAnswers', () => {
+      dispatch(hide());
     });
 
     socketRef.current.on('answer:startTimer', () => {
@@ -90,6 +90,7 @@ const useGame = (roomId: any) => {
 
   const goNextTurn = () => {
     socketRef.current.emit('game:create_turn');
+    dispatch(hidePopup());
   }
 
   const startAnswers = () => {

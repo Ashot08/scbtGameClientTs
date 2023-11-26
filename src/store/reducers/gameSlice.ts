@@ -30,7 +30,6 @@ export const createGame = createAsyncThunk(
   }
 );
 
-
 export const gameSlice = createSlice({
   name: 'game',
   initialState,

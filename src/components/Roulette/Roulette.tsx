@@ -3,7 +3,7 @@ import './Roulette.css';
 import arrowImage from './img/arrow.svg';
 import BasicCard from "../Card/BasicCard.tsx";
 // import {offRollAction} from "../../store/gameReducer.js";
-import {ButtonGroup} from "@mui/material";
+import {ButtonGroup, ListItem, ListItemButton, ListItemIcon} from "@mui/material";
 import Button from "@mui/material/Button";
 import bonusIcon from './img/icons/bonus.png';
 import microIcon from './img/icons/micro.png';
@@ -15,11 +15,14 @@ import groupLetalIcon from './img/icons/group_letal.png';
 // import {clearAnswersStat} from "../../store/quizReducer.js";
 import {mobileCheck} from "../../utils/mobileCheck.ts";
 // import RouletteMobile from "../RouletteMobile/RouletteMobile.jsx";
-import {showPopup} from "../../store/reducers/popupSlice.ts";
+import {hidePopup, showPopup} from "../../store/reducers/popupSlice.ts";
 import {useAppDispatch, useAppSelector} from "../../hooks.ts";
 import {selectGame} from "../../store/reducers/gameSlice.ts";
 import {selectIsRoll, selectPrizeNumber, setMeta, stopRoll} from "../../store/reducers/rouletteSlice.ts";
 import RouletteMobile from "../RouletteMobile/RouletteMobile.tsx";
+import List from "@mui/material/List";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import DangerousIcon from "@mui/icons-material/Dangerous";
 
 const data = [
     {
@@ -127,21 +130,57 @@ export default function Roulette (props: any){
     const prizeNumber = useAppSelector(selectPrizeNumber);
     const dispatch = useAppDispatch();
     const game = useAppSelector(selectGame);
+    //const [yourTurnWasShown, setYourTurnWasShown] = useState(false);
 
     // useEffect(() => {
-    //     setPrizeNumber(props.prizeNumber);
-    //     setMustSpin(props.doRoll);
-    //     if(props.doRoll || props.game.nextTurn) {
-    //         dispatch(hidePopup());
+    //     if(!yourTurnWasShown) {
+    //         if (props.userId === props.activePlayer?.id) {
+    //             dispatch(showPopup({title: 'Ваш ход', content: 'success'}));
+    //             setYourTurnWasShown(true);
+    //         }
     //     }
-    // }, [props.doRoll, props.prizeNumber, props.game.nextTurn]);
+    // }, [game]);
+    const onNextPlayer = () => {
+        dispatch(showPopup({
+            title: '',
+            content:                             <BasicCard
+              name={'Вы уверены, что хотите передать ход?'}
+              id={`Вернуться к текущему ходу будет нельзя`}
+              content={
+                  <List>
+                      <ListItem key={'sdfsa'} disablePadding>
+                          <ListItemButton onClick={() => {
+                             // setYourTurnWasShown(false);
+                              props.onNextPlayer();
+                          }}>
+                              <ListItemIcon>
+                                  <CheckCircleOutlineIcon/>
+                              </ListItemIcon>
+                              <Button sx={{my: 2}} type="submit"
+                                      variant="contained">Да</Button>
+                          </ListItemButton>
+                      </ListItem>
+
+                      <ListItem key={'sdfsa'} disablePadding>
+                          <ListItemButton onClick={()=>dispatch(hidePopup())}>
+                              <ListItemIcon>
+                                  <DangerousIcon/>
+                              </ListItemIcon>
+                              <Button sx={{my: 2}} type="submit"
+                                      variant="contained">Нет</Button>
+                          </ListItemButton>
+                      </ListItem>
+                  </List>
+              }
+            />,
+        }))
+    }
 
     const onRoll = () => {
         props.handleSpinClick();
     }
 
     const onStopSpinning = () => {
-
 
         if(prizeNumber === undefined) return;
         dispatch(showPopup({
@@ -169,19 +208,13 @@ export default function Roulette (props: any){
                     </div>} />,
             }
         ));
-        // dispatch(clearAnswersStat());
+
         dispatch(stopRoll());
         dispatch(setMeta({
             result: data[prizeNumber].fullName,
             playerName: props.activePlayer.name || props.activePlayer.username})
         );
     }
-
-    // let audio = document.querySelector("#chatAudio");
-    // function play() {
-    //     audio.play()
-    // }
-
 
     return (
         <>
@@ -214,7 +247,7 @@ export default function Roulette (props: any){
                     &&
                     <ButtonGroup className={'rouletteButtons'} variant="contained" aria-label="outlined primary button group">
                         <Button disabled={mustSpin} onClick={onRoll}>Крутить</Button>
-                        <Button disabled={mustSpin} onClick={props.onNextPlayer}>Передать ход</Button>
+                        <Button disabled={mustSpin} onClick={onNextPlayer}>Передать ход</Button>
                     </ButtonGroup>
                 }
 

@@ -18,12 +18,11 @@ import {
 export const Quiz = (props: any) => {
     const dispatch = useAppDispatch();
     const game = useAppSelector(selectGame);
-    // const questionNumber = useSelector(state => state.game.game.question.question);
     const questionNumber = getCurrentAnswer(game)?.question_id;
     const [answer, setAnswer] = useState('');
     const [answerStatus, setAnswerStatus] = useState('error');
     const [answerResultText, setAnswerResultText] = useState('');
-
+    const [oneMoreQuestionDisabled, setOneMoreQuestionDisabled] = useState(true);
 
     let orderNumber = 0;
     if(questionNumber < 150) {
@@ -41,7 +40,10 @@ export const Quiz = (props: any) => {
 
     useEffect(() => {
         setAnswerStatus(getCurrentPlayerAnswer(game, props.userId)?.status ?? 'in_process');
-    }, [questionNumber]);
+        setTimeout(function () {
+            setOneMoreQuestionDisabled(false);
+        }, 2500);
+    }, [questionNumber, game]);
 
     const onSubmit = (e: any) => {
         e.preventDefault();
@@ -84,6 +86,7 @@ export const Quiz = (props: any) => {
         if(answerStatus !== 'success') {
             setAnswerStatus('error')
         }
+        setAnswer('');
     }
 
     return <>
@@ -154,7 +157,7 @@ export const Quiz = (props: any) => {
                         &&
                         <div>
                             <h3>{answerResultText}</h3>
-                            {props.isMyTurn && !props.timerOn && <Button disabled={props.quizTimer} onClick={props.startAnswers} variant={'contained'}>Взять ещё один вопрос</Button>}
+                            {props.isMyTurn && !props.timerOn && <Button disabled={props.quizTimer || oneMoreQuestionDisabled} onClick={props.startAnswers} variant={'contained'}>Взять ещё один вопрос</Button>}
                         </div>
 
                     }
