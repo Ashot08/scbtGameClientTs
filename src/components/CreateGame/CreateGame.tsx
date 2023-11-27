@@ -1,8 +1,9 @@
 import {
+  Accordion, AccordionDetails, AccordionSummary,
   Checkbox,
   Divider,
   FormControl,
-  FormControlLabel,
+  FormControlLabel, FormGroup,
   InputLabel,
   ListItem,
   MenuItem,
@@ -20,6 +21,8 @@ import {useNavigate} from "react-router-dom";
 import {showPopup} from "../../store/reducers/popupSlice.ts";
 import {GameQR} from "../GameQR/GameQR.tsx";
 import {selectUserLogin, selectUserName} from "../../store/reducers/userSlice.ts";
+import Typography from "@mui/material/Typography";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 export const CreateGame = () => {
   const [playersCount, setPlayersCount] = useState(3);
@@ -135,6 +138,26 @@ export const CreateGame = () => {
               <FormControlLabel onChange={() => setModeratorMode(!moderatorMode)}
                                 control={<Checkbox checked={moderatorMode}/>} label="Модератор"/>
             </FormControl>
+
+            <Accordion>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1a-content"
+                id="panel1a-header"
+              >
+                <Typography>Разделы вопросов</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Typography>
+                  <FormGroup>
+                    <FormControlLabel control={<Checkbox defaultChecked />} label="Пожарная безопасность" />
+                    <FormControlLabel control={<Checkbox defaultChecked />} label="Первая помощь" />
+                    <FormControlLabel control={<Checkbox defaultChecked />} label="Охрана труда" />
+                  </FormGroup>
+                </Typography>
+              </AccordionDetails>
+            </Accordion>
+
             <form onSubmit={onCreateGame}>
               <Button disabled={submitDisabled} sx={{my: 2, width: '100%', textAlign: 'center'}} type="submit" variant="contained">Новая
                 игра</Button>

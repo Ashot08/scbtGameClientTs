@@ -165,7 +165,7 @@ function Game() {
                               {game.moderator == userId && <li><strong>Режим модератора:</strong> ON</li>}
                                 <li><strong>Игрок:</strong> {playerName || player}</li>
                                 <li>
-                                    <strong>Игра:</strong> {game.title} ({params.id})
+                                    <strong>Игра:</strong> {game.title} ({params.gameId})
                                     <button style={{marginLeft: 5}} onClick={onGetGameLink}>Ссылка на игру</button>
                                 </li>
                                 <li><strong>Смена:</strong> {getLastTurn(game)?.shift < 4 ? getLastTurn(game)?.shift : 'Игра окончена'}</li>
@@ -207,7 +207,7 @@ function Game() {
                                     ||
                                     quizActive
                                     ?
-                                    <button onClick={onHideQuiz} className={'button'}>Перейти к рулетке</button>
+                                      !timerOn && <button onClick={onHideQuiz} className={'button'}>Перейти к рулетке</button>
                                     :
                                     <button onClick={onShowQuiz} className={'button'}>Взять вопрос</button>
                                 }
