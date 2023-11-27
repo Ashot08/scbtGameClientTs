@@ -11,6 +11,12 @@ export interface GameState {
   playersCount?: number,
   moderator?: number,
   creationDate?: string,
+  players?: any,
+  turns?: any,
+  answers?: any,
+  lastTurnRolls?: any,
+  moderatorMode?: boolean | string,
+  answersMode?: 'true' | 'false',
 }
 
 const initialState :GameState = {
@@ -24,7 +30,6 @@ export const createGame = createAsyncThunk(
   }
 );
 
-
 export const gameSlice = createSlice({
   name: 'game',
   initialState,
@@ -36,11 +41,18 @@ export const gameSlice = createSlice({
       state.playersCount = action.payload.playersCount;
       state.moderator = action.payload.moderator;
       state.creationDate = action.payload.creationDate;
+      state.players = action.payload.players;
+      state.moderatorMode = action.payload.moderatorMode;
+      state.turns = action.payload.turns;
+      state.answers = action.payload.answers;
+      state.lastTurnRolls = action.payload.lastTurnRolls;
+      state.answersMode = action.payload.answersMode;
     },
   },
 });
 
 export const selectGameIsLoaded = (state: RootState) => state.game.isLoaded;
+export const selectGame = (state: RootState) => state.game;
 
 export const { setGame,  } = gameSlice.actions;
 export default gameSlice.reducer;

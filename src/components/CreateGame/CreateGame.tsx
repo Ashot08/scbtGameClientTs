@@ -12,25 +12,25 @@ import {
 import List from "@mui/material/List";
 import Button from "@mui/material/Button";
 import {useState} from "react";
-import {useAppDispatch} from "../../hooks.ts";
+import {useAppDispatch, useAppSelector} from "../../hooks.ts";
 import {createGame} from "../../store/reducers/gameSlice.ts";
 import Token from "../../utils/Token.ts";
 import {show} from "../../store/reducers/notificationSlice.ts";
 import {useNavigate} from "react-router-dom";
+import {showPopup} from "../../store/reducers/popupSlice.ts";
+import {GameQR} from "../GameQR/GameQR.tsx";
+import {selectUserLogin, selectUserName} from "../../store/reducers/userSlice.ts";
 
 export const CreateGame = () => {
   const [playersCount, setPlayersCount] = useState(3);
   const [gameTitle, setGameTitle] = useState('');
   const [moderatorMode, setModeratorMode] = useState(false);
-  const [gameIdInput, setGameIdInput] = useState('');
+  // const [gameIdInput, setGameIdInput] = useState('');
   const [submitDisabled, setSubmitDisabled] = useState(false);
   const navigate = useNavigate();
 
   const dispatch = useAppDispatch();
 
-  const joinGame = () => {
-    console.log('join game');
-  }
   const onCreateGame = (e: any) => {
     e.preventDefault();
     setSubmitDisabled(true);
@@ -58,7 +58,13 @@ export const CreateGame = () => {
             dispatch(show({text: i.msg, status: res.payload.status}));
           }
         }else{
+
+
           dispatch(show({text: res.payload.text, status: res.payload.status}));
+          dispatch(showPopup({
+            title: 'Игра создана',
+            content: <GameQR gameId={res.payload.game_id} />
+          }))
           if(res.payload.game_id) {
             navigate(`/game/${res.payload.game_id}`);
           }
@@ -73,9 +79,8 @@ export const CreateGame = () => {
 
 
   }
-  const player = {
-    name: 'oleg',
-  }
+  const player = useAppSelector(selectUserLogin);
+  const playerName = useAppSelector(selectUserName);
 
   return (
     <>
@@ -93,7 +98,7 @@ export const CreateGame = () => {
               type="text"
               name={'name'}
               placeholder={'Добро пожаловать'}
-              value={player.name}
+              value={playerName ? playerName : player}
               disabled={true}
             />
             <FormControl sx={{my: 2}} fullWidth>
@@ -139,32 +144,33 @@ export const CreateGame = () => {
 
         <Divider/>
 
-        <ListItem sx={{width: '100%'}} divider>
-          <div style={{width: '100%'}}>
-            <h4>Присоединиться к игре</h4>
-            <form onSubmit={joinGame} action="">
+        {/*<ListItem sx={{width: '100%'}} divider>*/}
+        {/*  <div style={{width: '100%'}}>*/}
+        {/*    <h4>Присоединиться к игре</h4>*/}
+        {/*    <form onSubmit={joinGame} action="">*/}
 
-              <div>
-                <label htmlFor="">
-                  <TextField
-                    sx={{width: "100%"}}
-                    onInput={(e: any) => {
-                      setGameIdInput('' + e.target.value);
-                      console.log(gameIdInput);
-                    }}
-                    required={true}
-                    id={'name-input'}
-                    label={'Id игры'}
-                    variant={'outlined'}
-                    type={'text'}
-                    name={'game_id'}
-                  />
-                </label>
-              </div>
-              <Button disabled={submitDisabled} sx={{my: 2, width: '100%'}} type="submit" variant="contained">Присоединиться</Button>
-            </form>
-          </div>
-        </ListItem>
+        {/*      <div>*/}
+        {/*        <label htmlFor="">*/}
+        {/*          <TextField*/}
+        {/*            sx={{width: "100%"}}*/}
+        {/*            onInput={(e: any) => {*/}
+        {/*              setGameIdInput('' + e.target.value);*/}
+        {/*            }}*/}
+        {/*            required={true}*/}
+        {/*            id={'name-input'}*/}
+        {/*            label={'Id игры'}*/}
+        {/*            variant={'outlined'}*/}
+        {/*            type={'text'}*/}
+        {/*            name={'game_id'}*/}
+        {/*          />*/}
+        {/*        </label>*/}
+        {/*      </div>*/}
+        {/*      <Button disabled={submitDisabled} sx={{my: 2, width: '100%'}} type="submit"*/}
+        {/*              variant="contained">Присоединиться</Button>*/}
+        {/*    </form>*/}
+        {/*  </div>*/}
+        {/*</ListItem>*/}
+
       </List>
 
     </>

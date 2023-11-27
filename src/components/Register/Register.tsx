@@ -41,7 +41,7 @@ function Register () {
               if (Token.getToken()) {
                 AuthController.fetchUser().then((res) => {
                   if (res.user.id) {
-                    dispatch(setUser(res));
+                    dispatch(setUser(res.user));
                   }
                 }).catch(e => console.log(e))
               }
