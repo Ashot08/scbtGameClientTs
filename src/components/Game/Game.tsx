@@ -15,7 +15,7 @@ import {hidePopup, showPopup} from "../../store/reducers/popupSlice.ts";
 import FaceIcon from '@mui/icons-material/Face';
 import Button from "@mui/material/Button";
 import Account from "../Account/Account.tsx";
-import useGame from "../../hooks/useGame.ts";
+import useGame from "../../hooks/useGame.tsx";
 import CasinoIcon from '@mui/icons-material/Casino';
 import {selectPlayerName, selectResult} from "../../store/reducers/rouletteSlice.ts";
 import {hide, selectIsActive, selectTimerOn, show} from "../../store/reducers/quizSlice.ts";
@@ -210,7 +210,7 @@ function Game() {
                                     userId={userId} updateAnswer={updateAnswer} />
                               :
                               <div>
-                                {(getLastTurn(game)?.shift === 4 && !getLastRoll(game))
+                                {(getLastTurn(game)?.shift > 3 && !getLastRoll(game))
                                   ?
 
                                   <div style={{marginTop: 20}}>

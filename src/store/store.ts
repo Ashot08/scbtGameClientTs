@@ -14,7 +14,8 @@ export const store = configureStore({
     popup: popupReducer,
     roulette: rouletteReducer,
     quiz: quizReducer,
-  }
+  },
+  devTools: false,
 });
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
