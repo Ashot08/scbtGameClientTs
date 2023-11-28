@@ -42,7 +42,7 @@ export const Quiz = (props: any) => {
         setAnswerStatus(getCurrentPlayerAnswer(game, props.userId)?.status ?? 'in_process');
         setTimeout(function () {
             setOneMoreQuestionDisabled(false);
-        }, 2500);
+        }, 3000);
     }, [questionNumber, game]);
 
     const onSubmit = (e: any) => {

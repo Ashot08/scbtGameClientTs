@@ -60,8 +60,6 @@ class AuthController {
 
         const response: any = await AuthAPI.read(token.id, token.token);
 
-        console.log('xfg', response.user)
-
         if(response.user.id){
           return {text: 'Get User Success', status: 'success', user: response.user};
         }

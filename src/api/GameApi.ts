@@ -26,6 +26,10 @@ class GameAPI extends BaseAPI {
     return this.http.get(`/game/${id}`, {authorization: `Bearer ${token}`});
   }
 
+  getGamesByPlayerId(playerId:number, token: string): Promise<unknown> {
+    return this.http.get(`/games/${playerId}`, {authorization: `Bearer ${token}`});
+  }
+
   create = undefined;
 
   update = undefined;

@@ -1,4 +1,5 @@
 import GameApi, {CreateGameData} from "../api/GameApi.ts";
+import Token from "../utils/Token.ts";
 
 class GameController {
 
@@ -20,13 +21,25 @@ class GameController {
     }
   }
 
-  async getGameState(payload: any) {
-    console.log(payload);
+  async getGameState() {
     try {
       return {text: 'Registration error', status: 'error'}
     } catch (e) {
       return {text: 'Registration error', status: 'error'}
     }
+  }
+
+  async getGamesByPlayerId (playerId: number) {
+
+    const token = Token.getToken();
+
+    if(token.token) {
+      const response = await GameApi.getGamesByPlayerId(playerId, token.token);
+      console.log(response);
+      return {message: 'Get Games Success', status: 'success', games: response};
+    }
+    return {message: 'Get Games Error', status: 'error'};
+
   }
 
 }

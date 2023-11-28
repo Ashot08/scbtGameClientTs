@@ -86,11 +86,11 @@ export default function ButtonAppBar(props: ButtonAppBarProps) {
                             </ListItemButton>
                             <Collapse in={open} timeout="auto" unmountOnExit>
                                 <List component="div" disablePadding>
-                                    {props.games && props.games.map((g) => {
+                                    {props.games && props.games.map((g: any) => {
                                         return (
-                                            <ListItemButton key={'game' + g[0]} sx={{pl: 4}}>
-                                                <Link to={'/game/' + g[0]}>
-                                                    <ListItemText primary={'Игра ' + g[1].title}/>
+                                            <ListItemButton key={'game' + g.id} sx={{pl: 4}}>
+                                                <Link to={'/game/' + g.id}>
+                                                    <ListItemText primary={'Игра ' + g.title}/>
                                                 </Link>
                                             </ListItemButton>
                                         );
@@ -99,12 +99,14 @@ export default function ButtonAppBar(props: ButtonAppBarProps) {
                                 </List>
                             </Collapse>
 
-                            <ListItemButton onClick={handleClose}>
-                                <ListItemIcon>
-                                    <TableBarIcon/>
-                                </ListItemIcon>
-                                <ListItemText primary="Лобби"/>
-                            </ListItemButton>
+                            <Link to={'/lobby'}>
+                                <ListItemButton onClick={handleClose}>
+                                    <ListItemIcon>
+                                        <TableBarIcon/>
+                                    </ListItemIcon>
+                                    <ListItemText primary="Лобби"/>
+                                </ListItemButton>
+                            </Link>
                             <Link to={'/'}>
                                 <ListItemButton onClick={handleClose}>
 
