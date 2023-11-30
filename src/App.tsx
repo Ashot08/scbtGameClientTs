@@ -1,7 +1,6 @@
 import './App.css'
 import ButtonAppBar from "./components/ButtonAppBar/ButtonAppBar.tsx";
 import Notification from "./components/Notification/Notification.tsx";
-//import Popup from "./components/Popup/Popup.tsx";
 import {Route, Routes} from "react-router-dom";
 import {logout, selectUserIsLogin, setUser} from "./store/reducers/userSlice.ts";
 import {useAppDispatch, useAppSelector} from "./hooks.ts";
@@ -20,6 +19,7 @@ import {hidePopup, selectPopupContent, selectPopupIsShown} from "./store/reducer
 import Popup from "./components/Popup/Popup.tsx";
 import GameController from "./controllers/GameController.ts";
 import Lobby from "./components/Lobby/Lobby.tsx";
+import Personal from "./components/Personal/Personal.tsx";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -98,6 +98,7 @@ function App() {
           <Route path='/' element={<StartPage />}/>
           <Route path='/game/:gameId?' element={<Game />} />
           <Route path='/lobby/' element={<Lobby />} />
+          <Route path='/personal/' element={<Personal />} />
         </Routes>
       }
     </>

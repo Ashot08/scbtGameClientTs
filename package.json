@@ -17,6 +17,7 @@
     "@mui/material": "^5.14.7",
     "@reduxjs/toolkit": "^1.9.7",
     "@types/react-redux": "^7.1.28",
+    "cyrillic-to-translit-js": "^3.2.1",
     "nanoid": "^4.0.2",
     "react": "^18.2.0",
     "react-custom-roulette": "^1.4.1",

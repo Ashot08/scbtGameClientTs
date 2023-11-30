@@ -7,6 +7,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import HomeIcon from '@mui/icons-material/Home';
 import TableBarIcon from '@mui/icons-material/TableBar';
+import PersonIcon from '@mui/icons-material/Person';
 
 import {
     Collapse,
@@ -115,6 +116,14 @@ export default function ButtonAppBar(props: ButtonAppBarProps) {
                                         </ListItemIcon>
                                         <ListItemText sx={{color: 'rgba(0, 0, 0, 0.87)'}} primary="Главная"/>
 
+                                </ListItemButton>
+                            </Link>
+                            <Link to={'/personal'}>
+                                <ListItemButton onClick={handleClose}>
+                                    <ListItemIcon>
+                                        <PersonIcon/>
+                                    </ListItemIcon>
+                                    <ListItemText primary="Личный кабинет"/>
                                 </ListItemButton>
                             </Link>
                         </List>
