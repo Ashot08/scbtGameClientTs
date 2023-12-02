@@ -55,8 +55,11 @@ function Personal () {
     }
   }
 
-  const deleteCats = () => {
-
+  const deleteCats = async () => {
+    setSubmitDisabled(true);
+    const result = await QuestionApi.deleteQuestionCats({catsIds: checkedCats}, Token.getToken().token);
+    console.log(result)
+    setSubmitDisabled(false);
   }
 
   return (
@@ -65,19 +68,18 @@ function Personal () {
 
         <div className={'page_wrapper'}>
 
-          <div style={{textAlign: 'left'}}>
-            <ul>
-              {cats.map((c:any) => <li><label><input key={'cat_checkbox_' + c.id} onChange={changeCheckbox} type={'checkbox'} name={'category'} value={c.id} />{c?.title}</label></li>)}
-            </ul>
-            <div>
-              <button onClick={deleteCats}>Удалить выбранные</button>
-            </div>
-          </div>
-
-
           {isLogin ?
 
             <>
+              <div style={{textAlign: 'left'}}>
+                <ul>
+                  {cats.map((c:any) => <li><label><input key={'cat_checkbox_' + c.id} onChange={changeCheckbox} type={'checkbox'} name={'category'} value={c.id} />{c?.title}</label></li>)}
+                </ul>
+                <div>
+                  <button disabled={submitDisabled} onClick={deleteCats}>Удалить выбранные</button>
+                </div>
+              </div>
+
               <div>
 
                 <h3>Создать категорию вопроса</h3>

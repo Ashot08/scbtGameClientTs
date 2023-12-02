@@ -5,6 +5,10 @@ export interface CreateQuestionCatData {
   slug: string,
 }
 
+export interface DeleteQuestionCatsData {
+  catsIds: number [],
+}
+
 class QuestionAPI extends BaseAPI {
   constructor() {
     super('/question');
@@ -12,6 +16,10 @@ class QuestionAPI extends BaseAPI {
 
   createQuestionCat(data: CreateQuestionCatData, token: string): Promise<unknown> {
     return this.http.post('/create_cat', {...data, authorization: `Bearer ${token}`});
+  }
+
+  deleteQuestionCats(data: DeleteQuestionCatsData, token: string): Promise<unknown> {
+    return this.http.post('/delete_cats', {...data, authorization: `Bearer ${token}`});
   }
 
   getQuestionsCats(token: string): Promise<unknown> {
