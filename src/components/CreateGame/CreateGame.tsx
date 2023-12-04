@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import List from "@mui/material/List";
 import Button from "@mui/material/Button";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useAppDispatch, useAppSelector} from "../../hooks.ts";
 import {createGame} from "../../store/reducers/gameSlice.ts";
 import Token from "../../utils/Token.ts";
@@ -23,6 +23,7 @@ import {GameQR} from "../GameQR/GameQR.tsx";
 import {selectUserLogin, selectUserName} from "../../store/reducers/userSlice.ts";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import QuestionApi from "../../api/QuestionApi.ts";
 
 export const CreateGame = () => {
   const [playersCount, setPlayersCount] = useState(3);
@@ -31,9 +32,37 @@ export const CreateGame = () => {
   // const [gameIdInput, setGameIdInput] = useState('');
   const [submitDisabled, setSubmitDisabled] = useState(false);
   const navigate = useNavigate();
-
   const dispatch = useAppDispatch();
+  const [cats, setCats] = useState([]);
+  const [checkedCats, setCheckedCats] = useState([] as number[]);
 
+  useEffect(() => {
+    getCats();
+  }, []);
+  const getCats = async () => {
+    const result: any = await QuestionApi.getQuestionsCats(Token.getToken().token);
+    if(Array.isArray(result?.cats)) {
+      setCats(result?.cats);
+      setCheckedCats([...result.cats.map((c: any) => c.id)])
+
+      return result?.cats;
+    }
+    setCats([]);
+    return [];
+  }
+
+  const changeCheckbox = (e: any) => {
+    if(e.target.checked) {
+      setCheckedCats([
+        ...checkedCats,
+        +e.target.value
+      ])
+    } else {
+      setCheckedCats([
+        ...checkedCats.filter(id => id !== +e.target.value),
+      ])
+    }
+  }
   const onCreateGame = (e: any) => {
     e.preventDefault();
     setSubmitDisabled(true);
@@ -53,7 +82,8 @@ export const CreateGame = () => {
           playersCount,
           moderator: userId,
           authorization: `Bearer ${token.token}`,
-          moderatorMode
+          moderatorMode,
+          questionsCats: checkedCats,
         }
       )).then((res: any) => {
         if(res.payload.errors) {
@@ -150,9 +180,7 @@ export const CreateGame = () => {
               <AccordionDetails>
                 <Typography>
                   <FormGroup>
-                    <FormControlLabel control={<Checkbox defaultChecked />} label="Пожарная безопасность" />
-                    <FormControlLabel control={<Checkbox defaultChecked />} label="Первая помощь" />
-                    <FormControlLabel control={<Checkbox defaultChecked />} label="Охрана труда" />
+                    {cats.map((c: any) => <FormControlLabel key={`${c.title}_${c.id}`} control={<Checkbox onChange={changeCheckbox} value={c.id} checked={checkedCats.includes(c.id)} />} label={c.title} />)}
                   </FormGroup>
                 </Typography>
               </AccordionDetails>

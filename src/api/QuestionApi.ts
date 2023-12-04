@@ -25,6 +25,9 @@ class QuestionAPI extends BaseAPI {
   getQuestionsCats(token: string): Promise<unknown> {
     return this.http.get('/cats', {authorization: `Bearer ${token}`});
   }
+  getQuestionCatsByGameId(gameId: number, token: string): Promise<unknown> {
+    return this.http.get(`/cats/${gameId}`, {authorization: `Bearer ${token}`});
+  }
 
   read = undefined;
 

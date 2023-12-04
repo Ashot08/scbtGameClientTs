@@ -35,6 +35,7 @@ import {
 } from "recharts";
 import Box from "@mui/material/Box";
 import {mobileCheck} from "../../utils/mobileCheck.ts";
+import QuestionApi from "../../api/QuestionApi.ts";
 
 function Game() {
   const dispatch = useAppDispatch();
@@ -49,6 +50,7 @@ function Game() {
   const quizActive = useAppSelector(selectIsActive);
   const timerOn = useAppSelector(selectTimerOn);
   const [activeTabNumber, setActiveTabNumber] = useState(0);
+  // const [questionsCats, setQuestionsCats] = useState([]);
 
   const handleChange = (event: any, newValue: number) => {
     console.log(event)
@@ -59,6 +61,13 @@ function Game() {
       dispatch(show());
     }
   }, [game, userId, dispatch]);
+
+  const getQuestionsCats = async () => {
+    if(params.gameId) {
+      const result = await QuestionApi.getQuestionCatsByGameId(+params.gameId, Token.getToken().token);
+      console.log(result);
+    }
+  }
 
   const onGetGameLink = () => {
       dispatch(showPopup({
@@ -129,6 +138,7 @@ function Game() {
                     <div className={'game_desk game_desk_centered'}>
                         <div>
                             <div>
+                              <button onClick={getQuestionsCats}>get cats</button>
                               {/*{player && <BasicCard name={''} id={game.players[game.turn].name} />}*/}
                             </div>
                             <BasicCard

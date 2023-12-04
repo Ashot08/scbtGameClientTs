@@ -71,14 +71,19 @@ function Personal () {
           {isLogin ?
 
             <>
-              <div style={{textAlign: 'left'}}>
-                <ul>
-                  {cats.map((c:any) => <li><label><input key={'cat_checkbox_' + c.id} onChange={changeCheckbox} type={'checkbox'} name={'category'} value={c.id} />{c?.title}</label></li>)}
-                </ul>
-                <div>
-                  <button disabled={submitDisabled} onClick={deleteCats}>Удалить выбранные</button>
+              {Array.isArray(cats) && cats.length
+                ?
+                <div style={{textAlign: 'left'}}>
+                  <ul>
+                    {cats.map((c:any) => <li><label><input key={'cat_checkbox_' + c.id} onChange={changeCheckbox} type={'checkbox'} name={'category'} value={c.id} />{c?.title}</label></li>)}
+                  </ul>
+                  <div>
+                    <button disabled={submitDisabled} onClick={deleteCats}>Удалить выбранные</button>
+                  </div>
                 </div>
-              </div>
+                :
+                ''
+              }
 
               <div>
 

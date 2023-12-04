@@ -6,7 +6,8 @@ export interface CreateGameData {
   playersCount: number,
   moderator: number,
   authorization: string,
-  moderatorMode: boolean
+  moderatorMode: boolean,
+  questionsCats: number[],
 }
 
 class GameAPI extends BaseAPI {
