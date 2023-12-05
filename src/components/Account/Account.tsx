@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import {Tab, Tabs} from "@mui/material";
 import Login from "../Login/Login.tsx";
 import Register from "../Register/Register.tsx";
-import classes from './Account.module.css';
+import classes from './Account.module.scss';
 
 function Account () {
   const [activeTabNumber, setActiveTabNumber] = useState(0);

@@ -48,8 +48,13 @@ function App() {
 
   async function getGames() {
     if(Token.getToken().id) {
-      const games: any = await GameController.getGamesByPlayerId(Token.getToken().id);
-      setGames(games.games.games);
+      try {
+        const games: any = await GameController.getGamesByPlayerId(Token.getToken().id);
+        setGames(games.games.games);
+      } catch (e) {
+        console.log(e);
+      }
+
     }
   }
 
