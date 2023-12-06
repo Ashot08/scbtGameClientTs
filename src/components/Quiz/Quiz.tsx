@@ -114,7 +114,7 @@ export const Quiz = (props: any) => {
                   &&
                 <form style={{textAlign: 'left'}} onSubmit={onSubmit}>
                     <FormControl sx={{width: '100%'}}>
-                        <FormLabel id="demo-radio-buttons-group-label">{quiz.questions[questionNumber].question}</FormLabel>
+                        <FormLabel id="demo-radio-buttons-group-label">{quiz.questions[questionNumber]?.question}</FormLabel>
                         <RadioGroup
                             sx={{display: 'grid'}}
                             aria-labelledby="demo-radio-buttons-group-label"
@@ -123,7 +123,7 @@ export const Quiz = (props: any) => {
                             onChange={(e) => setAnswer(e.target.value)}
                         >
                             {
-                                quiz.questions[questionNumber].answers.map(
+                                quiz.questions[questionNumber]?.answers.map(
                                   (a: any) => <FormControlLabel
                                     disabled={answerStatus !== 'in_process'}
                                     sx={{order: order[orderNumber][quiz.questions[questionNumber].answers.indexOf(a)]}}
