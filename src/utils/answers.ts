@@ -82,6 +82,35 @@ export const getAnswersResults = (game: GameState) => {
   return result;
 }
 
+export const getAnswersResultsToGraph = (game: GameState) => {
+  const result = [];
+
+  for (const player of game.players) {
+
+    const playerResult = {
+      name: player.name || player.username,
+      'Попытки': 0,
+      'Баллы': 0,
+    };
+
+    for (const answer of game.answers) {
+      if (answer.player_id === player.id
+        && answer.is_countable === 'true') {
+
+        if(answer.status === 'success') {
+          playerResult['Попытки'] += 1;
+          playerResult['Баллы'] += 1;
+        } else {
+          playerResult['Попытки'] += 1;
+        }
+      }
+    }
+    result.push(playerResult);
+  }
+
+  return result;
+}
+
 // export const isAnswersModeActive = (game: GameState) => {
 //   let isAnswersModeActive = false;
 //   const currentAnswer = getCurrentAnswer(game);

@@ -1,7 +1,6 @@
 import './App.css'
 import ButtonAppBar from "./components/ButtonAppBar/ButtonAppBar.tsx";
 import Notification from "./components/Notification/Notification.tsx";
-//import Popup from "./components/Popup/Popup.tsx";
 import {Route, Routes} from "react-router-dom";
 import {logout, selectUserIsLogin, setUser} from "./store/reducers/userSlice.ts";
 import {useAppDispatch, useAppSelector} from "./hooks.ts";
@@ -18,6 +17,9 @@ import {useEffect, useState} from "react";
 import Token from "./utils/Token.ts";
 import {hidePopup, selectPopupContent, selectPopupIsShown} from "./store/reducers/popupSlice.ts";
 import Popup from "./components/Popup/Popup.tsx";
+import GameController from "./controllers/GameController.ts";
+import Lobby from "./components/Lobby/Lobby.tsx";
+import Personal from "./components/Personal/Personal.tsx";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -29,6 +31,7 @@ function App() {
 
   const [loading, setLoading] = useState(false);
   const isLogin = useAppSelector(selectUserIsLogin);
+  const [games, setGames] = useState([]);
   const auth = () => {
     if(Token.getToken()) {
       setLoading(true);
@@ -43,8 +46,23 @@ function App() {
     }
   }
 
-  useEffect(() => {
+  async function getGames() {
+    if(Token.getToken().id) {
+      try {
+        const games: any = await GameController.getGamesByPlayerId(Token.getToken().id);
+        setGames(games.games.games);
+      } catch (e) {
+        console.log(e);
+      }
+
+    }
+  }
+
+  useEffect( () => {
     auth();
+
+    getGames();
+
   }, []);
 
 
@@ -54,7 +72,7 @@ function App() {
       <ButtonAppBar
         buttonText={isLogin ? 'Выйти' : 'Войти'}
         buttonHandler={()=>{ dispatch(logout()) }}
-        games={[]}
+        games={games as never}
         //buttonHandler={isLogin ? () => dispatch(logout()) : ()=>{} }
         //games={games}
       />
@@ -84,6 +102,8 @@ function App() {
         <Routes>
           <Route path='/' element={<StartPage />}/>
           <Route path='/game/:gameId?' element={<Game />} />
+          <Route path='/lobby/' element={<Lobby />} />
+          <Route path='/personal/' element={<Personal />} />
         </Routes>
       }
     </>

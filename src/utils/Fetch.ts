@@ -16,7 +16,7 @@ type headers = {'Content-Type': string, 'Authorization' ?: string};
 
 export default class Fetch {
   static API_URL = 'http://localhost:3001';
-  //static API_URL = 'http://80.90.189.247:3001';
+  // static API_URL = 'http://80.90.189.247:3001';
 
   protected endpoint: string;
 

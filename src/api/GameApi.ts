@@ -6,7 +6,8 @@ export interface CreateGameData {
   playersCount: number,
   moderator: number,
   authorization: string,
-  moderatorMode: boolean
+  moderatorMode: boolean,
+  questionsCats: number[],
 }
 
 class GameAPI extends BaseAPI {
@@ -24,6 +25,10 @@ class GameAPI extends BaseAPI {
 
   read(id: number, token: string): Promise<unknown> {
     return this.http.get(`/game/${id}`, {authorization: `Bearer ${token}`});
+  }
+
+  getGamesByPlayerId(playerId:number, token: string): Promise<unknown> {
+    return this.http.get(`/games/${playerId}`, {authorization: `Bearer ${token}`});
   }
 
   create = undefined;

@@ -1,25 +1,23 @@
 import {useState} from 'react';
 import Box from "@mui/material/Box";
 import {Tab, Tabs} from "@mui/material";
-import Login from "../Login/Login.tsx";
-import Register from "../Register/Register.tsx";
-import classes from './Account.module.scss';
 
-function Account () {
+
+function Lobby () {
   const [activeTabNumber, setActiveTabNumber] = useState(0);
 
   const handleChange = (event: any, newValue: number) => {
-    console.log(event)
+    console.log(event);
     setActiveTabNumber(newValue);
   };
 
   return (
     <>
-      <div className={classes.account}>
+      <div style={{marginTop: 120}}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs value={activeTabNumber} onChange={handleChange} aria-label="basic tabs example">
-            <Tab label="Авторизация" />
-            <Tab label="Регистрация" />
+            <Tab label="Игры" />
+            <Tab label="Рейтинг" />
           </Tabs>
         </Box>
 
@@ -31,7 +29,7 @@ function Account () {
         >
           {activeTabNumber === 0 && (
             <Box sx={{ p: 3 }}>
-              <Login />
+
             </Box>
           )}
         </div>
@@ -44,7 +42,7 @@ function Account () {
         >
           {activeTabNumber === 1 && (
             <Box sx={{ p: 3 }}>
-              <Register />
+
             </Box>
           )}
         </div>
@@ -53,4 +51,4 @@ function Account () {
   )
 }
 
-export default Account;
+export default Lobby;
