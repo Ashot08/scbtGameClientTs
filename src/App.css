@@ -4,20 +4,17 @@
 body{
   margin: 0;
   padding: 0;
+  color: #fff;
 }
+
 main{
-  /*max-width: 300px;*/
-  margin: 0 auto;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  min-height: calc(100vh - 64px);
+  height: 100vh;
 }
 .page_wrapper{
   padding-top: 60px;
+  height: 100%;
 }
+
 @media(max-width: 768px){
   main{
     max-width: 100%;

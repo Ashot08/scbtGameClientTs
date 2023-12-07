@@ -1,7 +1,18 @@
 .main {
-  background-image: url('./img/background.png');
+  background-color: #07082F;
+  min-height: 600px;
 }
 .container {
   max-width: 1440px;
   margin: 0 auto;
+  height: 100%;
+}
+.start_page{
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  padding-top: 20px;
+  background-image: url('./img/background.png');
+  background-position: center -60px;
+  background-repeat: no-repeat;
 }

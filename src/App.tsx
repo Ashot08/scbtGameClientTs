@@ -47,7 +47,7 @@ function App() {
   }
 
   async function getGames() {
-    if(Token.getToken().id) {
+    if(Token.getToken()?.id) {
       try {
         const games: any = await GameController.getGamesByPlayerId(Token.getToken().id);
         setGames(games.games.games);
