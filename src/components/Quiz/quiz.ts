@@ -1,5 +1,4 @@
 export const quiz: any = {
-    /* eslint-disable */
     "quizTitle": "React Quiz Component Demo",
     "quizSynopsis": "При каких состояниях оказывается первая помощь?",
     "nrOfQuestions": "1",
@@ -5364,5 +5363,4 @@ export const quiz: any = {
 
 
     ],
-    /* eslint-enable */
 };
