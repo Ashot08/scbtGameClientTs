@@ -35,7 +35,7 @@ import {
 } from "recharts";
 import Box from "@mui/material/Box";
 import {mobileCheck} from "../../utils/mobileCheck.ts";
-import QuestionApi from "../../api/QuestionApi.ts";
+import classes from './Game.module.scss';
 
 function Game() {
   const dispatch = useAppDispatch();
@@ -62,12 +62,12 @@ function Game() {
     }
   }, [game, userId, dispatch]);
 
-  const getQuestionsCats = async () => {
-    if(params.gameId) {
-      const result = await QuestionApi.getQuestionCatsByGameId(+params.gameId, Token.getToken().token);
-      console.log(result);
-    }
-  }
+  // const getQuestionsCats = async () => {
+  //   if(params.gameId) {
+  //     const result = await QuestionApi.getQuestionCatsByGameId(+params.gameId, Token.getToken().token);
+  //     console.log(result);
+  //   }
+  // }
 
   const onGetGameLink = () => {
       dispatch(showPopup({
@@ -116,6 +116,12 @@ function Game() {
     dispatch(show());
   }
 
+  // const getPlayersWaitList = () => {
+  //   const players = [];
+  //   for (let i = 0; i < game.playersCount; i++) {
+  //
+  //   }
+  // }
 
   return (
     <>
@@ -136,13 +142,16 @@ function Game() {
                 {(game.status === 'created')
                   &&
                     <div className={'game_desk game_desk_centered'}>
-                        <div>
+                        <div className={classes.gameWait}>
+                            <h1>
+                                Игра создана. Ждём игроков.
+                            </h1>
                             <div>
-                              <button onClick={getQuestionsCats}>get cats</button>
                               {/*{player && <BasicCard name={''} id={game.players[game.turn].name} />}*/}
                             </div>
+
                             <BasicCard
-                                name={'Игра ' + game.title ? game.title : params.id }
+                                name={`Игра '${(game.title ? game.title : params.id)}'`}
                                 id={`Ожидает, когда наберется ${game.playersCount} игроков (сейчас ${game.players.length} из ${game.playersCount})`}
                                 content={
                                   <List>{
@@ -162,7 +171,8 @@ function Game() {
                                 }
                             />
                             <br/>
-                            <button style={{marginLeft: 5}} onClick={onGetGameLink} >Ссылка на игру</button>
+                            <Button sx={{backgroundColor: '#00A4A4'}} onClick={onGetGameLink} type="submit"
+                                    variant="contained" fullWidth={true}>Ссылка на игру</Button>
                         </div>
                     </div>
                 }
@@ -320,10 +330,10 @@ function Game() {
               </>
               :
               <div className={'game_desk game_desk_centered'}>
-                <div>
+                <div className={classes.gameWait}>
                   <>
                     <h1>ИГРА {game && game.title}</h1>
-                    {isLogin && <BasicCard name={playerName || player} id={'id: ' + userId} />}
+                    {/*{isLogin && <BasicCard name={playerName || player} id={'id: ' + userId} />}*/}
                   </>
 
                   {(!isLogin)
@@ -338,8 +348,11 @@ function Game() {
                       <List component="nav" aria-label="mailbox folders">
                         <ListItem sx={{justifyContent: 'center'}} divider>
                           <div>
-                            <h4>Присоединиться к игре</h4>
-                            <form onSubmit={(e) => {e.preventDefault(); joinGame(userId);}} action="">
+                            <h4>Присоединиться к игре '{game && game.title}'</h4>
+                            <form onSubmit={(e) => {
+                              e.preventDefault();
+                              joinGame(userId);
+                            }} action="">
 
                               <div>
                                 <label htmlFor="">
@@ -357,7 +370,11 @@ function Game() {
                               </div>
                               <Button sx={{my: 2, width: '100%'}} type="submit"
                                       variant="contained">Присоединиться</Button>
+
+                              <br/>
                             </form>
+                            <Button sx={{backgroundColor: '#00A4A4'}} onClick={onGetGameLink} type="submit"
+                                    variant="contained" fullWidth={true}>Ссылка на игру</Button>
                           </div>
                         </ListItem>
                       </List>

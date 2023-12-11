@@ -1,4 +1,4 @@
-import './App.css'
+import './App.scss'
 import ButtonAppBar from "./components/ButtonAppBar/ButtonAppBar.tsx";
 import Notification from "./components/Notification/Notification.tsx";
 import {Route, Routes} from "react-router-dom";

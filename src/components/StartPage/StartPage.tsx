@@ -13,8 +13,9 @@ function StartPage () {
                   <div className={classes.container}>
                     <div className={classes.start_page}>
                       {isLogin ?
-
-                        <CreateGame />
+                        <div>
+                          <CreateGame/>
+                        </div>
                         :
                         <Account />
                       }

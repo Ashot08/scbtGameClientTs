@@ -19,7 +19,7 @@ function Account () {
       <div className={classes.account}>
 
         <div className={classes.forms}>
-          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Box className={'tabs'} sx={{ borderBottom: 1, borderColor: 'divider' }}>
             <Tabs value={activeTabNumber} onChange={handleChange} aria-label="basic tabs example">
               <Tab label="Авторизация" />
               <Tab label="Регистрация" />
@@ -53,10 +53,13 @@ function Account () {
           </div>
         </div>
 
-        <div className={classes.worker}>
-          <img width={573} height={480} src={workerImg} alt="Сибтруд человек на лестнице"/>
-        </div>
-
+        {
+          activeTabNumber == 0
+          &&
+            <div className={classes.worker}>
+                <img width={573} height={480} src={workerImg} alt="Сибтруд человек на лестнице"/>
+            </div>
+        }
       </div>
     </>
   )
