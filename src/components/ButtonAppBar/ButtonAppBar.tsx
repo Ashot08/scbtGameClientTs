@@ -21,6 +21,8 @@ import {
 import {useState} from "react";
 import {ExpandLess, ExpandMore, StarBorder} from "@mui/icons-material";
 import {Link} from "react-router-dom";
+import {useAppSelector} from "../../hooks.ts";
+import {selectUserIsLogin, selectUserLogin, selectUserName} from "../../store/reducers/userSlice.ts";
 
 interface ButtonAppBarProps {
     games: [['one', {title: 'game 1'}], ['two', {title: 'game 1'}], ['three', {title: 'game 1'}]] | [],
@@ -31,6 +33,10 @@ export default function ButtonAppBar(props: ButtonAppBarProps) {
 
     const [anchorEl, setAnchorEl] = useState(null);
     const [open, setOpen] = useState(false);
+    const player = useAppSelector(selectUserLogin);
+    const playerName = useAppSelector(selectUserName);
+    const isLogin = useAppSelector(selectUserIsLogin);
+
     const handleClose = () => {
         setAnchorEl(null);
     };
@@ -57,7 +63,12 @@ export default function ButtonAppBar(props: ButtonAppBarProps) {
                             <img src={MenuIcon} alt="Меню"/>
                         </IconButton>
 
+                        {(!isLogin)
+                        ?
                         <img src={Logo} alt="Сибтруд Логотип компании"/>
+                        :
+                        <span style={{fontFamily: 'Oswald',fontSize: '24px'}}>{playerName || player}</span>
+                        }
 
                         <Menu
                           id="menu-appbar"
@@ -141,10 +152,10 @@ export default function ButtonAppBar(props: ButtonAppBarProps) {
                         {props.buttonText === 'Войти'
                           ?
                           <Link to={'/'}>
-                              <Button sx={{color: '#fff'}} color="inherit">{props.buttonText}</Button>
+                              <Button sx={{color: '#fff', fontFamily: 'Oswald'}} color="inherit">{props.buttonText}</Button>
                           </Link>
                           :
-                          <Button onClick={props.buttonHandler} color="inherit">{props.buttonText}</Button>
+                          <Button sx={{color: '#fff', fontFamily: 'Oswald'}} onClick={props.buttonHandler} color="inherit">{props.buttonText}</Button>
                         }
 
 

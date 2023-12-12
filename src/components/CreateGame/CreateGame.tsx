@@ -149,11 +149,11 @@ export const CreateGame = () => {
                     setPlayersCount(+e.target.value)
                   }}
                 >
-                  <MenuItem value={2}>2</MenuItem>
-                  <MenuItem value={3}>3</MenuItem>
-                  <MenuItem value={4}>4</MenuItem>
-                  <MenuItem value={5}>5</MenuItem>
-                  <MenuItem value={6}>6</MenuItem>
+                  <MenuItem key={'players-count_2'} value={2}>2</MenuItem>
+                  <MenuItem key={'players-count_3'} value={3}>3</MenuItem>
+                  <MenuItem key={'players-count_4'} value={4}>4</MenuItem>
+                  <MenuItem key={'players-count_5'} value={5}>5</MenuItem>
+                  <MenuItem key={'players-count_6'} value={6}>6</MenuItem>
                 </Select>
               </FormControl>
 
@@ -163,7 +163,6 @@ export const CreateGame = () => {
                                   label="Модератор"
                 />
               </FormControl>
-
 
               <Accordion className={classes.questionsCatsAccordion}>
                 <AccordionSummary
