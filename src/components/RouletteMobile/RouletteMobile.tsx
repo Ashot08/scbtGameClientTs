@@ -158,7 +158,7 @@ const RouletteMobile = (props: any) => {
         spinningTime: {
             name: 'Продолжительность вращения',
             options: ['3', '5', '10', '15', '20'],
-            value: '6',
+            value: '3',
         },
     });
 

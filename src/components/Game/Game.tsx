@@ -312,7 +312,7 @@ function Game() {
 
                           <div className={'game_desk'}>
                               <div className={classes.shiftIndicator}>
-                                  Смена {getLastTurn(game)?.shift < 4 ? getLastTurn(game)?.shift : 'Игра окончена'}
+                                  Смена {getLastTurn(game)?.shift < 4 ? getLastTurn(game)?.shift : ''}
                               </div>
                             {
 
