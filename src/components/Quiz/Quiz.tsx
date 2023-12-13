@@ -1,6 +1,6 @@
-import { quiz } from './quiz';
-import { order } from './order';
-import {FormControl, FormControlLabel, FormLabel, Radio, RadioGroup} from "@mui/material";
+import {quiz} from './quiz';
+import {order} from './order';
+import {FormControl, FormControlLabel, Radio, RadioGroup} from "@mui/material";
 import Button from "@mui/material/Button";
 import './quiz.css';
 import {useEffect, useState} from "react";
@@ -11,116 +11,121 @@ import {useAppDispatch, useAppSelector} from "../../hooks.ts";
 import {offTimer} from "../../store/reducers/quizSlice.ts";
 import {selectGame} from "../../store/reducers/gameSlice.ts";
 import {
-    getCurrentAnswer, getCurrentPlayerAnswer,
-    getCurrentPlayerProcessAnswer,
+  getCurrentAnswer, getCurrentPlayerAnswer,
+  getCurrentPlayerProcessAnswer,
 } from "../../utils/answers.ts";
+import thinkingMan from './images/thinkingMan.png';
 
 export const Quiz = (props: any) => {
-    const dispatch = useAppDispatch();
-    const game = useAppSelector(selectGame);
-    const questionNumber = getCurrentAnswer(game)?.question_id;
-    const [answer, setAnswer] = useState('');
-    const [answerStatus, setAnswerStatus] = useState('error');
-    const [answerResultText, setAnswerResultText] = useState('');
-    const [oneMoreQuestionDisabled, setOneMoreQuestionDisabled] = useState(true);
+  const dispatch = useAppDispatch();
+  const game = useAppSelector(selectGame);
+  const questionNumber = getCurrentAnswer(game)?.question_id;
+  const [answer, setAnswer] = useState('');
+  const [answerStatus, setAnswerStatus] = useState('error');
+  const [answerResultText, setAnswerResultText] = useState('');
+  const [oneMoreQuestionDisabled, setOneMoreQuestionDisabled] = useState(true);
 
-    let orderNumber = 0;
-    if(questionNumber < 150) {
-        orderNumber = 1;
-    }
-    if(questionNumber <  110) {
-        orderNumber = 2;
-    }
-    if(questionNumber <  60) {
-        orderNumber = 2;
-    }
-    if(questionNumber < 30) {
-        orderNumber = 0;
-    }
+  let orderNumber = 0;
+  if (questionNumber < 150) {
+    orderNumber = 1;
+  }
+  if (questionNumber < 110) {
+    orderNumber = 2;
+  }
+  if (questionNumber < 60) {
+    orderNumber = 2;
+  }
+  if (questionNumber < 30) {
+    orderNumber = 0;
+  }
 
-    useEffect(() => {
-        setAnswerStatus(getCurrentPlayerAnswer(game, props.userId)?.status ?? 'in_process');
-        setTimeout(function () {
-            setOneMoreQuestionDisabled(false);
-        }, 3000);
-    }, [questionNumber, game]);
+  useEffect(() => {
+    setAnswerStatus(getCurrentPlayerAnswer(game, props.userId)?.status ?? 'in_process');
+    setTimeout(function () {
+      setOneMoreQuestionDisabled(false);
+    }, 3000);
+  }, [questionNumber, game]);
 
-    const onSubmit = (e: any) => {
-        e.preventDefault();
-        const trueAnswer = quiz.questions[questionNumber].answers[ +quiz.questions[questionNumber]['correctAnswer'] - 1 ];
+  const onSubmit = (e: any) => {
+    e.preventDefault();
+    const trueAnswer = quiz.questions[questionNumber].answers[+quiz.questions[questionNumber]['correctAnswer'] - 1];
 
-        if(!answer) {
-            alert('Нужно выбрать ответ!');
-            return;
-        }
-
-        const isSuccessAnswer = (answer == trueAnswer);
-
-        setAnswerStatus(isSuccessAnswer ? 'success' : 'error');
-        dispatch(show({
-            text: isSuccessAnswer ? `Вы ответили правильно!` : `Вы ошиблись!`,
-            status: isSuccessAnswer ? 'success' : 'error',
-        }));
-        if(getCurrentPlayerProcessAnswer(game, props.userId)) {
-            props.updateAnswer(
-              getCurrentPlayerProcessAnswer(game, props.userId)?.id,
-              isSuccessAnswer ? 'success' : 'error'
-            );
-        }
-        setAnswerResultText(isSuccessAnswer ? 'Верно!' : 'Вы ошиблись!');
+    if (!answer) {
+      alert('Нужно выбрать ответ!');
+      return;
     }
 
-    const time = new Date();
-    time.setSeconds(time.getSeconds() + 3);
+    const isSuccessAnswer = (answer == trueAnswer);
 
-    const onExpire = () => {
-        dispatch(offTimer());
-        if(getCurrentPlayerProcessAnswer(game, props.userId)) {
-            props.updateAnswer(
-              getCurrentPlayerProcessAnswer(game, props.userId)?.id,
-              'error'
-            );
-            setAnswerResultText('Ответ неверный! (Вы не успели ответить).')
-        }
+    setAnswerStatus(isSuccessAnswer ? 'success' : 'error');
+    dispatch(show({
+      text: isSuccessAnswer ? `Вы ответили правильно!` : `Вы ошиблись!`,
+      status: isSuccessAnswer ? 'success' : 'error',
+    }));
+    if (getCurrentPlayerProcessAnswer(game, props.userId)) {
+      props.updateAnswer(
+        getCurrentPlayerProcessAnswer(game, props.userId)?.id,
+        isSuccessAnswer ? 'success' : 'error'
+      );
+    }
+    setAnswerResultText(isSuccessAnswer ? 'Верно!' : 'Вы ошиблись!');
+  }
 
-        if(answerStatus !== 'success') {
-            setAnswerStatus('error')
-        }
-        setAnswer('');
+  const time = new Date();
+  time.setSeconds(time.getSeconds() + 3);
+
+  const onExpire = () => {
+    dispatch(offTimer());
+    if (getCurrentPlayerProcessAnswer(game, props.userId)) {
+      props.updateAnswer(
+        getCurrentPlayerProcessAnswer(game, props.userId)?.id,
+        'error'
+      );
+      setAnswerResultText('Ответ неверный! (Вы не успели ответить).')
     }
 
-    return <>
+    if (answerStatus !== 'success') {
+      setAnswerStatus('error')
+    }
+    setAnswer('');
+  }
 
-        <div className={'quiz'}>
-            <div className={'variants'}>
-                {game?.answersMode === 'false'
-                  &&
+  return <>
+
+    <div className={'quiz'}>
+      <div className={'variants'}>
+        {game?.answersMode === 'false'
+          &&
+            <div>
+              {game.lastTurnRolls.length
+                ?
                 <div>
-                    {game.lastTurnRolls.length
-                      ?
-                      <div>
-                          <h4>Готовы отвечать?</h4>
-                          <Button onClick={props.startAnswers} disabled={false} variant={'contained'}>Старт!</Button>
-                      </div>
-                      :
-                      <div>
-                          <h4>Прежде чем отвечать, нужно покрутить рулетку!</h4>
-                      </div>
-                    }
+                  <h4>Готовы отвечать?</h4>
+                  <Button sx={{backgroundColor: '#c0392b'}} onClick={props.startAnswers} disabled={false}
+                          variant={'contained'}>Старт!</Button>
+                </div>
+                :
+                <div>
+                  <h4>Прежде чем отвечать, нужно покрутить рулетку!</h4>
+                </div>
+              }
 
 
-                </div>}
-                {game?.answersMode === 'true'
-                  &&
-                <form style={{textAlign: 'left'}} onSubmit={onSubmit}>
-                    <FormControl sx={{width: '100%'}}>
-                        <FormLabel sx={{color: '#fff'}} id="demo-radio-buttons-group-label">{quiz.questions[questionNumber]?.question}</FormLabel>
+            </div>}
+        {game?.answersMode === 'true'
+          &&
+            <form style={{textAlign: 'left'}} onSubmit={onSubmit}>
+                <FormControl sx={{width: '100%'}}>
+                    {/*<FormLabel sx={{color: '#fff'}} id="demo-radio-buttons-group-label">{quiz.questions[questionNumber]?.question}</FormLabel>*/}
+                    <div className={'questionNumber'}>Вопрос №{questionNumber}</div>
+                    <div className={'questionText'}>{quiz.questions[questionNumber]?.question}</div>
+                    <div className={'questionsWrapper'}>
                         <RadioGroup
-                            sx={{display: 'grid'}}
-                            aria-labelledby="demo-radio-buttons-group-label"
-                            defaultValue=""
-                            name="radio-buttons-group"
-                            onChange={(e) => setAnswer(e.target.value)}
+                          sx={{display: 'grid'}}
+                          aria-labelledby="demo-radio-buttons-group-label"
+                          defaultValue=""
+                          name="radio-buttons-group"
+                          onChange={(e) => setAnswer(e.target.value)}
                         >
                             {
                                 quiz.questions[questionNumber]?.answers.map(
@@ -137,35 +142,43 @@ export const Quiz = (props: any) => {
                             }
 
                         </RadioGroup>
-                    </FormControl>
+                    </div>
+                </FormControl>
 
-                    {
-                      (game?.moderatorMode === '1' && props.userId === game?.moderator)
-                      ?
-                        <div>Игроки находятся в режиме ответов на вопросы...</div>
-                      :
-                      <Button disabled={answerStatus !== 'in_process'} type={'submit'}
-                              variant={'contained'}>Ответить</Button>
-                    }
+                {
+                    (game?.moderatorMode === '1' && props.userId === game?.moderator)
+                  ?
+                  <div>Игроки находятся в режиме ответов на вопросы...</div>
+                  :
+                  <div className={'answerButtonWrapper'}><Button sx={{color: '#fff', border: '1px solid rgba(255, 255, 255, 0.5)'}}
+                          disabled={answerStatus !== 'in_process'} type={'submit'}
+                               variant={'outlined'}>Ответить</Button></div>
+              }
 
-                    {
-                        props.quizTimer && <Timer expiryTimestamp={time} onExpire={onExpire} />
-                    }
+              {
+                props.quizTimer && <div className={'timerWrapper'}><Timer expiryTimestamp={time} onExpire={onExpire}/></div>
+              }
 
-                    {
-                        (answerStatus !== 'in_process')
-                        &&
-                        <div>
-                            <h3>{answerResultText}</h3>
-                            {props.isMyTurn && !props.timerOn && <Button disabled={props.quizTimer || oneMoreQuestionDisabled} onClick={props.startAnswers} variant={'contained'}>Взять ещё один вопрос</Button>}
-                        </div>
+              {
+                (answerStatus !== 'in_process')
+                &&
+                  <div className={'answerButtonWrapper'}>
+                      <h3>{answerResultText}</h3>
+                    {props.isMyTurn && !props.timerOn &&
+                        <Button disabled={props.quizTimer || oneMoreQuestionDisabled} onClick={props.startAnswers}
+                                variant={'contained'}>Взять ещё один вопрос</Button>}
+                  </div>
 
-                    }
+              }
 
-                </form>
-                }
-            </div>
+            </form>
+        }
+
+        <div className={'thinkingMan'}>
+          <img src={thinkingMan} alt="Думающий человек"/>
         </div>
-    </>
+      </div>
+    </div>
+  </>
 }
 

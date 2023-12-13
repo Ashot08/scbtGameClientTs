@@ -95,7 +95,7 @@
     border-radius: 10px;
     background: #222144;
 }
-.game_state_player svg {
+.game_state_player svg:first-child {
     margin-right: 20px;
 }
 @media(max-width: 768px){

@@ -1,6 +1,9 @@
 .quiz{
     width: 100%;
     padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .question{
     margin: 20px;
@@ -10,7 +13,92 @@
     text-align: left;
     margin-bottom: 10px;
 }
+.MuiRadio-root.Mui-checked {
+    color: #fff !important;
+}
+.MuiFormControlLabel-root .MuiFormControlLabel-label.Mui-disabled {
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+.variants {
+    position: relative;
+    max-width: 488px;
+    min-width: 488px;
+    border-radius: 8px;
+    background: #32307C;
+    padding: 30px;
+    min-height: 600px;
+}
+.questionNumber {
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+}
+.questionText {
+    margin: 20px 0;
+    text-align: center;
+}
+.questionsWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.questionsWrapper label {
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 3px;
+    padding: 10px 40px;
+    justify-content: center;
+    position: relative;
+    margin-right: 0;
+}
+.questionsWrapper label .MuiTypography-root {
+    font-size: 14px;
+    font-weight: 400;
+    opacity: 0.8;
+}
+.questionsWrapper label > span.MuiRadio-root {
+    display: none;
+}
+.questionsWrapper label > span.MuiRadio-root.Mui-checked {
+    display: block;
+    position: absolute;
+    left: 0;
+}
+.answerButtonWrapper {
+    text-align: center;
+    margin-top: 20px;
+}
+.timerWrapper {
+    display: flex;
+    justify-content: center;
+}
+.thinkingMan {
+    position: absolute;
+    right: -120px;
+    bottom: -10px;
+    height: 100%;
+
+}
+.thinkingMan img {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    height: 600px;
+}
+@media (max-width: 1440px) {
+    .variants {
+        max-width: 380px;
+        min-width: 380px;
+    }
+    .quiz{
+        justify-content: flex-start;
+    }
+}
 @media(max-width: 768px){
+    .thinkingMan {
+        display: none;
+    }
     .button {
         position: fixed !important;
         bottom: 118px;

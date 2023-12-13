@@ -137,18 +137,18 @@ const RouletteMobile = (props: any) => {
         withoutAnimation: {
             name: 'Without animation',
             options: [false, true],
-            value: true,
+            value: false,
         },
         hideCenterDelimiter: {
             name: 'Hide center delimiter',
             options: [false, true],
-            value: true,
+            value: false,
             forDesign: 'Regular',
         },
         soundWhileSpinning: {
             name: 'Sound while spinning',
             options: [false, true],
-            value: true,
+            value: false,
         },
         stopInCenter: {
             name: 'Stop in the prize item center',
@@ -171,7 +171,10 @@ const RouletteMobile = (props: any) => {
             //const randomPrizeIndex = getRandomIntInRange(0, prizes.length - 1);
             const randomPrizeIndex = props.prizeNumber;
 
-            const randomPrizeIndexOffset = prizes.length * 4;
+            //const randomPrizeIndexOffset = prizes.length * 4;
+            const randomPrizeIndexOffset = 8;
+
+            console.log('PRIZE', randomPrizeIndex + randomPrizeIndexOffset);
 
             return randomPrizeIndex + randomPrizeIndexOffset;
 
@@ -180,12 +183,12 @@ const RouletteMobile = (props: any) => {
 
     useEffect(() => {
         const reproducedArray = [
-            ...prizes,
-            // @ts-expect-error: prizes type
-            ...reproductionArray(prizes, prizes.length * 3),
-            ...prizes,
-            // @ts-expect-error: prizes type
-            ...reproductionArray(prizes, prizes.length),
+            //...prizes,
+            // // @ts-expect-error: prizes type
+            // ...reproductionArray(prizes, prizes.length * 3),
+            // ...prizes,
+            // // @ts-expect-error: prizes type
+             ...reproductionArray(prizes, prizes.length),
         ];
 
         const list: any = [...reproducedArray].map((item) => ({
@@ -215,7 +218,7 @@ const RouletteMobile = (props: any) => {
 
             // const { id } = prizeList[newPrizeIndex];
 
-            console.log({ icon: 'info', title: `Вращаем..`, newPrizeIndex });
+            console.log({ icon: 'info', title: `Вращаем..`, newPrizeIndex, prizeList });
         };
         prepare();
     }, [props.prizeNumber, props.mustSpin]);
@@ -243,13 +246,13 @@ const RouletteMobile = (props: any) => {
             <div className={`roulette ${type}`}>
                 <RoulettePro
                     type={type as RouletteType}
-                    prizes={prizeList}
+                    prizes={[...prizes, ...prizes, ...prizes]}
                     // design={design}
 
                     // @ts-expect-error: designOptions type
                     designOptions={designOptions}
                     start={start}
-                    prizeIndex={prizeIndex}
+                    prizeIndex={prizeIndex + 0}
                     onPrizeDefined={handlePrizeDefined}
                     spinningTime={spinningTime}
                     classes={{

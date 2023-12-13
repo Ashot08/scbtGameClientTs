@@ -220,7 +220,8 @@ function Game() {
                   {(game.status === 'in_process')
                     &&
                       <>
-                          <aside className={'game_state'}>
+                      {
+                        !mobileCheck() && <aside className={'game_state'}>
                               <div className={classes.asideInner}>
                                   <div className={classes.asideInnerHead}>
                                       <img src={gameIcon} alt="Название игры" title={'Название игры'}/>
@@ -256,7 +257,7 @@ function Game() {
                                                   :
                                                   <CheckIcon sx={{width: 15}}/>
                                               }
-                                              {p.name ? p.name : p.username} {p.username === player ? '(Вы)' : ''}
+                                              {p.name ? p.name : p.username}{p.username === player ? '(Вы)' : ''}
                                               {(getActivePlayer(game).id === p.id) && getLastRollMainAnswers(game)?.map((a) => {
                                                 if (a.status === 'success') return <CheckCircleOutlineIcon
                                                   sx={{color: 'green'}}/>;
@@ -307,6 +308,7 @@ function Game() {
                                     }
                                   </div>
                           </aside>
+                      }
 
                           <div className={'game_desk'}>
                               <div className={classes.shiftIndicator}>
@@ -404,7 +406,9 @@ function Game() {
                                 </div>
                             }
                           </div>
-                          <aside className={'game_state'}>
+
+                        {
+                          !mobileCheck() && <aside className={'game_state'}>
                               <div className={classes.asideInner + ' ' + classes.asideInnerRight}>
                                   <div className={classes.asideInnerHead}>
                                       <img src={historyIcon} alt="История игры" title={'История игры'}/>
@@ -442,6 +446,7 @@ function Game() {
                                   </div>
                               </div>
                           </aside>
+                        }
                       </>
                   }
 
