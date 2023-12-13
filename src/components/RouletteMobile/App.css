@@ -144,6 +144,7 @@ body {
 
 .roulette-pro-regular-prize-item-wrapper{
   background: radial-gradient(farthest-corner, #fff 0, #fadadd 100%);
+  border: 0;
 }
 
 .button-wrapper::after {
@@ -157,17 +158,27 @@ body {
   background: linear-gradient(to bottom, red 0%, #f00000 50%, #c50000 100%);
   z-index: -2;
 }
+/*.roulette-pro-regular-design-prize-item-horizontal {*/
+/*  max-width: 112px;*/
+/*}*/
+/*.roulette-pro-regular-prize-item {*/
+/*  max-width: 112px !important;*/
+/*  width: 112px !important;*/
+/*}*/
+/*.roulette-pro-regular-image-wrapper {*/
+/*  height: 112px;*/
+/*}*/
 @media(max-width: 768px){
 
-  .mobileRoulette{
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-  }
-  .roulette-pro-wrapper-additional-styles{
-    padding: 0;
-    min-height: 230px;
-  }
+  /*.mobileRoulette{*/
+  /*  overflow: hidden;*/
+  /*  display: flex;*/
+  /*  align-items: center;*/
+  /*  justify-content: flex-start;*/
+  /*}*/
+  /*.roulette-pro-wrapper-additional-styles{*/
+  /*  padding: 0;*/
+  /*  min-height: 230px;*/
+  /*}*/
 
 }

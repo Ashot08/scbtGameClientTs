@@ -7,6 +7,7 @@
     position: relative;
     border-radius: 8px;
     background: rgba(26, 25, 68, 0.6);
+    min-height: calc(100vh - 90px);
 
     .asideInnerHead {
       display: flex;
@@ -76,6 +77,11 @@
       background: linear-gradient(180deg, #3F3B83 0%, #23214E 100%);
       opacity: 0.8;
     }
+
+    &.asideInnerRight:after {
+      right: inherit;
+      left: -8px;
+    }
   }
 }
 .gameWait {
@@ -98,5 +104,25 @@
 
   .MuiListItem-root {
     border-bottom: none;
+  }
+}
+
+.shiftIndicator {
+  position: absolute;
+  left: 40px;
+  top: 85px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  text-transform: uppercase;
+
+  &:after {
+    content: '';
+    position: absolute;
+    width: 60px;
+    background-color: #434B71;
+    height: 2px;
+    top: calc(50% - 1px);
+    margin-left: 20px;
   }
 }

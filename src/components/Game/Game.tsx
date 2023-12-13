@@ -39,9 +39,12 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import StartPage from "../StartPage/StartPage.tsx";
 import gameIcon from './img/gameIcon.png';
 import placeholder_1 from './img/placeholder_1.png';
+import placeholder_2 from './img/placeholder_2.png';
 import lockIcon from './img/lock.png';
 import peopleIcon from './img/people.png';
 import CheckIcon from '@mui/icons-material/Check';
+import historyIcon from './img/history.png';
+import chatIcon from './img/chat.png';
 
 function Game() {
   const dispatch = useAppDispatch();
@@ -268,26 +271,6 @@ function Game() {
                                       </div>
                                   </div>
 
-
-                                  <ul>
-                                    {lastRollResult &&
-                                        <li><strong>Результат
-                                            предыдущего:</strong> {lastRollPlayerName} - {lastRollResult}
-                                        </li>}
-
-                                      <li>
-                                          <button style={{marginLeft: 5}} onClick={onGetGameLink}>Ссылка на
-                                              игру
-                                          </button>
-                                      </li>
-                                      <li>
-                                          <strong>Смена:</strong> {getLastTurn(game)?.shift < 4 ? getLastTurn(game)?.shift : 'Игра окончена'}
-                                      </li>
-                                      <li><strong>Сейчас
-                                          ходит:</strong> {getActivePlayer(game).name || getActivePlayer(game).username}
-                                      </li>
-
-                                  </ul>
                                   <div className={classes.asideInnerContent}>
                                     {game.moderator == userId && <div className={classes.moderatorModeText}>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -305,7 +288,7 @@ function Game() {
                                 {
                                   (getActivePlayer(game).id === userId || game.moderator == userId)
                                   &&
-                                    <div>
+                                    <div className={classes.asideInnerContent}>
                                       {
                                         (game?.answersMode === 'true'
                                           &&
@@ -325,7 +308,10 @@ function Game() {
                                   </div>
                           </aside>
 
-                        <div className={'game_desk'}>
+                          <div className={'game_desk'}>
+                              <div className={classes.shiftIndicator}>
+                                  Смена {getLastTurn(game)?.shift < 4 ? getLastTurn(game)?.shift : 'Игра окончена'}
+                              </div>
                             {
 
                               (game?.answersMode === 'true' || quizActive)
@@ -354,7 +340,7 @@ function Game() {
                                         id={`simple-tabpanel-${0}`}
                                         aria-labelledby={`simple-tab-${0}`}
                                       >
-                                      {activeTabNumber === 0 && (
+                                        {activeTabNumber === 0 && (
                                           <Box sx={{p: 3}}>
                                             <BarChart
                                               width={mobileCheck() ? 320 : 500}
@@ -418,6 +404,44 @@ function Game() {
                                 </div>
                             }
                           </div>
+                          <aside className={'game_state'}>
+                              <div className={classes.asideInner + ' ' + classes.asideInnerRight}>
+                                  <div className={classes.asideInnerHead}>
+                                      <img src={historyIcon} alt="История игры" title={'История игры'}/>
+                                      <span>История</span>
+                                  </div>
+
+                                  <div className={classes.asideInnerContent}>
+                                      <div className={'game_state_history'}>
+                                        {lastRollResult ?
+                                          <div>Результат
+                                            предыдущего: {lastRollPlayerName} - {lastRollResult}
+                                          </div>
+                                          :
+                                          'Тут будет история ходов'
+                                        }
+                                      </div>
+                                  </div>
+
+                                  <div className={classes.asideInnerHead}>
+                                      <img src={chatIcon} alt="Чат игры" title={'Чат игры'}/>
+                                      <span>Чат</span>
+                                  </div>
+
+                                  <div className={classes.asideInnerContent}>
+                                      <div className={classes.tilesField}>
+                                          <img src={placeholder_2} alt="Чат игры" title={'Чат игры'}/>
+                                          <div className={classes.lock}>
+                                              <img src={lockIcon} alt="lock"/>
+                                          </div>
+                                      </div>
+                                  </div>
+                                  <div className={classes.asideInnerContent}>
+                                      <Button sx={{backgroundColor: '#00A4A4'}} onClick={onGetGameLink} type="submit"
+                                              variant="contained" fullWidth={true}>Ссылка на игру</Button>
+                                  </div>
+                              </div>
+                          </aside>
                       </>
                   }
 

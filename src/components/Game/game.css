@@ -14,12 +14,13 @@
     min-width: 320px;
 }
 .game_desk {
+    position: relative;
     height: 100%;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding-top: 60px;
+    padding-top: 140px;
 }
 
 .button {
@@ -67,11 +68,19 @@
 .game_state > ul > li:last-child{
     border-bottom: 1px solid rgba(0,0,0,0.1);
 }
-.game_state_players {
+.game_state_players,
+.game_state_history{
     padding: 16px;
     border-radius: 4px;
     border: 1px solid rgba(42, 41, 88, 0.80);
 }
+.game_state_history {
+    font-size: 12px;
+    font-weight: 400;
+    color: #7B7A9C;
+    text-align: center;
+}
+
 .game_state_player {
     display: flex;
     align-items: center;

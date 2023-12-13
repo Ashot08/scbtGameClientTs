@@ -132,23 +132,23 @@ const RouletteMobile = (props: any) => {
         prizesWithText: {
             name: 'Prizes with text',
             options: [false, true],
-            value: true,
+            value: false,
         },
         withoutAnimation: {
             name: 'Without animation',
             options: [false, true],
-            value: false,
+            value: true,
         },
         hideCenterDelimiter: {
             name: 'Hide center delimiter',
             options: [false, true],
-            value: false,
+            value: true,
             forDesign: 'Regular',
         },
         soundWhileSpinning: {
             name: 'Sound while spinning',
             options: [false, true],
-            value: false,
+            value: true,
         },
         stopInCenter: {
             name: 'Stop in the prize item center',
@@ -158,7 +158,7 @@ const RouletteMobile = (props: any) => {
         spinningTime: {
             name: 'Продолжительность вращения',
             options: ['3', '5', '10', '15', '20'],
-            value: '3',
+            value: '6',
         },
     });
 
