@@ -1,0 +1,20 @@
+.personal {
+  padding: 0 20px;
+
+  .catsList {
+    ul {
+      margin-left: 0;
+      padding-left: 0;
+      list-style: none;
+    }
+  }
+
+  .createCat {
+    max-width: 400px;
+  }
+}
+@media (max-width: 768px) {
+  .personal {
+    padding: 0 16px;
+  }
+}

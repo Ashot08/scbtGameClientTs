@@ -11,12 +11,15 @@ function StartPage () {
             <main className={classes.main}>
                 <div className={'page_wrapper'}>
                   <div className={classes.container}>
-                    {isLogin ?
-
-                      <CreateGame />
-                      :
-                      <Account />
-                    }
+                    <div className={classes.start_page}>
+                      {isLogin ?
+                        <div>
+                          <CreateGame/>
+                        </div>
+                        :
+                        <Account />
+                      }
+                    </div>
                   </div>
                 </div>
             </main>

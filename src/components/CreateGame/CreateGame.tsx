@@ -1,7 +1,7 @@
 import {
   Accordion, AccordionDetails, AccordionSummary,
   Checkbox,
-  Divider,
+  // Divider,
   FormControl,
   FormControlLabel, FormGroup,
   InputLabel,
@@ -13,17 +13,17 @@ import {
 import List from "@mui/material/List";
 import Button from "@mui/material/Button";
 import {useEffect, useState} from "react";
-import {useAppDispatch, useAppSelector} from "../../hooks.ts";
+import {useAppDispatch} from "../../hooks.ts";
 import {createGame} from "../../store/reducers/gameSlice.ts";
 import Token from "../../utils/Token.ts";
 import {show} from "../../store/reducers/notificationSlice.ts";
 import {useNavigate} from "react-router-dom";
 import {showPopup} from "../../store/reducers/popupSlice.ts";
 import {GameQR} from "../GameQR/GameQR.tsx";
-import {selectUserLogin, selectUserName} from "../../store/reducers/userSlice.ts";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import QuestionApi from "../../api/QuestionApi.ts";
+import classes from './CreateGame.module.scss';
 
 export const CreateGame = () => {
   const [playersCount, setPlayersCount] = useState(3);
@@ -109,121 +109,120 @@ export const CreateGame = () => {
     } catch(error) {
       console.log(error);
     }
-
-
   }
-  const player = useAppSelector(selectUserLogin);
-  const playerName = useAppSelector(selectUserName);
 
   return (
     <>
+      <div className={classes.createGame}>
+        <List component="nav" aria-label="mailbox folders">
+          <ListItem>
+            <div>
 
+              <h1>
+                Новая игра
+              </h1>
 
+              <FormControl sx={{mb: 3.2}} fullWidth>
+                <TextField
+                  className={'input standard'}
+                  sx={{width: '100%'}}
+                  id="game-title-input"
+                  label={'Название игры'}
+                  variant="standard"
+                  type="text"
+                  name={'game-title'}
+                  placeholder={'Введите название'}
+                  value={gameTitle}
+                  onChange={(e) => setGameTitle(e.target.value)}
+                  required={true}
+                />
+              </FormControl>
+              <FormControl className={'select'} sx={{mb: 1.6}} fullWidth>
+                <InputLabel id="demo-simple-select-label">Количество игроков</InputLabel>
+                <Select
+                  className={'select'}
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={playersCount}
+                  label="Количество игроков"
+                  onChange={(e) => {
+                    setPlayersCount(+e.target.value)
+                  }}
+                >
+                  <MenuItem key={'players-count_2'} value={2}>2</MenuItem>
+                  <MenuItem key={'players-count_3'} value={3}>3</MenuItem>
+                  <MenuItem key={'players-count_4'} value={4}>4</MenuItem>
+                  <MenuItem key={'players-count_5'} value={5}>5</MenuItem>
+                  <MenuItem key={'players-count_6'} value={6}>6</MenuItem>
+                </Select>
+              </FormControl>
 
-      <List component="nav" aria-label="mailbox folders">
-        <ListItem>
-          <div>
-            <TextField
-              sx={{width: '100%'}}
-              id="name-input"
-              label="Добро пожаловать"
-              variant="outlined"
-              type="text"
-              name={'name'}
-              placeholder={'Добро пожаловать'}
-              value={playerName ? playerName : player}
-              disabled={true}
-            />
-            <FormControl sx={{my: 2}} fullWidth>
-              <TextField
-                sx={{width: '100%'}}
-                id="game-title-input"
-                label={'Название игры'}
-                variant="outlined"
-                type="text"
-                name={'game-title'}
-                placeholder={'Введите название'}
-                value={gameTitle}
-                onChange={(e) => setGameTitle(e.target.value)}
-                required={true}
-              />
-            </FormControl>
-            <FormControl sx={{my: 2}} fullWidth>
-              <InputLabel id="demo-simple-select-label">Количество игроков</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={playersCount}
-                label="Количество игроков"
-                onChange={(e) => {
-                  setPlayersCount(+e.target.value)
-                }}
-              >
-                <MenuItem value={2}>2</MenuItem>
-                <MenuItem value={3}>3</MenuItem>
-                <MenuItem value={4}>4</MenuItem>
-                <MenuItem value={5}>5</MenuItem>
-                <MenuItem value={6}>6</MenuItem>
-              </Select>
-              <FormControlLabel onChange={() => setModeratorMode(!moderatorMode)}
-                                control={<Checkbox checked={moderatorMode}/>} label="Модератор"/>
-            </FormControl>
+              <FormControl className={'select'} sx={{mb: 1.6}}>
+                <FormControlLabel onChange={() => setModeratorMode(!moderatorMode)}
+                                  control={<Checkbox checked={moderatorMode}/>}
+                                  label="Модератор"
+                />
+              </FormControl>
 
-            <Accordion>
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-              >
-                <Typography>Разделы вопросов</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Typography>
-                  <FormGroup>
-                    {cats.map((c: any) => <FormControlLabel key={`${c.title}_${c.id}`} control={<Checkbox onChange={changeCheckbox} value={c.id} checked={checkedCats.includes(c.id)} />} label={c.title} />)}
-                  </FormGroup>
-                </Typography>
-              </AccordionDetails>
-            </Accordion>
+              <Accordion className={classes.questionsCatsAccordion}>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon/>}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <Typography>Разделы вопросов</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Typography>
+                    <FormGroup>
+                      {cats.map((c: any) => <FormControlLabel key={`${c.title}_${c.id}`}
+                                                              control={<Checkbox onChange={changeCheckbox} value={c.id}
+                                                                                 checked={checkedCats.includes(c.id)}/>}
+                                                              label={c.title}/>)}
+                    </FormGroup>
+                  </Typography>
+                </AccordionDetails>
+              </Accordion>
 
-            <form onSubmit={onCreateGame}>
-              <Button disabled={submitDisabled} sx={{my: 2, width: '100%', textAlign: 'center'}} type="submit" variant="contained">Новая
-                игра</Button>
-            </form>
-          </div>
-        </ListItem>
+              <form onSubmit={onCreateGame}>
+                <Button disabled={submitDisabled} sx={{my: 2, width: '100%', textAlign: 'center'}} type="submit"
+                        variant="contained">Создать
+                </Button>
+              </form>
+            </div>
+          </ListItem>
 
-        <Divider/>
+          {/*<Divider/>*/}
 
-        {/*<ListItem sx={{width: '100%'}} divider>*/}
-        {/*  <div style={{width: '100%'}}>*/}
-        {/*    <h4>Присоединиться к игре</h4>*/}
-        {/*    <form onSubmit={joinGame} action="">*/}
+          {/*<ListItem sx={{width: '100%'}} divider>*/}
+          {/*  <div style={{width: '100%'}}>*/}
+          {/*    <h4>Присоединиться к игре</h4>*/}
+          {/*    <form onSubmit={joinGame} action="">*/}
 
-        {/*      <div>*/}
-        {/*        <label htmlFor="">*/}
-        {/*          <TextField*/}
-        {/*            sx={{width: "100%"}}*/}
-        {/*            onInput={(e: any) => {*/}
-        {/*              setGameIdInput('' + e.target.value);*/}
-        {/*            }}*/}
-        {/*            required={true}*/}
-        {/*            id={'name-input'}*/}
-        {/*            label={'Id игры'}*/}
-        {/*            variant={'outlined'}*/}
-        {/*            type={'text'}*/}
-        {/*            name={'game_id'}*/}
-        {/*          />*/}
-        {/*        </label>*/}
-        {/*      </div>*/}
-        {/*      <Button disabled={submitDisabled} sx={{my: 2, width: '100%'}} type="submit"*/}
-        {/*              variant="contained">Присоединиться</Button>*/}
-        {/*    </form>*/}
-        {/*  </div>*/}
-        {/*</ListItem>*/}
+          {/*      <div>*/}
+          {/*        <label htmlFor="">*/}
+          {/*          <TextField*/}
+          {/*            sx={{width: "100%"}}*/}
+          {/*            onInput={(e: any) => {*/}
+          {/*              setGameIdInput('' + e.target.value);*/}
+          {/*            }}*/}
+          {/*            required={true}*/}
+          {/*            id={'name-input'}*/}
+          {/*            label={'Id игры'}*/}
+          {/*            variant={'outlined'}*/}
+          {/*            type={'text'}*/}
+          {/*            name={'game_id'}*/}
+          {/*          />*/}
+          {/*        </label>*/}
+          {/*      </div>*/}
+          {/*      <Button disabled={submitDisabled} sx={{my: 2, width: '100%'}} type="submit"*/}
+          {/*              variant="contained">Присоединиться</Button>*/}
+          {/*    </form>*/}
+          {/*  </div>*/}
+          {/*</ListItem>*/}
 
-      </List>
-
+        </List>
+      </div>
     </>
   );
 

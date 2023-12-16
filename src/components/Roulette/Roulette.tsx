@@ -218,8 +218,6 @@ export default function Roulette (props: any){
 
     return (
         <>
-            <BasicCard name={''} id={'Ходит ' + props.activePlayer.name || props.activePlayer.username} />
-
             <div className="rouletteWrapper">
 
                 {mobileCheck() ?

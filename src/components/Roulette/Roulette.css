@@ -1,13 +1,12 @@
 .rouletteButtonWrapper{
     position: fixed;
     bottom: 0;
-    left: 0;
     z-index: 12;
-    width: 100%;
     background-color: transparent;
     padding: 20px;
     padding-bottom: 60px;
     text-align: right;
+    left: calc(50% - 140px);
 }
 .roll_result_content{
     text-align: center;

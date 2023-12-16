@@ -1,4 +1,4 @@
-import './App.css'
+import './App.scss'
 import ButtonAppBar from "./components/ButtonAppBar/ButtonAppBar.tsx";
 import Notification from "./components/Notification/Notification.tsx";
 import {Route, Routes} from "react-router-dom";
@@ -47,7 +47,7 @@ function App() {
   }
 
   async function getGames() {
-    if(Token.getToken().id) {
+    if(Token.getToken()?.id) {
       try {
         const games: any = await GameController.getGamesByPlayerId(Token.getToken().id);
         setGames(games.games.games);

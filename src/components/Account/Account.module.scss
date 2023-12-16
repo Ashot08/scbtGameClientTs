@@ -1,10 +1,79 @@
 .account {
-    max-width: 400px;
-
+    position: relative;
+    max-width: 530px;
+    width: 100%;
     border-radius: 8px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
     border-top: 1px solid #6D8EAF;
     border-right: 1px solid #6D8EAF;
     border-left: 1px solid #6D8EAF;
-    background: linear-gradient(180deg, rgba(24, 23, 81, 0.36) 0%, rgba(9, 8, 46, 0.00) 100%);
-    backdrop-filter: blur(4px);
+
+    &:before,
+    &:after{
+        content: '';
+        background-color: #07082F;
+        width: 1px;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        backdrop-filter: blur(15px);
+        z-index: 10;
+        mask-image: linear-gradient(to top, black, transparent);
+        -webkit-mask-image: linear-gradient(to top, black,transparent);
+    }
+    &:before {
+        left: -1px;
+    }
+    &:after {
+        right: -1px;
+    }
+
+    .worker {
+        position: absolute;
+        bottom: 0;
+        overflow: hidden;
+
+        img {
+            max-width: 100%;
+            height: auto;
+            position: relative;
+            bottom: -3px;
+        }
+
+        z-index: 3;
+    }
+    .forms {
+        position: relative;
+        z-index: 5;
+        margin-top: 131px;
+    }
+    @media (max-height: 850px) {
+        .worker {
+            width: 100%;
+            text-align: right;
+
+            img {
+                max-height: 300px;
+                width: auto;
+            }
+        }
+    }
+    @media (max-height: 720px) {
+        .worker {
+            img {
+                max-height: 200px;
+            }
+        }
+    }
+    @media (max-height: 640px) {
+        .worker {
+            img {
+                max-height: 140px;
+            }
+        }
+    }
 }
+
+
+

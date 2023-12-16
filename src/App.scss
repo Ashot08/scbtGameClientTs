@@ -1,0 +1,138 @@
+*{
+  box-sizing: border-box;
+}
+body{
+  margin: 0;
+  padding: 0;
+  color: #fff;
+  background-color: #07082F;
+}
+
+main{
+  height: 100vh;
+}
+
+.container {
+  max-width: 1440px;
+  margin: 0 auto;
+  height: 100%;
+  width: 100%;
+}
+
+.page_wrapper{
+  padding-top: 60px;
+  height: 100%;
+}
+.input {
+  &.standard {
+    text-align: center;
+
+    .MuiInputLabel-root {
+      width: 100%;
+
+      &.Mui-focused {
+      text-align: left;
+    }
+    }
+
+    .MuiFormLabel-filled{
+      text-align: left;
+    }
+
+    .MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before {
+      border-bottom: 2px solid rgba(255, 255, 255, 0.42);
+    }
+
+    .MuiInput-input {
+      color: #fff;
+      text-align: center;
+    }
+    .MuiInput-underline {
+      &:before{
+        border-bottom: 1px solid rgba(255, 255, 255, 0.42);
+      }
+      &.Mui-focused:after{
+        border-bottom: 2px solid rgba(255, 255, 255, 0.42);
+      }
+    }
+  }
+
+  .MuiOutlinedInput-input {
+    color: #fff;
+  }
+
+  .MuiOutlinedInput-notchedOutline{
+    border-color: #F0F1FB;
+  }
+
+  .MuiInputBase-root:hover .MuiOutlinedInput-notchedOutline,
+  .MuiInputBase-root.Mui-focused .MuiOutlinedInput-notchedOutline{
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+
+  .MuiInputLabel-root {
+    color: rgba(255, 255, 255, 0.4);
+
+    &.Mui-focused {
+      color: #D4D4EB;
+      color: rgba(255, 255, 255, 0.4);
+    }
+  }
+}
+.select {
+  .MuiOutlinedInput-input {
+    color: #fff;
+  }
+  .MuiOutlinedInput-notchedOutline{
+    border-color: #F0F1FB;
+  }
+  .MuiInputLabel-root {
+    color: rgba(255, 255, 255, 0.4);
+
+    &.Mui-focused {
+      color: #D4D4EB;
+      color: rgba(255, 255, 255, 0.4);
+    }
+  }
+  &.MuiInputBase-root.Mui-focused .MuiOutlinedInput-notchedOutline,
+  &.MuiInputBase-root:hover .MuiOutlinedInput-notchedOutline{
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+  .MuiSvgIcon-root {
+    color: rgba(255, 255, 255, 0.5);
+  }
+}
+
+.tabs {
+  border-bottom: none !important;
+
+  .MuiTab-root {
+    color: rgba(255, 255, 255, 0.4);
+
+    &.Mui-selected {
+      color: #fff;
+      background-color: rgba(0,0,0,0.05);
+    }
+  }
+  .MuiTabs-flexContainer {
+    justify-content: center;
+  }
+}
+
+
+
+@media (max-width: 1440px) {
+  .container {
+    max-width: 1200px;
+  }
+}
+
+@media(max-width: 768px){
+  main{
+    max-width: 100%;
+    align-items: flex-start;
+  }
+  .gameWrapper{
+    width: 100%;
+  }
+}
