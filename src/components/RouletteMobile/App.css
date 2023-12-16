@@ -168,6 +168,22 @@ body {
 /*.roulette-pro-regular-image-wrapper {*/
 /*  height: 112px;*/
 /*}*/
+
+
+.flex {
+  display: flex;
+  align-items: center;
+}
+
+.flex.fill {
+  height: 100%;
+}
+
+.flex.center {
+  justify-content: center;
+}
+
+
 @media(max-width: 768px){
 
   /*.mobileRoulette{*/

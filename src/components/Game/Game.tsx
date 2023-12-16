@@ -329,7 +329,7 @@ function Game() {
                                       isMyTurn={getActivePlayer(game).username === player}
                                       userId={userId} updateAnswer={updateAnswer}/>
                                 :
-                                <div>
+                                <div style={{width: '100%'}}>
                                   {(getLastTurn(game)?.shift > 3 && !getLastRoll(game))
                                     ?
 

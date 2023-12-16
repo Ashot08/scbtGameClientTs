@@ -1,0 +1,41 @@
+.swiperWrapper {
+  width: 100%;
+  padding: 0 40px;
+
+  .swiper {
+    overflow: visible;
+  }
+
+  .swiperSlide {
+    border-radius: 4px;
+    min-height: 112px;
+
+    .slideImage {
+      img {
+        max-width: 100%;
+      }
+    }
+
+    &.groupLetal  {
+        background: linear-gradient(180deg, #CB101B 0%, #584282 100%);
+      }
+    &.bonus {
+      background: linear-gradient(180deg, #39BC89 0%, #414283 100%);
+    }
+    &.hard {
+      background: linear-gradient(180deg, #9F6EF4 0%, #414283 100%);
+    }
+    &.micro {
+      background: linear-gradient(180deg, #FAA406 0%, #414283 100%);
+    }
+    &.letal {
+      background: linear-gradient(180deg, #F64747 0%, #414283 100%);
+    }
+    &.light {
+      background: linear-gradient(180deg, #5DADF9 0%, #414283 100%);
+    }
+    &.group {
+      background: linear-gradient(180deg, #E660BF 0%, #464284 100%);
+    }
+  }
+}

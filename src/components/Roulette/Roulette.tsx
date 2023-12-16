@@ -23,6 +23,7 @@ import RouletteMobile from "../RouletteMobile/RouletteMobile.tsx";
 import List from "@mui/material/List";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import DangerousIcon from "@mui/icons-material/Dangerous";
+import RouletteMobile2 from "../RouletteMobile/RouletteMobile2.tsx";
 
 const data = [
     {
@@ -217,43 +218,46 @@ export default function Roulette (props: any){
     }
 
     return (
-        <>
-            <div className="rouletteWrapper">
+      <>
+          <div style={{marginTop: 60}}>
+              <RouletteMobile2/>
+          </div>
+          <div className="rouletteWrapper">
 
-                {mobileCheck() ?
-                     <RouletteMobile onStopSpinning={onStopSpinning} mustSpin={mustSpin} prizeNumber={prizeNumber}   />
-                    :
-                    <Wheel
-                        mustStartSpinning={mustSpin}
-                        prizeNumber={prizeNumber as number}
-                        data={data}
-                        innerRadius={8}
-                        radiusLineWidth={1}
-                        textDistance={55}
-                        spinDuration={0.2}
-                        pointerProps={{src: arrowImage}}
-                        onStopSpinning={onStopSpinning}
-                    />
-                }
-
-
-            </div>
-            <div className="rouletteButtonWrapper">
-
-                {
-                    ( props.activePlayer.id == props.userId || game.moderator == props.userId )
-                    &&
-                    <ButtonGroup className={'rouletteButtons'} variant="contained" aria-label="outlined primary button group">
-                        <Button disabled={mustSpin} onClick={onRoll}>Крутить</Button>
-                        <Button disabled={mustSpin} onClick={onNextPlayer}>Передать ход</Button>
-                    </ButtonGroup>
-                }
+              {mobileCheck() ?
+                <RouletteMobile onStopSpinning={onStopSpinning} mustSpin={mustSpin} prizeNumber={prizeNumber}/>
+                :
+                <Wheel
+                  mustStartSpinning={mustSpin}
+                  prizeNumber={prizeNumber as number}
+                  data={data}
+                  innerRadius={8}
+                  radiusLineWidth={1}
+                  textDistance={55}
+                  spinDuration={0.2}
+                  pointerProps={{src: arrowImage}}
+                  onStopSpinning={onStopSpinning}
+                />
+              }
 
 
-            </div>
+          </div>
+          <div className="rouletteButtonWrapper">
+
+              {
+                (props.activePlayer.id == props.userId || game.moderator == props.userId)
+                &&
+                <ButtonGroup className={'rouletteButtons'} variant="contained"
+                             aria-label="outlined primary button group">
+                    <Button disabled={mustSpin} onClick={onRoll}>Крутить</Button>
+                    <Button disabled={mustSpin} onClick={onNextPlayer}>Передать ход</Button>
+                </ButtonGroup>
+              }
 
 
+          </div>
 
-        </>
+
+      </>
     )
 }

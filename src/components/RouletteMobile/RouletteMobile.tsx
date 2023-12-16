@@ -242,8 +242,10 @@ const RouletteMobile = (props: any) => {
 
 
     return (
+
+      <>
         <div className={'mobileRoulette'}>
-            <div className={`roulette ${type}`}>
+            {0 && <div className={`roulette ${type}`}>
                 <RoulettePro
                     type={type as RouletteType}
                     prizes={[...prizes, ...prizes, ...prizes]}
@@ -262,10 +264,11 @@ const RouletteMobile = (props: any) => {
                     options={{ stopInCenter, withoutAnimation }}
                     defaultDesignOptions={{ prizesWithText, hideCenterDelimiter }}
                 />
-            </div>
+            </div>}
 
 
         </div>
+      </>
     );
 };
 
