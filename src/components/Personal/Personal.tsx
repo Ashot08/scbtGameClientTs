@@ -8,6 +8,7 @@ import cyrillicToTranslit from "cyrillic-to-translit-js";
 import QuestionApi from "../../api/QuestionApi.ts";
 import Token from "../../utils/Token.ts";
 import {show} from "../../store/reducers/notificationSlice.ts";
+import classes from './Personal.module.scss';
 
 function Personal() {
   const dispatch = useAppDispatch();
@@ -73,60 +74,66 @@ function Personal() {
             {isLogin ?
 
               <>
-                {Array.isArray(cats) && cats.length
-                  ?
-                  <div style={{textAlign: 'left'}}>
-                    <ul>
-                      {cats.map((c: any) => <li><label><input key={'cat_checkbox_' + c.id} onChange={changeCheckbox}
-                                                              type={'checkbox'} name={'category'}
-                                                              value={c.id}/>{c?.title}
-                      </label></li>)}
-                    </ul>
-                    <div>
-                      <button disabled={submitDisabled} onClick={deleteCats}>Удалить выбранные</button>
+                <div className={classes.personal}>
+                  {Array.isArray(cats) && cats.length
+                    ?
+                    <div className={classes.catsList} style={{textAlign: 'left'}}>
+
+                      <h3>Доступные категории</h3>
+
+                      <ul>
+                        {cats.map((c: any) => <li><label><input key={'cat_checkbox_' + c.id} onChange={changeCheckbox}
+                                                                type={'checkbox'} name={'category'}
+                                                                value={c.id}/>{c?.title}
+                        </label></li>)}
+                      </ul>
+                      <div>
+                        <button disabled={submitDisabled} onClick={deleteCats}>Удалить выбранные</button>
+                      </div>
                     </div>
+                    :
+                    ''
+                  }
+
+                  <div className={classes.createCat}>
+
+                    <h3>Создать категорию вопроса</h3>
+
+                    <form onSubmit={createCat}>
+
+                      <TextField
+                        className={'input'}
+                        sx={{width: '100%', mb: 1}}
+                        required={true}
+                        onInput={(e: any) => {
+                          setCatTitle(e.target.value);
+                          setCatSlug(cyrillicToTranslit().transform(e.target.value, '_').toLowerCase())
+                        }}
+                        id="cat-title-input"
+                        label="Название"
+                        variant="outlined"
+                        type="text"
+                        name={'title'}
+                        value={catTitle}
+                      />
+
+                      <TextField
+                        className={'input'}
+                        sx={{width: '100%', mb: 1}}
+                        required={true}
+                        onInput={(e: any) => setCatSlug(e.target.value)}
+                        id="cat-slug-input"
+                        label="Slug"
+                        variant="outlined"
+                        type="text"
+                        name={'slug'}
+                        value={catSlug}
+                      />
+
+                      <Button sx={{width: '100%'}} type="submit" variant="contained"
+                              disabled={submitDisabled}>Создать</Button>
+                    </form>
                   </div>
-                  :
-                  ''
-                }
-
-                <div>
-
-                  <h3>Создать категорию вопроса</h3>
-
-                  <form onSubmit={createCat}>
-
-                    <TextField
-                      sx={{width: '100%', mb: 1}}
-                      required={true}
-                      onInput={(e: any) => {
-                        setCatTitle(e.target.value);
-                        setCatSlug(cyrillicToTranslit().transform(e.target.value, '_').toLowerCase())
-                      }}
-                      id="cat-title-input"
-                      label="Название"
-                      variant="outlined"
-                      type="text"
-                      name={'title'}
-                      value={catTitle}
-                    />
-
-                    <TextField
-                      sx={{width: '100%', mb: 1}}
-                      required={true}
-                      onInput={(e: any) => setCatSlug(e.target.value)}
-                      id="cat-slug-input"
-                      label="Slug"
-                      variant="outlined"
-                      type="text"
-                      name={'slug'}
-                      value={catSlug}
-                      disabled={true}
-                    />
-
-                    <Button sx={{width: '100%'}} type="submit" variant="contained"
-                            disabled={submitDisabled}>Создать</Button>
-                  </form>
                 </div>
               </>
               :

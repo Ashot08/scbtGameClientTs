@@ -109,4 +109,26 @@
     .button:active{
         top: inherit !important;
     }
+    .variants {
+        min-width: 100%;
+        min-height: 0;
+        padding: 16px;
+    }
+    .quiz {
+        margin-top: 60px;
+        padding: 0;
+        margin-bottom: 180px;
+    }
+    .questionText {
+        margin: 10px 0;
+    }
+    .answerButtonWrapper {
+        margin-top: 0;
+    }
+    .questionsWrapper label {
+        padding: 5px 40px;
+    }
+    .answerButtonWrapper h3 {
+        margin: 5px 0;
+    }
 }

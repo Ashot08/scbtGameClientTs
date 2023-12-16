@@ -106,10 +106,13 @@
         width: 100%;
         order: 2;
         display: grid;
-        height: 100%;
         align-items: flex-start;
-        padding: 20px;
+        padding: 0;
         border-top: 3px solid rgba(0,0,0,0.1);
+        height: auto;
+        bottom: 0;
+        position: fixed;
+        z-index: 999;
     }
     .game_state > ul{
         order: 2;
@@ -120,8 +123,21 @@
         overflow-y: auto;
         justify-content: center;
         align-items: center;
+        padding: 0 16px;
     }
     .game_desk_centered{
         justify-content: center;
+    }
+    .game_state_players {
+        border-radius: 0;
+        border: none;
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .game_state_player {
+        width: 50%;
+    }
+    .game_state_player:last-child {
+        margin-bottom: 10px;
     }
 }

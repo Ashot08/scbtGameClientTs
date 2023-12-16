@@ -18,3 +18,9 @@ h1 {
   background-position: center -60px;
   background-repeat: no-repeat;
 }
+
+@media (max-width: 768px) {
+  .start_page {
+    padding: 20px 16px 0;
+  }
+}

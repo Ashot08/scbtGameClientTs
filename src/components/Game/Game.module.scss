@@ -125,3 +125,24 @@
     margin-left: 20px;
   }
 }
+
+@media (max-width: 768px) {
+  .gameWait {
+    margin-top: 80px;
+    min-width: 100%;
+    min-height: 500px;
+  }
+  .main {
+    .asideInner {
+      &:after,
+      &:before {
+        display: none;
+      }
+      min-height: 0;
+
+      .asideInnerContent {
+        padding-bottom: 0;
+      }
+    }
+  }
+}

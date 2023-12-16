@@ -52,3 +52,17 @@
     }
   }
 }
+
+@media (max-width: 768px) {
+  .createGame {
+    padding: 0;
+    padding-top: 20px;
+    margin-top: 0;
+
+    &:before,
+    &:after{
+      display: none;
+    }
+  }
+
+}

@@ -181,5 +181,12 @@ body {
     /*min-height: 230px;*/
     min-height: 170px;
   }
+  .rouletteWrapper {
+    margin-top: 138px;
+  }
+  .rouletteButtonWrapper {
+    bottom: 165px;
+    padding: 20px 20px 0;
+  }
 
 }

@@ -221,14 +221,16 @@ function Game() {
                     &&
                       <>
                       {
-                        !mobileCheck() && <aside className={'game_state'}>
+                        <aside className={'game_state'}>
                               <div className={classes.asideInner}>
-                                  <div className={classes.asideInnerHead}>
+                                {
+                                  !mobileCheck() && <div className={classes.asideInnerHead}>
                                       <img src={gameIcon} alt="Название игры" title={'Название игры'}/>
                                       <span>{game.title}</span>
-                                  </div>
+                                  </div>}
 
-                                  <div className={classes.asideInnerContent}>
+                                {
+                                  !mobileCheck() && <div className={classes.asideInnerContent}>
                                       <div className={classes.tilesField}>
                                           <img src={placeholder_1} alt="Игровое поле" title={'Игровое поле'}/>
                                           <div className={classes.lock}>
@@ -237,11 +239,14 @@ function Game() {
                                       </div>
 
                                   </div>
+                                }
 
-                                  <div className={classes.asideInnerHead}>
-                                      <img src={peopleIcon} alt="Название игры" title={'Название игры'}/>
+                                {
+                                  !mobileCheck() && <div className={classes.asideInnerHead}>
+                                      <img src={peopleIcon} alt="Участники игры" title={'Участники игры'}/>
                                       <span>В игре</span>
                                   </div>
+                                }
 
                                   <div className={classes.asideInnerContent}>
                                       <div className={'game_state_players'}>
@@ -272,7 +277,8 @@ function Game() {
                                       </div>
                                   </div>
 
-                                  <div className={classes.asideInnerContent}>
+                                {
+                                  !mobileCheck() && <div className={classes.asideInnerContent}>
                                     {game.moderator == userId && <div className={classes.moderatorModeText}>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                              viewBox="0 0 24 24" fill="none">
@@ -286,6 +292,7 @@ function Game() {
                                         Режим модератора
                                     </div>}
                                   </div>
+                                }
                                 {
                                   (getActivePlayer(game).id === userId || game.moderator == userId)
                                   &&
