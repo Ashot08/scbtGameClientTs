@@ -1,8 +1,9 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import {Autoplay} from "swiper/modules";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import classes from './RouletteMobile.module.scss';
+import './RouletteMobile.scss';
 
 import groupLetalIcon from "./images/groupLetal.png";
 import bonusIcon from "./images/bonus.png";
@@ -11,6 +12,8 @@ import microIcon from "./images/micro.png";
 import letalIcon from "./images/letal.png";
 import lightIcon from "./images/light.png";
 import groupIcon from "./images/group.png";
+import defendIcon from "./images/defend.png";
+import arrowIcon from "./images/arrow.png";
 
 const data = [
   {
@@ -102,8 +105,19 @@ const data = [
     class: 'micro'
   },
 ]
-export default function RouletteMobile2() {
+export default function RouletteMobile2(props: any) {
   const [swiper, setSwiper] = useState(null);
+  const [blur, setBlur] = useState(false);
+
+
+  useEffect(() => {
+    if (!props.mustSpin) {
+      return;
+    }
+    console.log('PRIZE', props.prizeNumber + 32);
+    rollTo(props.prizeNumber + 32);
+  }, [props.prizeNumber, props.mustSpin]);
+
   function rollTo(index: number, speed = 3000) {
     if(swiper) {
       // @ts-expect-error: swiper
@@ -111,22 +125,46 @@ export default function RouletteMobile2() {
     }
   }
 
-  const slides = data.map(el => <SwiperSlide className={classes.swiperSlide + ' ' + classes[el.class]}>
-    <div className={classes.difficultly}>{el.category}</div>
-    <div className={classes.slideImage}><img src={el.icon} alt={el.fullName}/></div>
-  </SwiperSlide>)
-
+  function getSlides () {
+    return data.map((el) => <SwiperSlide key={el.class + '_' + Math.random()} className={classes.swiperSlide + ' ' + classes[el.class]}>
+      {
+        el.category
+          ?
+          <div className={classes.difficultly}>
+            <span>{el.category}</span>
+            <img src={defendIcon} alt="Тяжесть"/>
+          </div>
+          :
+          ''
+      }
+      <div className={classes.slideImage}><img src={el.icon} alt={el.fullName}/></div>
+      <div className={classes.slideName}>{el.option}</div>
+    </SwiperSlide>)
+  }
   return (
     <>
-      <button onClick={()=>rollTo(20)}>Roll!</button>
+      <button onClick={()=>rollTo(52)}>Roll!</button>
       <button onClick={()=>rollTo(2, 1)}>Back</button>
-      <div style={{marginTop: 100, marginBottom: 100}}>
+      <div className={blur ? 'blur' : ''} style={{marginTop: 100, marginBottom: 100}}>
         <div className={classes.swiperWrapper}>
+          <div className={classes.swiperArrow}>
+            <img src={arrowIcon} alt="Стрелка"/>
+          </div>
           <Swiper
             className={classes.swiper}
             spaceBetween={4}
-            slidesPerView={3}
+            // slidesPerView={3}
+            slidesPerView={'auto'}
             onSlideChange={() => console.log('slide change')}
+            onSlideNextTransitionEnd={() => {
+              if(props.mustSpin) {
+                setBlur(true);
+                props.onStopSpinning();
+                setTimeout(() => {
+                  rollTo(2, 1);
+                }, 1200)
+              }
+            }}
             onSwiper={(swiper) => {
               console.log(swiper);
               setSwiper(swiper as any);
@@ -136,11 +174,16 @@ export default function RouletteMobile2() {
             speed={3000}
             modules={[Autoplay]}
             centeredSlides={true}
+
           >
-            {...slides}
-            {...slides}
-            {...slides}
-            {...slides}
+            {...getSlides()}
+            {...getSlides()}
+            {...getSlides()}
+            {...getSlides()}
+            {...getSlides()}
+            {...getSlides()}
+            {...getSlides()}
+            {...getSlides()}
 
           </Swiper>
         </div>
@@ -149,4 +192,4 @@ export default function RouletteMobile2() {
     </>
 
   );
-};
+}

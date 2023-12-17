@@ -1,0 +1,8 @@
+.blur {
+  .swiper-slide {
+    filter: blur(4px);
+  }
+  .swiper-slide-active {
+    filter: none;
+  }
+}

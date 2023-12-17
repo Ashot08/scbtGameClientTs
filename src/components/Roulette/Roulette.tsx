@@ -220,7 +220,7 @@ export default function Roulette (props: any){
     return (
       <>
           <div style={{marginTop: 60}}>
-              <RouletteMobile2/>
+              <RouletteMobile2 onStopSpinning={onStopSpinning} mustSpin={mustSpin} prizeNumber={prizeNumber} />
           </div>
           <div className="rouletteWrapper">
 
