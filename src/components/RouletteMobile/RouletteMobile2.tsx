@@ -143,9 +143,7 @@ export default function RouletteMobile2(props: any) {
   }
   return (
     <>
-      <button onClick={()=>rollTo(52)}>Roll!</button>
-      <button onClick={()=>rollTo(2, 1)}>Back</button>
-      <div className={blur ? 'blur' : ''} style={{marginTop: 100, marginBottom: 100}}>
+      <div className={blur ? 'blur' : ''} style={{marginTop: 100, marginBottom: 16}}>
         <div className={classes.swiperWrapper}>
           <div className={classes.swiperArrow}>
             <img src={arrowIcon} alt="Стрелка"/>
@@ -160,9 +158,9 @@ export default function RouletteMobile2(props: any) {
               if(props.mustSpin) {
                 setBlur(true);
                 props.onStopSpinning();
-                setTimeout(() => {
-                  rollTo(2, 1);
-                }, 1200)
+                // setTimeout(() => {
+                //   rollTo(2, 1);
+                // }, 1200)
               }
             }}
             onSwiper={(swiper) => {

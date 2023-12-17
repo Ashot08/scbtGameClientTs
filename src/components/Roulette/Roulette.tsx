@@ -1,5 +1,5 @@
 import { Wheel } from 'react-custom-roulette';
-import './Roulette.css';
+import './Roulette.scss';
 import arrowImage from './img/arrow.svg';
 import BasicCard from "../Card/BasicCard.tsx";
 // import {offRollAction} from "../../store/gameReducer.js";
@@ -19,11 +19,11 @@ import {hidePopup, showPopup} from "../../store/reducers/popupSlice.ts";
 import {useAppDispatch, useAppSelector} from "../../hooks.ts";
 import {selectGame} from "../../store/reducers/gameSlice.ts";
 import {selectIsRoll, selectPrizeNumber, setMeta, stopRoll} from "../../store/reducers/rouletteSlice.ts";
-import RouletteMobile from "../RouletteMobile/RouletteMobile.tsx";
 import List from "@mui/material/List";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import DangerousIcon from "@mui/icons-material/Dangerous";
 import RouletteMobile2 from "../RouletteMobile/RouletteMobile2.tsx";
+import placeholder_1 from './img/placeholder_1.png';
 
 const data = [
     {
@@ -219,29 +219,36 @@ export default function Roulette (props: any){
 
     return (
       <>
-          <div style={{marginTop: 60}}>
-              <RouletteMobile2 onStopSpinning={onStopSpinning} mustSpin={mustSpin} prizeNumber={prizeNumber} />
-          </div>
-          <div className="rouletteWrapper">
+
 
               {mobileCheck() ?
-                <RouletteMobile onStopSpinning={onStopSpinning} mustSpin={mustSpin} prizeNumber={prizeNumber}/>
+                <div>
+                    <RouletteMobile2 onStopSpinning={onStopSpinning} mustSpin={mustSpin} prizeNumber={prizeNumber} />
+                    <div className={'mobileTopPanel'}>
+                        <div className={'mobileTopPanel_placeholder_1'}><img src={placeholder_1} alt=""/></div>
+                        <button className={'mobileRollButton'} disabled={mustSpin} onClick={onRoll}>Крутить</button>
+                    </div>
+
+                </div>
+                // <RouletteMobile onStopSpinning={onStopSpinning} mustSpin={mustSpin} prizeNumber={prizeNumber}/>
                 :
-                <Wheel
-                  mustStartSpinning={mustSpin}
-                  prizeNumber={prizeNumber as number}
-                  data={data}
-                  innerRadius={8}
-                  radiusLineWidth={1}
-                  textDistance={55}
-                  spinDuration={0.2}
-                  pointerProps={{src: arrowImage}}
-                  onStopSpinning={onStopSpinning}
-                />
+                <div className="rouletteWrapper">
+                    <Wheel
+                      mustStartSpinning={mustSpin}
+                      prizeNumber={prizeNumber as number}
+                      data={data}
+                      innerRadius={8}
+                      radiusLineWidth={1}
+                      textDistance={55}
+                      spinDuration={0.2}
+                      pointerProps={{src: arrowImage}}
+                      onStopSpinning={onStopSpinning}
+                    />
+                </div>
               }
 
 
-          </div>
+
           <div className="rouletteButtonWrapper">
 
               {
