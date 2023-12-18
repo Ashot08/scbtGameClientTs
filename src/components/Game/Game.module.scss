@@ -127,6 +127,23 @@
 }
 
 @media (max-width: 768px) {
+  .shiftIndicator {
+    left: 89px;
+    top: 32px;
+    z-index: 9999;
+    font-size: 10px;
+    text-transform: none;
+    color: #C3C0ED;
+    font-family: inherit;
+    font-weight: 500;
+    opacity: 0.6;
+
+    &:after {
+      display: none;
+    }
+  }
+
+
   .gameWait {
     margin-top: 80px;
     min-width: 100%;

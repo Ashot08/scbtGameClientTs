@@ -143,7 +143,7 @@ export default function RouletteMobile2(props: any) {
   }
   return (
     <>
-      <div className={blur ? 'blur' : ''} style={{marginTop: 100, marginBottom: 16}}>
+      <div className={blur ? 'blur' : ''} style={{marginTop: 67, marginBottom: 16}}>
         <div className={classes.swiperWrapper}>
           <div className={classes.swiperArrow}>
             <img src={arrowIcon} alt="Стрелка"/>

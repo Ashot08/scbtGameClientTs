@@ -9,6 +9,7 @@ import Logo from './img/Logo.svg';
 import HomeIcon from '@mui/icons-material/Home';
 import TableBarIcon from '@mui/icons-material/TableBar';
 import PersonIcon from '@mui/icons-material/Person';
+import './ButtonAppBar.scss';
 
 import {
     Collapse,
@@ -67,7 +68,7 @@ export default function ButtonAppBar(props: ButtonAppBarProps) {
                         ?
                         <img src={Logo} alt="Сибтруд Логотип компании"/>
                         :
-                        <span style={{fontFamily: 'Oswald',fontSize: '24px'}}>{playerName || player}</span>
+                        <span className={'playerName'}>{playerName || player}</span>
                         }
 
                         <Menu

@@ -6,10 +6,11 @@
 
   .swiperArrow {
     position: absolute;
-    left: 0;
+    left: calc(50% - 6px);
     top: -24px;
-    width: 100%;
+    width: 12px;
     text-align: center;
+    z-index: 9000;
   }
 
   &:before {
