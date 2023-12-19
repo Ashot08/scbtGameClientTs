@@ -125,8 +125,80 @@
     margin-left: 20px;
   }
 }
+.controlButtonsToggle {
+  display: none;
+  z-index: 10;
+  position: relative;
+}
+
+.controlButtons {
+  position: absolute;
+  bottom: -100%;
+  opacity: 0;
+  display: none;
+  background-color: #2A2958;
+  padding-top: 32px;
+  padding-bottom: 40px;
+  width: 100%;
+  text-align: center;
+
+  &.controlButtonsBlockShown {
+    transition: 0.3s;
+    bottom: 0;
+    opacity: 1;
+  }
+  button{
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 26px;
+    background: #00ABAB;
+    color: #fff;
+    border: none;
+
+    &:first-child {
+      margin-right: 20px;
+    }
+  }
+}
+.controlButtonsOpenIcon,
+.controlButtonsCloseIcon {
+  opacity: 0.6;
+  display: none;
+  border-left: 1px solid #414283;
+  border-right: 1px solid #414283;
+  border-top: 1px solid #414283;
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
+  position: absolute;
+  bottom: -5px;
+  left: calc(50% - 10px);
+  padding: 1px 3px;
+
+  svg {
+    width: 12px;
+    height: 12px;
+  }
+}
+.controlButtonsCloseIcon {
+  bottom: initial;
+  transform: rotate(180deg);
+  height: 16px;
+  top: 0;
+}
 
 @media (max-width: 768px) {
+
+  .controlButtonsToggle {
+    display: block;
+    text-align: center;
+  }
+
+  .controlButtons,
+  .controlButtonsOpenIcon,
+  .controlButtonsCloseIcon{
+    display: block;
+  }
   .shiftIndicator {
     left: 89px;
     top: 32px;
@@ -151,6 +223,8 @@
   }
   .main {
     .asideInner {
+      background-color: #2A2958;
+
       &:after,
       &:before {
         display: none;

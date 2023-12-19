@@ -6,7 +6,7 @@ import './quiz.css';
 import {useEffect, useState} from "react";
 // import {setAnswersStat} from "../../store/quizReducer.js";
 import Timer from "../Timer/Timer.jsx";
-import {show} from "../../store/reducers/notificationSlice.ts";
+// import {show} from "../../store/reducers/notificationSlice.ts";
 import {useAppDispatch, useAppSelector} from "../../hooks.ts";
 import {offTimer} from "../../store/reducers/quizSlice.ts";
 import {selectGame} from "../../store/reducers/gameSlice.ts";
@@ -58,10 +58,10 @@ export const Quiz = (props: any) => {
     const isSuccessAnswer = (answer == trueAnswer);
 
     setAnswerStatus(isSuccessAnswer ? 'success' : 'error');
-    dispatch(show({
-      text: isSuccessAnswer ? `Вы ответили правильно!` : `Вы ошиблись!`,
-      status: isSuccessAnswer ? 'success' : 'error',
-    }));
+    // dispatch(show({
+    //   text: isSuccessAnswer ? `Вы ответили правильно!` : `Вы ошиблись!`,
+    //   status: isSuccessAnswer ? 'success' : 'error',
+    // }));
     if (getCurrentPlayerProcessAnswer(game, props.userId)) {
       props.updateAnswer(
         getCurrentPlayerProcessAnswer(game, props.userId)?.id,
@@ -101,12 +101,23 @@ export const Quiz = (props: any) => {
                 ?
                 <div>
                   <h4>Готовы отвечать?</h4>
-                  <Button sx={{backgroundColor: '#c0392b'}} onClick={props.startAnswers} disabled={false}
+                  <Button sx={{backgroundColor: '#c0392b', marginRight: 4}} onClick={props.startAnswers} disabled={false}
                           variant={'contained'}>Старт!</Button>
+
+                  <div>
+                    <Button sx={{backgroundColor: '#00ABAB', marginTop: 1}} onClick={props.onHideQuiz} disabled={false}
+                            variant={'contained'}>Перейти к рулетке</Button>
+                  </div>
                 </div>
                 :
                 <div>
                   <h4>Прежде чем отвечать, нужно покрутить рулетку!</h4>
+
+                  <div className={'onlyMobile'}>
+                    <Button sx={{backgroundColor: '#00ABAB', marginTop: 1}}
+                            onClick={props.onHideQuiz} disabled={false}
+                            variant={'contained'}>Перейти к рулетке</Button>
+                  </div>
                 </div>
               }
 
@@ -116,47 +127,51 @@ export const Quiz = (props: any) => {
           &&
             <form style={{textAlign: 'left'}} onSubmit={onSubmit}>
                 <FormControl sx={{width: '100%'}}>
-                    {/*<FormLabel sx={{color: '#fff'}} id="demo-radio-buttons-group-label">{quiz.questions[questionNumber]?.question}</FormLabel>*/}
+                {/*<FormLabel sx={{color: '#fff'}} id="demo-radio-buttons-group-label">{quiz.questions[questionNumber]?.question}</FormLabel>*/}
                     <div className={'questionNumber'}>Вопрос №{questionNumber}</div>
                     <div className={'questionText'}>{quiz.questions[questionNumber]?.question}</div>
                     <div className={'questionsWrapper'}>
                         <RadioGroup
-                          sx={{display: 'grid'}}
-                          aria-labelledby="demo-radio-buttons-group-label"
-                          defaultValue=""
-                          name="radio-buttons-group"
-                          onChange={(e) => setAnswer(e.target.value)}
+                            sx={{display: 'grid'}}
+                            aria-labelledby="demo-radio-buttons-group-label"
+                            defaultValue=""
+                            name="radio-buttons-group"
+                            onChange={(e) => setAnswer(e.target.value)}
                         >
-                            {
-                                quiz.questions[questionNumber]?.answers.map(
-                                  (a: any) => <FormControlLabel
-                                    disabled={answerStatus !== 'in_process'}
-                                    sx={{order: order[orderNumber][quiz.questions[questionNumber].answers.indexOf(a)]}}
-                                    key={questionNumber + a} value={a} control={<Radio/>}
-                                    label={a}
-                                    // checked={
-                                    //   getCurrentPlayerAnswer(game, props.userId).status === 'success'
-                                    //   &&
-                                    //   (quiz.questions[questionNumber].answers.indexOf(a) === 0)}
-                                  />)
-                            }
+                          {
+                            quiz.questions[questionNumber]?.answers.map(
+                              (a: any) => <FormControlLabel
+                                disabled={answerStatus !== 'in_process'}
+                                sx={{
+                                  order: order[orderNumber][quiz.questions[questionNumber].answers.indexOf(a)],
+                                }}
+                                key={questionNumber + a} value={a} control={<Radio/>}
+                                label={a}
+                                // checked={
+                                //   getCurrentPlayerAnswer(game, props.userId).status === 'success'
+                                //   &&
+                                //   (quiz.questions[questionNumber].answers.indexOf(a) === 0)}
+                              />)
+                          }
 
                         </RadioGroup>
                     </div>
                 </FormControl>
 
-                {
-                    (game?.moderatorMode === '1' && props.userId === game?.moderator)
+              {
+                (game?.moderatorMode === '1' && props.userId === game?.moderator)
                   ?
                   <div>Игроки находятся в режиме ответов на вопросы...</div>
                   :
-                  <div className={'answerButtonWrapper'}><Button sx={{color: '#fff', border: '1px solid rgba(255, 255, 255, 0.5)'}}
-                          disabled={answerStatus !== 'in_process'} type={'submit'}
-                               variant={'outlined'}>Ответить</Button></div>
+                  <div className={'answerButtonWrapper'}><Button
+                    sx={{color: '#fff', border: '1px solid rgba(255, 255, 255, 0.5)'}}
+                    disabled={answerStatus !== 'in_process'} type={'submit'}
+                    variant={'outlined'}>Ответить</Button></div>
               }
 
               {
-                props.quizTimer && <div className={'timerWrapper'}><Timer expiryTimestamp={time} onExpire={onExpire}/></div>
+                props.quizTimer &&
+                  <div className={'timerWrapper'}><Timer expiryTimestamp={time} onExpire={onExpire}/></div>
               }
 
               {
@@ -164,9 +179,15 @@ export const Quiz = (props: any) => {
                 &&
                   <div className={'answerButtonWrapper'}>
                       <h3>{answerResultText}</h3>
-                    {props.isMyTurn && !props.timerOn &&
-                        <Button disabled={props.quizTimer || oneMoreQuestionDisabled} onClick={props.startAnswers}
-                                variant={'contained'}>Взять ещё один вопрос</Button>}
+                    {
+                      props.isMyTurn && !props.timerOn &&
+                        <>
+                            <div><Button disabled={props.quizTimer || oneMoreQuestionDisabled} onClick={props.startAnswers}
+                                         variant={'contained'}>Взять ещё один вопрос</Button></div>
+                            <div className={'onlyMobile'}><Button sx={{backgroundColor: '#00ABAB', marginTop: 1}} onClick={props.onHideQuiz} disabled={false}
+                                         variant={'contained'}>Перейти к рулетке</Button></div>
+                        </>
+                    }
                   </div>
 
               }

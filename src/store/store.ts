@@ -5,6 +5,7 @@ import popupReducer from "./reducers/popupSlice.ts";
 import notificationReducer from "./reducers/notificationSlice.ts";
 import rouletteReducer from "./reducers/rouletteSlice.ts";
 import quizReducer from "./reducers/quizSlice.ts";
+import gameInfoReducer from "./reducers/gameInfoSlice.ts";
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     popup: popupReducer,
     roulette: rouletteReducer,
     quiz: quizReducer,
+    gameInfo: gameInfoReducer,
   },
   devTools: false,
 });

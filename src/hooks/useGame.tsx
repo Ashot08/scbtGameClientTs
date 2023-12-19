@@ -12,6 +12,7 @@ import shiftClockIcon from '../assets/shift_clock.png'
 import shiftCupIcon from '../assets/shift_cup.png'
 import playerIcon from '../assets/player.png'
 import { Button } from '@mui/material';
+import {hideGameInfo} from "../store/reducers/gameInfoSlice.ts";
 
 // import { useBeforeUnload } from './useBeforeUnload.ts';
 
@@ -66,6 +67,7 @@ const useGame = (roomId: any) => {
 
     socketRef.current.on('game:roll', (result: any) => {
       dispatch(hidePopup());
+      dispatch(hideGameInfo());
       dispatch(hide());
 
       // Рулетка не успевает монтироваться, если у модератора был открыт Квиз, отсюда ошибка
@@ -77,10 +79,12 @@ const useGame = (roomId: any) => {
     });
 
     socketRef.current.on('game:stopAnswers', () => {
+      dispatch(hideGameInfo());
       dispatch(hide());
     });
 
     socketRef.current.on('game:nextPlayer', (activePlayer: any) => {
+      dispatch(hideGameInfo());
       dispatch(showPopup({
         title:
           <>
@@ -101,6 +105,7 @@ const useGame = (roomId: any) => {
     });
 
     socketRef.current.on('game:nextShift', (result: any, activePlayer: any) => {
+      dispatch(hideGameInfo());
       if(result.shift > 3) {
         dispatch(showPopup({
           title:

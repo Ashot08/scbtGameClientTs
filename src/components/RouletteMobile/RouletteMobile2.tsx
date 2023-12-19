@@ -1,6 +1,5 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
-import {Autoplay} from "swiper/modules";
 import {useEffect, useState} from "react";
 import classes from './RouletteMobile.module.scss';
 import './RouletteMobile.scss';
@@ -14,6 +13,8 @@ import lightIcon from "./images/light.png";
 import groupIcon from "./images/group.png";
 import defendIcon from "./images/defend.png";
 import arrowIcon from "./images/arrow.png";
+import {useAppSelector} from "../../hooks.ts";
+import {selectGameInfoIsShown} from "../../store/reducers/gameInfoSlice.ts";
 
 const data = [
   {
@@ -107,21 +108,24 @@ const data = [
 ]
 export default function RouletteMobile2(props: any) {
   const [swiper, setSwiper] = useState(null);
-  const [blur, setBlur] = useState(false);
-
+  // const [blur, setBlur] = useState(false);
+  const gameInfoOpen = useAppSelector(selectGameInfoIsShown);
 
   useEffect(() => {
     if (!props.mustSpin) {
       return;
     }
-    console.log('PRIZE', props.prizeNumber + 32);
-    rollTo(props.prizeNumber + 32);
+    rollTo(2, 0);
+    setTimeout(()=> {
+      rollTo(props.prizeNumber + 8);
+    }, 200)
+
   }, [props.prizeNumber, props.mustSpin]);
 
   function rollTo(index: number, speed = 3000) {
     if(swiper) {
       // @ts-expect-error: swiper
-      swiper.slideTo(index, speed)
+      swiper.slideTo(index, speed);
     }
   }
 
@@ -143,7 +147,7 @@ export default function RouletteMobile2(props: any) {
   }
   return (
     <>
-      <div className={blur ? 'blur' : ''} style={{marginTop: 67, marginBottom: 16}}>
+      <div className={gameInfoOpen ? 'blur' : ''} style={{marginTop: 67, marginBottom: 16}}>
         <div className={classes.swiperWrapper}>
           <div className={classes.swiperArrow}>
             <img src={arrowIcon} alt="Стрелка"/>
@@ -156,33 +160,38 @@ export default function RouletteMobile2(props: any) {
             onSlideChange={() => console.log('slide change')}
             onSlideNextTransitionEnd={() => {
               if(props.mustSpin) {
-                setBlur(true);
                 props.onStopSpinning();
-                // setTimeout(() => {
-                //   rollTo(2, 1);
-                // }, 1200)
               }
             }}
             onSwiper={(swiper) => {
-              console.log(swiper);
               setSwiper(swiper as any);
             }}
             allowTouchMove={false}
             initialSlide={2}
-            speed={3000}
-            modules={[Autoplay]}
+            // speed={10000}
             centeredSlides={true}
-
           >
             {...getSlides()}
             {...getSlides()}
-            {...getSlides()}
-            {...getSlides()}
-            {...getSlides()}
-            {...getSlides()}
-            {...getSlides()}
-            {...getSlides()}
+            {/*{...getSlides()}*/}
+            {/*{...getSlides()}*/}
+            {/*{...getSlides()}*/}
+            {/*{...getSlides()}*/}
+            {/*{...getSlides()}*/}
+            {/*{...getSlides()}*/}
+            <SwiperSlide key={data[0].class + '_' + Math.random()} className={classes.swiperSlide + ' ' + classes[data[0].class]}>
+                  <div className={classes.difficultly}>
+                    <span>{data[0].category}</span>
+                    <img src={defendIcon} alt="Тяжесть"/>
+                  </div>
+              <div className={classes.slideImage}><img src={data[0].icon} alt={data[0].fullName}/></div>
+              <div className={classes.slideName}>{data[0].option}</div>
+            </SwiperSlide>
+            <SwiperSlide key={data[1].class + '_' + Math.random()} className={classes.swiperSlide + ' ' + classes[data[1].class]}>
 
+              <div className={classes.slideImage}><img src={data[1].icon} alt={data[1].fullName}/></div>
+              <div className={classes.slideName}>{data[1].option}</div>
+            </SwiperSlide>
           </Swiper>
         </div>
       </div>

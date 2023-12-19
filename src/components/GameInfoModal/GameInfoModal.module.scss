@@ -1,0 +1,164 @@
+.gameInfo {
+  height: 160px;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  position: fixed;
+  bottom: 10px;
+  width: 800px;
+  left: calc(50% - 400px);
+  border-radius: 8px;
+  background-color: #32307C;
+  font-size: 14px;
+  font-weight: 400;
+  color: #fff;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding-top: 32px;
+  z-index: 15;
+
+  .leftText {
+    position: relative;
+    margin-left: 108px;
+    max-width: 195px;
+    text-align: right;
+    line-height: 1.5;
+
+    .leftTextTitle {
+      color: #4BBBFD;
+      font-size: 18px;
+      font-weight: 500;
+      margin-bottom: 16px;
+    }
+  }
+
+  .image {
+    position: absolute;
+    bottom: -100%;
+    left: 46%;
+    img {
+      display: block;
+      width: 100%;
+    }
+    transition: 0.8s;
+  }
+
+  .info {
+    margin-right: 40px;
+    max-width: 195px;
+    text-align: right;
+
+    .infoText {
+      margin-bottom: 16px;
+    }
+  }
+
+  &.blockShow {
+    opacity: 1;
+
+    .image {
+      bottom: 0;
+    }
+  }
+
+  .buttons {
+    display: none;
+  }
+}
+
+.leftCorner {
+  width: 138px;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+
+  img {
+    display: block;
+    width: 100%;
+  }
+}
+
+@media (max-width: 1440px) {
+  .gameInfo {
+    width: 560px;
+    left: calc(50% - 280px);
+    background-color: #2A2958;
+    padding-bottom: 40px;
+
+    .leftCorner {
+      width: 100px;
+    }
+
+    .leftText {
+      margin-left: 80px;
+      max-width: 150px;
+      .leftTextTitle {
+        max-width: 150px;
+        font-size: 16px;
+      }
+    }
+
+    .image {
+      left: 40%;
+    }
+
+    .info {
+      max-width: 112px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .gameInfo {
+    width: 100%;
+    height: auto;
+    display: block;
+    text-align: center;
+    left: 0;
+    border-top-right-radius: 32px;
+    border-top-left-radius: 32px;
+    padding-left: 30px;
+    padding-right: 30px;
+
+    .buttons {
+      display: block;
+      margin-top: 32px;
+
+      button{
+        padding: 8px 16px;
+        font-size: 12px;
+        font-weight: 700;
+        border-radius: 26px;
+        background: #00ABAB;
+        color: #fff;
+        border: none;
+
+        &:first-child {
+          margin-right: 20px;
+        }
+      }
+    }
+
+    .image {
+      display: none;
+    }
+
+    .leftText {
+      text-align: center;
+      max-width: 100%;
+      margin-left: 0;
+
+      .leftTextTitle {
+        max-width: 100%;
+      }
+    }
+
+    .leftCorner {
+      display: none;
+    }
+  }
+  .gameInfo {
+    z-index: 999;
+    bottom: 0;
+  }
+}

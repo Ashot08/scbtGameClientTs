@@ -4,6 +4,11 @@
 }
 
 @media (max-width: 768px) {
+
+  .blured_object {
+    filter: blur(2px);
+  }
+
   header.MuiAppBar-root {
     background-color: #2A2958;
     box-shadow: none;

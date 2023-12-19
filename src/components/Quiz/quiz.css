@@ -10,7 +10,7 @@
     font-size: 18px;
 }
 .variants label{
-    text-align: left;
+    text-align: center;
     margin-bottom: 10px;
 }
 .MuiRadio-root.Mui-checked {
@@ -86,6 +86,9 @@
     right: 0;
     height: 600px;
 }
+.onlyMobile {
+    display: none;
+}
 @media (max-width: 1440px) {
     .variants {
         max-width: 380px;
@@ -96,6 +99,9 @@
     }
 }
 @media(max-width: 768px){
+    .onlyMobile {
+        display: block;
+    }
     .thinkingMan {
         display: none;
     }

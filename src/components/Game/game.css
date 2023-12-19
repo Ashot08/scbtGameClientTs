@@ -49,6 +49,9 @@
     top: 4px;
     box-shadow: #c0392b 0px 3px 2px,#000 0px 3px 5px;
 }
+.blured_object {
+    filter: blur(2px);
+}
 
 .button:disabled:hover {
     opacity: 0.8;

@@ -45,7 +45,10 @@ import peopleIcon from './img/people.png';
 import CheckIcon from '@mui/icons-material/Check';
 import historyIcon from './img/history.png';
 import chatIcon from './img/chat.png';
-import RollPopup from "../RollPopup/RollPopup.tsx";
+import GameInfoModal from "../GameInfoModal/GameInfoModal.tsx";
+import {hideGameInfo, selectGameInfoIsShown} from "../../store/reducers/gameInfoSlice.ts";
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import CloseIcon from '@mui/icons-material/Close';
 
 function Game() {
   const dispatch = useAppDispatch();
@@ -59,13 +62,77 @@ function Game() {
   const quizActive = useAppSelector(selectIsActive);
   const timerOn = useAppSelector(selectTimerOn);
   const [activeTabNumber, setActiveTabNumber] = useState(0);
+  const gameInfoOpen = useAppSelector(selectGameInfoIsShown);
+  const [controllsOpen, setControllsOpen] = useState(false);
+  const [controlsAnimate, setControlsAnimate] = useState(false);
   // const [questionsCats, setQuestionsCats] = useState([]);
 
+
+  const onNextPlayer = () => {
+    dispatch(showPopup({
+      title: '',
+      content: <BasicCard
+        name={'Вы уверены, что хотите передать ход?'}
+        id={`Вернуться к текущему ходу будет нельзя`}
+        content={
+          <List>
+            <ListItem key={'sdfsa'} disablePadding>
+              <ListItemButton onClick={() => {
+                // setYourTurnWasShown(false);
+                goNextTurn();
+              }}>
+                <ListItemIcon>
+                  <CheckCircleOutlineIcon/>
+                </ListItemIcon>
+                <Button sx={{my: 2}} type="submit"
+                        variant="contained">Да</Button>
+              </ListItemButton>
+            </ListItem>
+
+            <ListItem key={'sdfsa'} disablePadding>
+              <ListItemButton onClick={() => dispatch(hidePopup())}>
+                <ListItemIcon>
+                  <DangerousIcon/>
+                </ListItemIcon>
+                <Button sx={{my: 2}} type="submit"
+                        variant="contained">Нет</Button>
+              </ListItemButton>
+            </ListItem>
+          </List>
+        }
+      />,
+    }))
+  }
+
+  // const swipeHandlers = useSwipeable({
+  //   onSwipedUp: () => {
+  //     if (getActivePlayer(game).id === userId || game.moderator == userId) {
+  //       setSwipedControllsOpen(true);
+  //       setTimeout(() => {
+  //         setSwipedControlsAnimate(true);
+  //       })
+  //     }
+  //   },
+  //   onSwipedDown: () => {
+  //     if (getActivePlayer(game).id === userId || game.moderator == userId) {
+  //       setSwipedControllsOpen(false);
+  //       setTimeout(() => {
+  //         setSwipedControlsAnimate(false);
+  //       })
+  //     }
+  //   }
+  // });
   const handleChange = (event: any, newValue: number) => {
     console.log(event)
     setActiveTabNumber(newValue);
   };
   useEffect(() => {
+
+
+    if (game.status === 'created') {
+      dispatch(hideGameInfo());
+    }
+
     if (game?.answersMode === 'true') {
       dispatch(show());
     }
@@ -77,6 +144,13 @@ function Game() {
   //     console.log(result);
   //   }
   // }
+
+  const toggleControlButtons = () => {
+    setControllsOpen(!controllsOpen);
+    setTimeout(() => {
+      setControlsAnimate(!controlsAnimate);
+    })
+  }
 
   const onGetGameLink = () => {
     dispatch(showPopup({
@@ -296,30 +370,86 @@ function Game() {
                                 }
                                 {
                                   (getActivePlayer(game).id === userId || game.moderator == userId)
-                                  &&
-                                    <div className={classes.asideInnerContent}>
-                                      {
-                                        (game?.answersMode === 'true'
-                                          &&
-                                          (getActivePlayer(game).username === player || userId === game.moderator)
-                                        )
-                                        ||
-                                        quizActive
-                                          ?
-                                          !timerOn &&
-                                            <button onClick={onHideQuiz} className={'button'}>Перейти к
-                                                рулетке</button>
-                                          :
-                                          <button onClick={onShowQuiz} className={'button'}>Взять вопрос</button>
-                                      }
-                                    </div>
+                                  && <>
+                                        <div className={classes.asideInnerContent}>
+                                          {
+                                            (game?.answersMode === 'true'
+                                              &&
+                                              (getActivePlayer(game).username === player || userId === game.moderator)
+                                            )
+                                            ||
+                                            quizActive
+                                              ?
+                                              !timerOn &&
+                                                <button onClick={onHideQuiz} className={'button'}>Перейти к
+                                                    рулетке</button>
+                                              :
+                                              <button onClick={onShowQuiz} className={'button'}>Взять вопрос</button>
+                                          }
+                                        </div>
+
+
+                                        <div onClick={toggleControlButtons} className={classes.controlButtonsToggle}>
+                                          {
+                                            controllsOpen
+                                              ?
+                                              <CloseIcon/>
+                                              :
+                                              <MoreHorizIcon/>
+                                          }
+                                        </div>
+                                    </>
                                 }
+
                               </div>
+
+                              {
+                                (getActivePlayer(game).id === userId || game.moderator == userId)
+                                && <>
+                                  {controllsOpen
+                                    &&
+                                      <div
+                                          className={`${classes.controlButtons} ${controlsAnimate ? classes.controlButtonsBlockShown : ''}`}>
+                                        {
+                                          (game?.answersMode === 'true'
+                                            &&
+                                            (getActivePlayer(game).username === player || userId === game.moderator)
+                                          )
+                                          ||
+                                          quizActive
+                                            ?
+                                            !timerOn &&
+                                              <button onClick={()=>{
+                                                onHideQuiz();
+                                                setControllsOpen(false);
+                                                setControlsAnimate(false);
+                                              }}>Перейти к
+                                                  рулетке</button>
+                                            :
+                                            <>
+                                              <button onClick={() => {
+                                                onShowQuiz();
+                                                setControllsOpen(false);
+                                                setControlsAnimate(false);
+                                              }}>Взять вопрос</button>
+                                              <button onClick={() => {
+                                                onNextPlayer();
+                                                setControllsOpen(false);
+                                                setControlsAnimate(false);
+                                              }}>Передать ход</button>
+                                            </>
+                                        }
+                                      </div>
+                                  }
+                                  </>
+                              }
+
+
                             </aside>
                           }
 
                             <div className={'game_desk'}>
-                                <div className={classes.shiftIndicator}>
+                                <div className={`${gameInfoOpen ? 'blured_object ' : ''} ${classes.shiftIndicator}`}>
                                     Смена {getLastTurn(game)?.shift < 4 ? getLastTurn(game)?.shift : ''}
                                 </div>
                               {
@@ -328,7 +458,7 @@ function Game() {
                                   ?
                                   <Quiz quizTimer={timerOn} startAnswers={startAnswers}
                                         isMyTurn={getActivePlayer(game).username === player}
-                                        userId={userId} updateAnswer={updateAnswer}/>
+                                        userId={userId} updateAnswer={updateAnswer} onHideQuiz={onHideQuiz}/>
                                   :
                                   <>
                                     <div style={{width: '100%'}}>
@@ -410,10 +540,17 @@ function Game() {
 
                                         :
                                         <Roulette userId={userId} activePlayer={getActivePlayer(game)}
-                                                  handleSpinClick={createRoll} onNextPlayer={goNextTurn}/>
+                                                  handleSpinClick={createRoll} onNextPlayer={onNextPlayer}/>
                                       }
                                     </div>
-                                    <RollPopup/>
+                                    {gameInfoOpen &&
+                                        <>
+
+                                            <GameInfoModal
+                                                showButtons={(getActivePlayer(game).id === userId || game.moderator == userId)}
+                                                onShowQuiz={onShowQuiz} goNextTurn={onNextPlayer}/>
+                                        </>
+                                    }
                                   </>
                               }
                             </div>

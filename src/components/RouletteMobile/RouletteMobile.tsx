@@ -245,7 +245,7 @@ const RouletteMobile = (props: any) => {
 
       <>
         <div className={'mobileRoulette'}>
-            {0 && <div className={`roulette ${type}`}>
+            {<div className={`roulette ${type}`}>
                 <RoulettePro
                     type={type as RouletteType}
                     prizes={[...prizes, ...prizes, ...prizes]}

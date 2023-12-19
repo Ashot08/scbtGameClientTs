@@ -24,6 +24,7 @@ import {ExpandLess, ExpandMore, StarBorder} from "@mui/icons-material";
 import {Link} from "react-router-dom";
 import {useAppSelector} from "../../hooks.ts";
 import {selectUserIsLogin, selectUserLogin, selectUserName} from "../../store/reducers/userSlice.ts";
+import {selectGameInfoIsShown} from "../../store/reducers/gameInfoSlice.ts";
 
 interface ButtonAppBarProps {
     games: [['one', {title: 'game 1'}], ['two', {title: 'game 1'}], ['three', {title: 'game 1'}]] | [],
@@ -37,6 +38,7 @@ export default function ButtonAppBar(props: ButtonAppBarProps) {
     const player = useAppSelector(selectUserLogin);
     const playerName = useAppSelector(selectUserName);
     const isLogin = useAppSelector(selectUserIsLogin);
+    const gameInfoOpen = useAppSelector(selectGameInfoIsShown);
 
     const handleClose = () => {
         setAnchorEl(null);
@@ -49,7 +51,7 @@ export default function ButtonAppBar(props: ButtonAppBarProps) {
     };
 
     return (
-        <Box sx={{flexGrow: 1}}>
+        <Box className={`${gameInfoOpen ? 'blured_object' : ''}`} sx={{flexGrow: 1}}>
             <AppBar position="fixed">
                 <div className={'container'}>
                     <Toolbar>
