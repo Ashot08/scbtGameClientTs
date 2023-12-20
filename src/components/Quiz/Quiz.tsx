@@ -26,18 +26,100 @@ export const Quiz = (props: any) => {
   const [oneMoreQuestionDisabled, setOneMoreQuestionDisabled] = useState(true);
 
   let orderNumber = 0;
-  if (questionNumber < 150) {
+  if (questionNumber < 400) {
     orderNumber = 1;
   }
-  if (questionNumber < 110) {
+  if (questionNumber < 390) {
     orderNumber = 2;
   }
-  if (questionNumber < 60) {
+  if (questionNumber < 280) {
+    orderNumber = 3;
+  }
+  if (questionNumber < 270) {
+    orderNumber = 0;
+  }
+  if (questionNumber < 260) {
+    orderNumber = 1;
+  }
+  if (questionNumber < 250) {
     orderNumber = 2;
+  }
+  if (questionNumber < 240) {
+    orderNumber = 3;
+  }
+  if (questionNumber < 230) {
+    orderNumber = 0;
+  }
+  if (questionNumber < 220) {
+    orderNumber = 1;
+  }
+  if (questionNumber < 210) {
+    orderNumber = 2;
+  }
+  if (questionNumber < 200) {
+    orderNumber = 3;
+  }
+  if (questionNumber < 190) {
+    orderNumber = 0;
+  }
+  if (questionNumber < 180) {
+    orderNumber = 1;
+  }
+  if (questionNumber < 170) {
+    orderNumber = 2;
+  }
+  if (questionNumber < 160) {
+    orderNumber = 3;
+  }
+  if (questionNumber < 150) {
+    orderNumber = 0;
+  }
+  if (questionNumber < 140) {
+    orderNumber = 1;
+  }
+  if (questionNumber < 130) {
+    orderNumber = 2;
+  }
+  if (questionNumber < 120) {
+    orderNumber = 3;
+  }
+  if (questionNumber < 110) {
+    orderNumber = 0;
+  }
+  if (questionNumber < 100) {
+    orderNumber = 1;
+  }
+  if (questionNumber < 90) {
+    orderNumber = 2;
+  }
+  if (questionNumber < 80) {
+    orderNumber = 3;
+  }
+  if (questionNumber < 70) {
+    orderNumber = 0;
+  }
+  if (questionNumber < 60) {
+    orderNumber = 1;
+  }
+  if (questionNumber < 50) {
+    orderNumber = 2;
+  }
+  if (questionNumber < 40) {
+    orderNumber = 3;
   }
   if (questionNumber < 30) {
     orderNumber = 0;
   }
+  if (questionNumber < 20) {
+    orderNumber = 1;
+  }
+  if (questionNumber < 10) {
+    orderNumber = 2;
+  }
+  if (questionNumber < 5) {
+    orderNumber = 3;
+  }
+
 
   useEffect(() => {
     setAnswerStatus(getCurrentPlayerAnswer(game, props.userId)?.status ?? 'in_process');
@@ -182,9 +264,9 @@ export const Quiz = (props: any) => {
                     {
                       props.isMyTurn && !props.timerOn &&
                         <>
-                            <div><Button disabled={props.quizTimer || oneMoreQuestionDisabled} onClick={props.startAnswers}
+                            <div><Button className={'oneMoreQuestionButton'} disabled={props.quizTimer || oneMoreQuestionDisabled} onClick={props.startAnswers}
                                          variant={'contained'}>Взять ещё один вопрос</Button></div>
-                            <div className={'onlyMobile'}><Button sx={{backgroundColor: '#00ABAB', marginTop: 1}} onClick={props.onHideQuiz} disabled={false}
+                            <div className={'onlyMobile'}><Button className={'oneMoreQuestionButton'} sx={{backgroundColor: '#00ABAB', marginTop: 2}} onClick={props.onHideQuiz} disabled={props.quizTimer}
                                          variant={'contained'}>Перейти к рулетке</Button></div>
                         </>
                     }

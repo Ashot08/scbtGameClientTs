@@ -255,15 +255,21 @@ export default function Roulette(props: any) {
 
 
       {mobileCheck() ?
-        <div>
+        <div style={{marginTop: 67}}>
           <RouletteMobile2 game={game} onStopSpinning={onStopSpinning} mustSpin={mustSpin} prizeNumber={prizeNumber}/>
           <div className={'mobileTopPanel'}>
             <div className={'mobileTopPanel_placeholder_1'}><img src={placeholder_1} alt=""/></div>
             {
               (props.activePlayer.id == props.userId || game.moderator == props.userId)
               &&
-                <button className={'mobileRollButton'} disabled={mustSpin || gameInfoOpen}
-                        onClick={onRoll}>Крутить</button>
+                <div>
+                    <button style={{marginRight: 10}} className={'mobileRollButton'} disabled={mustSpin || gameInfoOpen}
+                            onClick={props.onNextPlayer}>Передать ход
+                    </button>
+                    <button className={'mobileRollButton'} disabled={mustSpin || gameInfoOpen}
+                            onClick={onRoll}>Крутить
+                    </button>
+                </div>
             }
           </div>
           {/*<RouletteMobile onStopSpinning={onStopSpinning} mustSpin={mustSpin} prizeNumber={prizeNumber}/>*/}

@@ -16,7 +16,12 @@ import CasinoIcon from '@mui/icons-material/Casino';
 import {selectPlayerName, selectResult} from "../../store/reducers/rouletteSlice.ts";
 import {hide, selectIsActive, selectTimerOn, show} from "../../store/reducers/quizSlice.ts";
 import {Quiz} from "../Quiz/Quiz.tsx";
-import {getAnswersResults, getAnswersResultsToGraph, getLastRoll, getLastRollMainAnswers} from "../../utils/answers.ts";
+import {
+  getAnswersResults,
+  getAnswersResultsToGraph,
+  getLastRollMainAnswers, getTotalAnswersResults,
+  getTotalAnswersResultsToGraph
+} from "../../utils/answers.ts";
 import {useEffect, useState} from "react";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import DangerousIcon from '@mui/icons-material/Dangerous';
@@ -40,6 +45,7 @@ import StartPage from "../StartPage/StartPage.tsx";
 import gameIcon from './img/gameIcon.png';
 import placeholder_1 from './img/placeholder_1.png';
 import placeholder_2 from './img/placeholder_2.png';
+import placeholder_3 from './img/placeholder_3.png';
 import lockIcon from './img/lock.png';
 import peopleIcon from './img/people.png';
 import CheckIcon from '@mui/icons-material/Check';
@@ -56,7 +62,16 @@ function Game() {
   const player = useAppSelector(selectUserLogin);
   const isLogin = useAppSelector(selectUserIsLogin);
   const userId = Token.getToken()?.id;
-  const {game, joinGame, createRoll, goNextTurn, startAnswers, updateAnswer, stopAnswers} = useGame(params.gameId);
+  const {
+    game,
+    joinGame,
+    createRoll,
+    goNextTurn,
+    startAnswers,
+    updateAnswer,
+    stopAnswers,
+    stopGame
+  } = useGame(params.gameId);
   const lastRollResult = useAppSelector(selectResult);
   const lastRollPlayerName = useAppSelector(selectPlayerName);
   const quizActive = useAppSelector(selectIsActive);
@@ -195,6 +210,43 @@ function Game() {
     }
     dispatch(hide());
   }
+
+  const onFinishGame = () => {
+    if ((game?.answersMode === 'false') && (userId === game?.moderator)) {
+      dispatch(showPopup({
+        title: '',
+        content: <BasicCard
+          name={'Вы уверены, что хотите завершить игру?'}
+          id={`Обратить это действие будет невозможно`}
+          content={
+            <List>
+              <ListItem key={'sdfsa'} disablePadding>
+                <ListItemButton onClick={stopGame}>
+                  <ListItemIcon>
+                    <CheckCircleOutlineIcon/>
+                  </ListItemIcon>
+                  <Button sx={{my: 2}} type="submit"
+                          variant="contained">Да</Button>
+                </ListItemButton>
+              </ListItem>
+
+              <ListItem key={'sdfsa1в'} disablePadding>
+                <ListItemButton onClick={() => dispatch(hidePopup())}>
+                  <ListItemIcon>
+                    <DangerousIcon/>
+                  </ListItemIcon>
+                  <Button sx={{my: 2}} type="submit"
+                          variant="contained">Нет</Button>
+                </ListItemButton>
+              </ListItem>
+            </List>
+          }
+        />,
+      }))
+    }
+    dispatch(hide());
+  }
+
   const onShowQuiz = () => {
     dispatch(show());
   }
@@ -323,7 +375,9 @@ function Game() {
                                     </div>
                                 }
 
-                                <div className={classes.asideInnerContent}>
+
+                                <div
+                                  className={`${classes.asideInnerContent} ${(game.answersMode === 'true') ? classes.mobileAnswersMode : ''}`}>
                                   <div className={'game_state_players'}>
                                     {game.players.map((p: any) => {
                                       return (
@@ -351,6 +405,7 @@ function Game() {
                                     })}
                                   </div>
                                 </div>
+
 
                                 {
                                   !mobileCheck() && <div className={classes.asideInnerContent}>
@@ -384,7 +439,17 @@ function Game() {
                                                 <button onClick={onHideQuiz} className={'button'}>Перейти к
                                                     рулетке</button>
                                               :
-                                              <button onClick={onShowQuiz} className={'button'}>Взять вопрос</button>
+                                              <>
+                                                <button onClick={onShowQuiz} className={'button'}>Взять вопрос</button>
+                                                {
+                                                  (game.moderator == userId)
+                                                  &&
+                                                    <div style={{marginTop: 10}}>
+                                                        <button onClick={onFinishGame} className={'button'}>Завершить игру
+                                                        </button>
+                                                    </div>
+                                                }
+                                              </>
                                           }
                                         </div>
 
@@ -410,35 +475,67 @@ function Game() {
                                     &&
                                       <div
                                           className={`${classes.controlButtons} ${controlsAnimate ? classes.controlButtonsBlockShown : ''}`}>
-                                        {
-                                          (game?.answersMode === 'true'
-                                            &&
-                                            (getActivePlayer(game).username === player || userId === game.moderator)
-                                          )
-                                          ||
-                                          quizActive
-                                            ?
-                                            !timerOn &&
-                                              <button onClick={()=>{
-                                                onHideQuiz();
-                                                setControllsOpen(false);
-                                                setControlsAnimate(false);
-                                              }}>Перейти к
-                                                  рулетке</button>
-                                            :
-                                            <>
-                                              <button onClick={() => {
-                                                onShowQuiz();
-                                                setControllsOpen(false);
-                                                setControlsAnimate(false);
-                                              }}>Взять вопрос</button>
-                                              <button onClick={() => {
-                                                onNextPlayer();
-                                                setControllsOpen(false);
-                                                setControlsAnimate(false);
-                                              }}>Передать ход</button>
-                                            </>
-                                        }
+
+                                          <div className={'game_state_players'}>
+                                            {game.players.map((p: any) => {
+                                              return (
+                                                <div
+                                                  className={'game_state_player' + (getActivePlayer(game).id === p.id ? ' active' : '')}
+                                                  key={'players' + p.id}>
+                                                  {
+                                                    (getActivePlayer(game).id === p.id)
+                                                      ?
+                                                      <CasinoIcon sx={{width: 15}}/>
+                                                      :
+                                                      <CheckIcon sx={{width: 15}}/>
+                                                  }
+                                                  {p.name ? p.name : p.username}{p.username === player ? '(Вы)' : ''}
+                                                  {(getActivePlayer(game).id === p.id) && getLastRollMainAnswers(game)?.map((a) => {
+                                                    if (a.status === 'success') return <CheckCircleOutlineIcon
+                                                      sx={{color: 'green'}}/>;
+                                                    if (a.status === 'error') return <DangerousIcon
+                                                      sx={{color: 'red'}}/>;
+                                                    if (a.status === 'in_process') return <HourglassTopIcon
+                                                      sx={{color: 'gray'}}/>;
+                                                  })}
+                                                </div>
+                                              )
+                                            })}
+                                          </div>
+
+                                          <div>
+                                            {
+                                              (game?.answersMode === 'true'
+                                                &&
+                                                (getActivePlayer(game).username === player || userId === game.moderator)
+                                              )
+                                              ||
+                                              quizActive
+                                                ?
+                                                !timerOn &&
+                                                  <button onClick={() => {
+                                                    onHideQuiz();
+                                                    setControllsOpen(false);
+                                                    setControlsAnimate(false);
+                                                  }}>Перейти к
+                                                      рулетке</button>
+                                                :
+                                                <>
+                                                  <button onClick={() => {
+                                                    onShowQuiz();
+                                                    setControllsOpen(false);
+                                                    setControlsAnimate(false);
+                                                  }}>Взять вопрос
+                                                  </button>
+                                                  <button onClick={() => {
+                                                    onNextPlayer();
+                                                    setControllsOpen(false);
+                                                    setControlsAnimate(false);
+                                                  }}>Передать ход
+                                                  </button>
+                                                </>
+                                            }
+                                          </div>
                                       </div>
                                   }
                                   </>
@@ -450,7 +547,7 @@ function Game() {
 
                             <div className={'game_desk'}>
                                 <div className={`${gameInfoOpen ? 'blured_object ' : ''} ${classes.shiftIndicator}`}>
-                                    Смена {getLastTurn(game)?.shift < 4 ? getLastTurn(game)?.shift : ''}
+                                    Смена {getLastTurn(game)?.shift || ''}
                                 </div>
                               {
 
@@ -462,86 +559,8 @@ function Game() {
                                   :
                                   <>
                                     <div style={{width: '100%'}}>
-                                      {(getLastTurn(game)?.shift > 3 && !getLastRoll(game))
-                                        ?
-
-                                        <div style={{marginTop: 20}}>
-
-                                          <Box sx={{borderBottom: 1, borderColor: 'divider', marginBottom: 2}}>
-                                            <Tabs value={activeTabNumber} onChange={handleChange}
-                                                  aria-label="basic tabs example">
-                                              <Tab label="График"/>
-                                              <Tab label="Таблица"/>
-                                            </Tabs>
-                                          </Box>
-
-                                          <div
-                                            role="tabpanel"
-                                            hidden={activeTabNumber !== 0}
-                                            id={`simple-tabpanel-${0}`}
-                                            aria-labelledby={`simple-tab-${0}`}
-                                          >
-                                            {activeTabNumber === 0 && (
-                                              <Box sx={{p: 3}}>
-                                                <BarChart
-                                                  width={mobileCheck() ? 320 : 500}
-                                                  height={300}
-                                                  data={getAnswersResultsToGraph(game)}
-                                                  margin={{
-                                                    top: 5,
-                                                    right: 30,
-                                                    left: 0,
-                                                    bottom: 5,
-                                                  }}
-                                                >
-                                                  <CartesianGrid strokeDasharray="3 3"/>
-                                                  <XAxis dataKey="name"/>
-                                                  <YAxis/>
-                                                  <Tooltip/>
-                                                  <Legend/>
-                                                  <Bar dataKey="Баллы" fill="#c50000"
-                                                       activeBar={<Rectangle fill="#920000" stroke="#920000"/>}/>
-                                                  <Bar dataKey="Попытки" fill="#594d5b"
-                                                       activeBar={<Rectangle fill="#c5c6d0" stroke="gray"/>}/>
-                                                </BarChart>
-                                              </Box>
-                                            )}
-                                          </div>
-
-                                          <div
-                                            role="tabpanel"
-                                            hidden={activeTabNumber !== 1}
-                                            id={`simple-tabpanel-${1}`}
-                                            aria-labelledby={`simple-tab-${1}`}
-                                          >
-                                            {activeTabNumber === 1 && (
-                                              <Box sx={{p: 3}}>
-                                                <table>
-                                                  <tbody>
-                                                  <tr>
-                                                    <th>Игрок</th>
-                                                    <th>Баллы</th>
-                                                  </tr>
-                                                  {
-                                                    game.players.map((p: any) => {
-                                                      return <tr>
-                                                        <td>{p.name || p.username}</td>
-                                                        <td>{getAnswersResults(game)[p.id]?.length}</td>
-                                                      </tr>
-                                                    })
-                                                  }
-                                                  </tbody>
-                                                </table>
-                                              </Box>
-                                            )}
-                                          </div>
-
-                                        </div>
-
-                                        :
-                                        <Roulette userId={userId} activePlayer={getActivePlayer(game)}
-                                                  handleSpinClick={createRoll} onNextPlayer={onNextPlayer}/>
-                                      }
+                                      <Roulette userId={userId} activePlayer={getActivePlayer(game)}
+                                                handleSpinClick={createRoll} onNextPlayer={onNextPlayer}/>
                                     </div>
                                     {gameInfoOpen &&
                                         <>
@@ -554,6 +573,24 @@ function Game() {
                                   </>
                               }
                             </div>
+
+
+                          {
+                            (mobileCheck() && !quizActive) &&
+                              <div className={'game_desk'}>
+                                  <div
+                                      className={`${gameInfoOpen ? 'blured_object ' : ''} ${classes.playersFieldWrapper}`}>
+                                      <div className={classes.tilesField}>
+                                          <img src={placeholder_3} alt="Игровое поле" title={'Игровое поле'}/>
+                                          <div className={classes.lock}>
+                                              <img src={lockIcon} alt="lock"/>
+                                          </div>
+                                      </div>
+
+                                  </div>
+                              </div>
+                          }
+
 
                           {
                             !mobileCheck() && <aside className={'game_state'}>
@@ -598,7 +635,143 @@ function Game() {
                         </>
                     }
 
-                    {(game.status === 'finished') && <BasicCard name={'Игра ' + game.title} id={'Завершена'}/>}
+                    {(game.status === 'finished')
+                      &&
+                        <div className={'game_desk_finished'}>
+
+                            <div style={{marginTop: 100}}>
+                                <h1 style={{textAlign: 'center'}}>Игра окончена</h1>
+                                <h2 style={{textAlign: 'center', opacity: 0.5}}>Итоги игры:</h2>
+                                <Box sx={{borderBottom: 1, borderColor: 'divider', marginBottom: 2}}>
+                                    <Tabs className={'tabs'} value={activeTabNumber} onChange={handleChange}
+                                          aria-label="basic tabs example">
+                                        <Tab label="График"/>
+                                        <Tab label="Таблица"/>
+                                    </Tabs>
+                                </Box>
+
+                                <div
+                                    className={'graph_wrapper'}
+                                    role="tabpanel"
+                                    hidden={activeTabNumber !== 0}
+                                    id={`simple-tabpanel-${0}`}
+                                    aria-labelledby={`simple-tab-${0}`}
+                                >
+                                    <h3 style={{opacity: 0.5, textAlign: 'center'}}>Бонусные баллы</h3>
+                                  {activeTabNumber === 0 && (
+
+                                    <BarChart
+                                      width={mobileCheck() ? 600 : 800}
+                                      height={300}
+                                      data={getAnswersResultsToGraph(game)}
+                                      margin={{
+                                        top: 5,
+                                        right: 30,
+                                        left: 0,
+                                        bottom: 5,
+                                      }}
+                                    >
+                                      <CartesianGrid strokeDasharray="3 3"/>
+                                      <XAxis dataKey="name"/>
+                                      <YAxis/>
+                                      <Tooltip/>
+                                      <Legend/>
+                                      <Bar dataKey="Баллы" fill="#c50000"
+                                           activeBar={<Rectangle fill="#920000" stroke="#920000"/>}/>
+                                      <Bar dataKey="Попытки" fill="#594d5b"
+                                           activeBar={<Rectangle fill="#c5c6d0" stroke="gray"/>}/>
+                                    </BarChart>
+
+                                  )}
+
+                                    <h3 style={{opacity: 0.5, textAlign: 'center'}}>Общее количество верных ответов</h3>
+                                  {activeTabNumber === 0 && (
+
+                                    <BarChart
+                                      width={mobileCheck() ? 600 : 800}
+                                      height={300}
+                                      data={getTotalAnswersResultsToGraph(game)}
+                                      margin={{
+                                        top: 5,
+                                        right: 30,
+                                        left: 0,
+                                        bottom: 5,
+                                      }}
+                                    >
+                                      <CartesianGrid strokeDasharray="3 3"/>
+                                      <XAxis dataKey="name"/>
+                                      <YAxis/>
+                                      <Tooltip/>
+                                      <Legend/>
+                                      <Bar dataKey="Баллы" fill="#c50000"
+                                           activeBar={<Rectangle fill="#920000" stroke="#920000"/>}/>
+
+                                    </BarChart>
+
+                                  )}
+                                </div>
+
+                                <div
+                                    role="tabpanel"
+                                    hidden={activeTabNumber !== 1}
+                                    id={`simple-tabpanel-${1}`}
+                                    aria-labelledby={`simple-tab-${1}`}
+                                >
+                                  {activeTabNumber === 1 && (
+                                    <>
+                                      <h3 style={{opacity: 0.5, textAlign: 'center'}}>Бонусные баллы</h3>
+                                      <Box sx={{p: 3}}>
+                                        <table className={'players_result_table'}>
+                                          <tbody>
+                                          <tr>
+                                            <th>Игрок</th>
+                                            <th>Баллы</th>
+                                          </tr>
+                                          {
+                                            game.players.map((p: any) => {
+                                              return <tr>
+                                                <td>{p.name || p.username}:</td>
+                                                <td style={{
+                                                  fontWeight: 600,
+                                                  textAlign: 'center'
+                                                }}>{getAnswersResults(game)[p.id]?.length}</td>
+                                              </tr>
+                                            })
+                                          }
+                                          </tbody>
+                                        </table>
+                                      </Box>
+
+                                      <h3 style={{opacity: 0.5, textAlign: 'center'}}>Общее количество верных ответов</h3>
+                                      <Box sx={{p: 3}}>
+                                        <table className={'players_result_table'}>
+                                          <tbody>
+                                          <tr>
+                                            <th>Игрок</th>
+                                            <th>Баллы</th>
+                                          </tr>
+                                          {
+                                            game.players.map((p: any) => {
+                                              return <tr>
+                                                <td>{p.name || p.username}:</td>
+                                                <td style={{
+                                                  fontWeight: 600,
+                                                  textAlign: 'center'
+                                                }}>{getTotalAnswersResults(game)[p.id]?.length}</td>
+                                              </tr>
+                                            })
+                                          }
+                                          </tbody>
+                                        </table>
+                                      </Box>
+                                    </>
+
+                                  )}
+                                </div>
+
+                            </div>
+                        </div>
+                    }
                   </>
                   :
                   <div className={'game_desk game_desk_centered'}>

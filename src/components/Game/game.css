@@ -103,7 +103,58 @@
 .game_state_player svg:first-child {
     margin-right: 20px;
 }
+.game_desk_finished {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+
+
+
+
+
+.players_result_table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.players_result_table td, .players_result_table th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.players_result_table tr:nth-child(even){}
+
+.players_result_table tr:hover {background-color: red;}
+
+.players_result_table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+
+
+
+
+
 @media(max-width: 768px){
+    .game_desk_finished {
+        display: block;
+    }
+
+    .game_desk_finished .graph_wrapper {
+        overflow-x: auto;
+    }
+    .game_desk_finished .recharts-wrapper,
+    .game_desk_finished .recharts-legend-wrapper{
+        max-width: 800px;
+        overflow-x: auto;
+        padding: 0 20px;
+    }
     .gameWrapper{
         flex-wrap: wrap;
     }
@@ -119,6 +170,7 @@
         position: fixed;
         z-index: 999;
     }
+
     .game_state > ul{
         order: 2;
         margin: 0;
@@ -144,5 +196,10 @@
     }
     .game_state_player:last-child {
         margin-bottom: 10px;
+    }
+    .game_state_player.active svg:nth-child(n+2){
+        width: 12px;
+        height: 12px;
+        margin-left: 1px;
     }
 }

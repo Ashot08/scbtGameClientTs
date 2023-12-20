@@ -105,3 +105,9 @@
         padding: 10px 20px;
     }
 }
+
+@media (max-width: 330px) {
+    .mobileRollButton {
+        font-size: 11px;
+    }
+}

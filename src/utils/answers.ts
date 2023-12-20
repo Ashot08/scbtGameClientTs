@@ -82,6 +82,23 @@ export const getAnswersResults = (game: GameState) => {
   return result;
 }
 
+export const getTotalAnswersResults = (game: GameState) => {
+  const result = [];
+
+  for (const answer of game.answers) {
+    if (answer.status === 'success') {
+      if (!Array.isArray(result[answer.player_id])) {
+        result[answer.player_id] = [];
+      }
+      if (!result[answer.player_id].includes(answer.id as never)) {
+        result[answer.player_id].push(answer.id as never);
+      }
+
+    }
+  }
+  return result;
+}
+
 export const getAnswersResultsToGraph = (game: GameState) => {
   const result = [];
 
@@ -110,6 +127,34 @@ export const getAnswersResultsToGraph = (game: GameState) => {
 
   return result;
 }
+
+export const getTotalAnswersResultsToGraph = (game: GameState) => {
+  const result = [];
+
+  for (const player of game.players) {
+
+    const playerResult = {
+      name: player.name || player.username,
+      'Попытки': 0,
+      'Баллы': 0,
+    };
+
+    for (const answer of game.answers) {
+      if (answer.player_id === player.id) {
+
+        if(answer.status === 'success') {
+          playerResult['Попытки'] += 1;
+          playerResult['Баллы'] += 1;
+        } else {
+          playerResult['Попытки'] += 1;
+        }
+      }
+    }
+    result.push(playerResult);
+  }
+  return result;
+}
+
 
 // export const isAnswersModeActive = (game: GameState) => {
 //   let isAnswersModeActive = false;

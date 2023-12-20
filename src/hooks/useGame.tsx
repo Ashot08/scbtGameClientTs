@@ -19,7 +19,7 @@ import {hideGameInfo} from "../store/reducers/gameInfoSlice.ts";
 // адрес сервера
 // требуется перенаправление запросов - смотрите ниже
 const SERVER_URL = 'http://localhost:3001'
-// const SERVER_URL = 'ws://80.90.189.247:3001/';
+//const SERVER_URL = 'ws://80.90.189.247:3001/';
 
 // хук принимает название комнаты
 const useGame = (roomId: any) => {
@@ -106,21 +106,21 @@ const useGame = (roomId: any) => {
 
     socketRef.current.on('game:nextShift', (result: any, activePlayer: any) => {
       dispatch(hideGameInfo());
-      if(result.shift > 3) {
-        dispatch(showPopup({
-          title:
-            <><div style={{marginTop: 20, marginBottom: 20, textAlign: "center"}}><strong>Игра окончена!</strong></div></>
-          ,
-          content: <div style={
-            {minWidth: 300, marginTop: 20, marginBottom: 20, textAlign: "center",}
-          }><img src={shiftCupIcon} alt="shift cup icon"/>
-            <div style={
-              {marginTop: 10, marginBottom: 10,}
-            }>
-              <Button variant="contained" onClick={() => dispatch(hidePopup())}>К итогам!</Button>
-            </div>
-          </div>
-        }));
+      if(result.shift > 300) {
+        // dispatch(showPopup({
+        //   title:
+        //     <><div style={{marginTop: 20, marginBottom: 20, textAlign: "center"}}><strong>Игра окончена!</strong></div></>
+        //   ,
+        //   content: <div style={
+        //     {minWidth: 300, marginTop: 20, marginBottom: 20, textAlign: "center",}
+        //   }><img src={shiftCupIcon} alt="shift cup icon"/>
+        //     <div style={
+        //       {marginTop: 10, marginBottom: 10,}
+        //     }>
+        //       <Button variant="contained" onClick={() => dispatch(hidePopup())}>К итогам!</Button>
+        //     </div>
+        //   </div>
+        // }));
       } else {
         dispatch(showPopup({
           title: <> {
@@ -148,6 +148,23 @@ const useGame = (roomId: any) => {
           </div>
         }));
       }
+    });
+
+    socketRef.current.on('game:gameFinished', () => {
+      dispatch(showPopup({
+        title:
+          <><div style={{marginTop: 20, marginBottom: 20, textAlign: "center"}}><strong>Игра окончена!</strong></div></>
+        ,
+        content: <div style={
+          {minWidth: 300, marginTop: 20, marginBottom: 20, textAlign: "center",}
+        }><img src={shiftCupIcon} alt="shift cup icon"/>
+          <div style={
+            {marginTop: 10, marginBottom: 10,}
+          }>
+            <Button variant="contained" onClick={() => dispatch(hidePopup())}>К итогам!</Button>
+          </div>
+        </div>
+      }));
     });
 
     socketRef.current.on('answer:startTimer', () => {
@@ -188,7 +205,12 @@ const useGame = (roomId: any) => {
     socketRef.current.emit('game:update_answer', {answerId, status});
   }
 
-  return { game, joinGame, createRoll, goNextTurn, startAnswers, updateAnswer, stopAnswers }
+  const stopGame = () => {
+    socketRef.current.emit('game:stop_game');
+    dispatch(hidePopup());
+  }
+
+  return { game, joinGame, createRoll, goNextTurn, startAnswers, updateAnswer, stopAnswers, stopGame }
 }
 
 export default useGame;

@@ -126,15 +126,25 @@
         margin-bottom: 180px;
     }
     .questionText {
-        margin: 10px 0;
+        margin: 8px 0;
+        font-size: 15px;
+    }
+    .questionNumber {
+        font-size: 16px;
     }
     .answerButtonWrapper {
         margin-top: 0;
     }
     .questionsWrapper label {
-        padding: 5px 40px;
+        padding: 4px 40px;
+    }
+    .questionsWrapper label .MuiTypography-root {
+        font-size: 13px;
     }
     .answerButtonWrapper h3 {
         margin: 5px 0;
+    }
+    .oneMoreQuestionButton.MuiButtonBase-root {
+        padding: 2px 8px;
     }
 }
