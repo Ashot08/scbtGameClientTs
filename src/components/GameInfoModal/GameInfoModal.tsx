@@ -60,6 +60,22 @@ export default function GameInfoModal(props: any) {
             }
 
             {
+              ( data.status === 'disaster')
+              &&
+                <div className={`${classes.info} ${classes.disasterInfo}`}>
+                    <div className={classes.infoText}>
+                        Требуется активных
+                        <div>
+                            защит: <span style={{fontWeight: 600, color: 'gold'}}>{data.needBonusesCount}</span>
+                        </div>
+                    </div>
+                    <div className={classes.infoCoins}>
+                        <img src={coinsIcon} alt="Монеты на защиту"/>
+                    </div>
+                </div>
+            }
+
+            {
               props.showButtons && <div className={classes.buttons}>
                 <button onClick={props.onShowQuiz}>Взять вопрос</button>
                 <button onClick={props.goNextTurn}>Передать ход</button>

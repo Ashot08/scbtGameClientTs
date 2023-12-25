@@ -17,8 +17,6 @@ import {selectPlayerName, selectResult} from "../../store/reducers/rouletteSlice
 import {hide, selectIsActive, selectTimerOn, show} from "../../store/reducers/quizSlice.ts";
 import {Quiz} from "../Quiz/Quiz.tsx";
 import {
-  getAnswersResults,
-  getAnswersResultsToGraph,
   getLastRollMainAnswers, getTotalAnswersResults,
   getTotalAnswersResultsToGraph
 } from "../../utils/answers.ts";
@@ -55,6 +53,7 @@ import GameInfoModal from "../GameInfoModal/GameInfoModal.tsx";
 import {hideGameInfo, selectGameInfoIsShown} from "../../store/reducers/gameInfoSlice.ts";
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import CloseIcon from '@mui/icons-material/Close';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 
 function Game() {
   const dispatch = useAppDispatch();
@@ -76,7 +75,7 @@ function Game() {
   const lastRollPlayerName = useAppSelector(selectPlayerName);
   const quizActive = useAppSelector(selectIsActive);
   const timerOn = useAppSelector(selectTimerOn);
-  const [activeTabNumber, setActiveTabNumber] = useState(0);
+  const [activeTabNumber, setActiveTabNumber] = useState(mobileCheck() ? 1 : 0);
   const gameInfoOpen = useAppSelector(selectGameInfoIsShown);
   const [controllsOpen, setControllsOpen] = useState(false);
   const [controlsAnimate, setControlsAnimate] = useState(false);
@@ -436,7 +435,7 @@ function Game() {
                                             quizActive
                                               ?
                                               !timerOn &&
-                                                <button onClick={onHideQuiz} className={'button'}>Перейти к
+                                                <button onClick={onHideQuiz} className={'button'}>К
                                                     рулетке</button>
                                               :
                                               <>
@@ -657,33 +656,6 @@ function Game() {
                                     id={`simple-tabpanel-${0}`}
                                     aria-labelledby={`simple-tab-${0}`}
                                 >
-                                    <h3 style={{opacity: 0.5, textAlign: 'center'}}>Бонусные баллы</h3>
-                                  {activeTabNumber === 0 && (
-
-                                    <BarChart
-                                      width={mobileCheck() ? 600 : 800}
-                                      height={300}
-                                      data={getAnswersResultsToGraph(game)}
-                                      margin={{
-                                        top: 5,
-                                        right: 30,
-                                        left: 0,
-                                        bottom: 5,
-                                      }}
-                                    >
-                                      <CartesianGrid strokeDasharray="3 3"/>
-                                      <XAxis dataKey="name"/>
-                                      <YAxis/>
-                                      <Tooltip/>
-                                      <Legend/>
-                                      <Bar dataKey="Баллы" fill="#c50000"
-                                           activeBar={<Rectangle fill="#920000" stroke="#920000"/>}/>
-                                      <Bar dataKey="Попытки" fill="#594d5b"
-                                           activeBar={<Rectangle fill="#c5c6d0" stroke="gray"/>}/>
-                                    </BarChart>
-
-                                  )}
-
                                     <h3 style={{opacity: 0.5, textAlign: 'center'}}>Общее количество верных ответов</h3>
                                   {activeTabNumber === 0 && (
 
@@ -719,29 +691,6 @@ function Game() {
                                 >
                                   {activeTabNumber === 1 && (
                                     <>
-                                      <h3 style={{opacity: 0.5, textAlign: 'center'}}>Бонусные баллы</h3>
-                                      <Box sx={{p: 3}}>
-                                        <table className={'players_result_table'}>
-                                          <tbody>
-                                          <tr>
-                                            <th>Игрок</th>
-                                            <th>Баллы</th>
-                                          </tr>
-                                          {
-                                            game.players.map((p: any) => {
-                                              return <tr>
-                                                <td>{p.name || p.username}:</td>
-                                                <td style={{
-                                                  fontWeight: 600,
-                                                  textAlign: 'center'
-                                                }}>{getAnswersResults(game)[p.id]?.length}</td>
-                                              </tr>
-                                            })
-                                          }
-                                          </tbody>
-                                        </table>
-                                      </Box>
-
                                       <h3 style={{opacity: 0.5, textAlign: 'center'}}>Общее количество верных ответов</h3>
                                       <Box sx={{p: 3}}>
                                         <table className={'players_result_table'}>
@@ -751,13 +700,25 @@ function Game() {
                                             <th>Баллы</th>
                                           </tr>
                                           {
-                                            game.players.map((p: any) => {
-                                              return <tr>
-                                                <td>{p.name || p.username}:</td>
+                                            [...game.players].sort((p1: any, p2: any) => {
+                                              return  +getTotalAnswersResults(game)[p2.id]?.length - +getTotalAnswersResults(game)[p1.id]?.length;
+                                            })
+                                              .map((p: any, index: number) => {
+                                              return <tr key={'players_table_item_' + p.id}>
+                                                <td>
+                                                  {p.name || p.username}:
+                                                </td>
                                                 <td style={{
                                                   fontWeight: 600,
                                                   textAlign: 'center'
-                                                }}>{getTotalAnswersResults(game)[p.id]?.length}</td>
+                                                }}>
+                                                  <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                                                    {getTotalAnswersResults(game)[p.id]?.length}
+                                                    {index === 0 && <EmojiEventsIcon sx={{color: 'gold', marginLeft: 1}} />}
+                                                    {index === 1 && <EmojiEventsIcon sx={{color: 'silver', marginLeft: 1, width: 22}} />}
+                                                    {index === 2 && <EmojiEventsIcon sx={{color: '#cd7f32', marginLeft: 1, width: 20}} />}
+                                                  </div>
+                                                </td>
                                               </tr>
                                             })
                                           }

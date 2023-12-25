@@ -109,6 +109,9 @@
 }
 
 @media (max-width: 768px) {
+  .disasterInfo {
+    display: none;
+  }
   .gameInfo {
     width: 100%;
     height: auto;

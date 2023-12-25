@@ -20,6 +20,7 @@ import Popup from "./components/Popup/Popup.tsx";
 import GameController from "./controllers/GameController.ts";
 import Lobby from "./components/Lobby/Lobby.tsx";
 import Personal from "./components/Personal/Personal.tsx";
+import {Quiz} from "./components/QuizPage/Quiz.tsx";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -103,6 +104,7 @@ function App() {
           <Route path='/game/:gameId?' element={<Game />} />
           <Route path='/lobby/' element={<Lobby />} />
           <Route path='/personal/' element={<Personal />} />
+          <Route path='/quiz/' element={<Quiz />} />
         </Routes>
       }
     </>

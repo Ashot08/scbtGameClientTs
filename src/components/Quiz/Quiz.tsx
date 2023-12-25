@@ -158,12 +158,16 @@ export const Quiz = (props: any) => {
 
   const onExpire = () => {
     dispatch(offTimer());
-    if (getCurrentPlayerProcessAnswer(game, props.userId)) {
-      props.updateAnswer(
-        getCurrentPlayerProcessAnswer(game, props.userId)?.id,
-        'error'
-      );
-      setAnswerResultText('Ответ неверный! (Вы не успели ответить).')
+    if(answer) {
+      onSubmit({preventDefault: ()=>{}});
+    } else {
+      if (getCurrentPlayerProcessAnswer(game, props.userId)) {
+        props.updateAnswer(
+          getCurrentPlayerProcessAnswer(game, props.userId)?.id,
+          'error'
+        );
+        setAnswerResultText('Ответ неверный! (Вы не успели ответить).')
+      }
     }
 
     if (answerStatus !== 'success') {
@@ -264,10 +268,10 @@ export const Quiz = (props: any) => {
                     {
                       props.isMyTurn && !props.timerOn &&
                         <>
-                            <div><Button className={'oneMoreQuestionButton'} disabled={props.quizTimer || oneMoreQuestionDisabled} onClick={props.startAnswers}
+                            <div><Button className={'oneMoreQuestionButton'} sx={{backgroundColor: '#00ABAB'}} disabled={props.quizTimer || oneMoreQuestionDisabled} onClick={props.startAnswers}
                                          variant={'contained'}>Взять ещё один вопрос</Button></div>
-                            <div className={'onlyMobile'}><Button className={'oneMoreQuestionButton'} sx={{backgroundColor: '#00ABAB', marginTop: 2}} onClick={props.onHideQuiz} disabled={props.quizTimer}
-                                         variant={'contained'}>Перейти к рулетке</Button></div>
+                            <div className={'onlyMobile'}><Button className={'oneMoreQuestionButton'} sx={{marginTop: 2}} onClick={props.onHideQuiz} disabled={props.quizTimer}
+                                         variant={'contained'}>Завершить</Button></div>
                         </>
                     }
                   </div>

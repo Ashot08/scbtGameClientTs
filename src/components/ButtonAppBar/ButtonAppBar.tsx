@@ -144,6 +144,14 @@ export default function ButtonAppBar(props: ButtonAppBarProps) {
                                         <ListItemText primary="Личный кабинет"/>
                                     </ListItemButton>
                                 </Link>
+                                <Link to={'/quiz'}>
+                                    <ListItemButton onClick={handleClose}>
+                                        <ListItemIcon>
+                                            <PersonIcon/>
+                                        </ListItemIcon>
+                                        <ListItemText primary="Вопросы"/>
+                                    </ListItemButton>
+                                </Link>
                             </List>
 
                         </Menu>
