@@ -1,0 +1,25 @@
+.resources {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+
+    > div {
+        display: flex;
+        align-items: center;
+    }
+
+    .defends {
+        color: #C7C4F4;
+        margin-right: 14px;
+    }
+
+    .money {
+        color: #F7F363;
+    }
+
+    img {
+        margin-right: 4px;
+    }
+}
+
+

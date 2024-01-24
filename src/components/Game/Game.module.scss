@@ -32,8 +32,6 @@
       padding-bottom: 30px;
 
       .tilesField {
-        cursor: not-allowed;
-        opacity: 0.5;
         position: relative;
         img {
           width: 100%;
@@ -125,6 +123,13 @@
     margin-left: 20px;
   }
 }
+
+.playerResources {
+  position: absolute;
+  left: 40px;
+  top: 120px;
+}
+
 .controlButtonsToggle {
   display: none;
   z-index: 10;

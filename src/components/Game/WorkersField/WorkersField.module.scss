@@ -1,0 +1,34 @@
+.workers_field {
+  position: relative;
+  width: 240px;
+  height: 240px;
+
+  .hexagon {
+    position: absolute;
+    width: 80px;
+
+    &:hover {
+      opacity: 0.4;
+    }
+  }
+
+  .hexagon_0 {
+    top: calc(50% - 47px);
+    transform: rotate(45deg);
+
+    img {
+      transform: rotate(-45deg);
+    }
+  }
+
+  .hexagon_1 {
+    top: 0;
+    left: 44px;
+    transform: rotate(-45deg);
+
+    img {
+      transform: rotate(45deg);
+    }
+  }
+
+}

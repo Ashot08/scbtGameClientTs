@@ -54,6 +54,9 @@ import {hideGameInfo, selectGameInfoIsShown} from "../../store/reducers/gameInfo
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import CloseIcon from '@mui/icons-material/Close';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import Resources from "./Resources/Resources.tsx";
+import WorkersCount from "./WorkersCount/WorkersCount.tsx";
+import WorkersField from "./WorkersField/WorkersField.tsx";
 
 function Game() {
   const dispatch = useAppDispatch();
@@ -358,10 +361,9 @@ function Game() {
                                 {
                                   !mobileCheck() && <div className={classes.asideInnerContent}>
                                         <div className={classes.tilesField}>
+                                            <WorkersCount playersState={game.playersState} userId={userId} />
+                                            <WorkersField playersState={game.playersState} userId={userId} />
                                             <img src={placeholder_1} alt="Игровое поле" title={'Игровое поле'}/>
-                                            <div className={classes.lock}>
-                                                <img src={lockIcon} alt="lock"/>
-                                            </div>
                                         </div>
 
                                     </div>
@@ -547,6 +549,9 @@ function Game() {
                             <div className={'game_desk'}>
                                 <div className={`${gameInfoOpen ? 'blured_object ' : ''} ${classes.shiftIndicator}`}>
                                     Смена {getLastTurn(game)?.shift || ''}
+                                </div>
+                                <div className={`${gameInfoOpen ? 'blured_object ' : ''} ${classes.playerResources}`}>
+                                    <Resources playersState={game.playersState} userId={userId} />
                                 </div>
                               {
 

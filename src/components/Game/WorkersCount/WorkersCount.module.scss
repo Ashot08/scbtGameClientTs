@@ -1,0 +1,25 @@
+.info {
+  margin-bottom: 11px;
+  color: #fff;
+
+  span {
+    color: #00AFAF;
+  }
+}
+.workers_count {
+  display: flex;
+  align-items: center;
+
+  .worker {
+    margin-right: 4px;
+
+    img {
+      width: 9px;
+      height: 18px;
+    }
+
+    .empty {
+      opacity: 0.4;
+    }
+  }
+}

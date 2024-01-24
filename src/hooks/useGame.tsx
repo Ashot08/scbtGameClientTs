@@ -58,6 +58,8 @@ const useGame = (roomId: any) => {
         lastTurnRolls: state.state.lastTurnRolls,
         moderatorMode: state.state.game.moderator_mode,
         answersMode: state.state.game.answers_mode,
+        shiftChangeMode: state.state.game.shift_change_mode,
+        playersState: state.state.playersState,
       }));
     })
 

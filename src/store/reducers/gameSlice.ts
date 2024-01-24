@@ -17,6 +17,8 @@ export interface GameState {
   lastTurnRolls?: any,
   moderatorMode?: boolean | string,
   answersMode?: 'true' | 'false',
+  shiftChangeMode?: 'true' | 'false',
+  playersState?: any,
 }
 
 const initialState :GameState = {
@@ -47,6 +49,8 @@ export const gameSlice = createSlice({
       state.answers = action.payload.answers;
       state.lastTurnRolls = action.payload.lastTurnRolls;
       state.answersMode = action.payload.answersMode;
+      state.shiftChangeMode = action.payload.shiftChangeMode;
+      state.playersState = action.payload.playersState;
     },
   },
 });

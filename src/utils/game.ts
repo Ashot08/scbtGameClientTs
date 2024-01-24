@@ -16,3 +16,16 @@ export const getActivePlayer = (game: GameState) => {
 export const getLastTurn = (game: GameState) => {
   return game.turns.slice(-1)[0];
 }
+
+export const getCurrentPlayerState = (playersState: any, playerId: number) => {
+  let currentPlayer = [];
+  if(Array.isArray(playersState)) {
+    for(const p of playersState) {
+      if(p.player_id === playerId) {
+        currentPlayer = p;
+        break;
+      }
+    }
+  }
+  return currentPlayer;
+}
