@@ -6009,14 +6009,5 @@ export const quiz: any = {
         18
       ]
     },
-    {
-      "answers": [],
-      "correctAnswer": "1",
-      "categories": [
-        18
-      ]
-    }
-
-
   ],
 };
