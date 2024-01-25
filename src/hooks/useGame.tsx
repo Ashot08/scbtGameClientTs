@@ -116,13 +116,19 @@ const useGame = (roomId: any) => {
             result.shift === 1
               ?
               <>
-                <div style={{marginTop: 20, marginBottom: 20, textAlign: "center"}}><strong>Старт игры!</strong></div><div style={{textAlign: "center"}}>Начинается смена <strong>№{result.shift}</strong></div>
-                <div style={{marginTop: 10, marginBottom: 10, textAlign: "center"}}>Ходит: {activePlayer.name || activePlayer.username}</div>
+                <div style={{marginTop: 20, marginBottom: 20, textAlign: "center"}}><strong>Старт игры!</strong></div><div style={{textAlign: "center"}}>Скоро начнется смена <strong>№{result.shift}</strong></div>
+                <div style={{marginTop: 10, marginBottom: 10, textAlign: "center"}}>
+                  <div>Купите защиты и расставьте работников!</div>
+                  Первым будет ходить: {activePlayer.name || activePlayer.username}
+                </div>
               </>
               :
               <>
-                <div style={{textAlign: "center"}}>Начинается смена <strong>№{result.shift}</strong></div>
-                <div style={{marginTop: 10, marginBottom: 10, textAlign: "center"}}>Ходит: {activePlayer.name || activePlayer.username}</div>
+                <div style={{textAlign: "center"}}>Скоро начнется смена <strong>№{result.shift}</strong></div>
+                <div style={{marginTop: 10, marginBottom: 10, textAlign: "center"}}>
+                  <div>Купите защиты и расставьте работников!</div>
+                  Первым будет ходить: {activePlayer.name || activePlayer.username}
+                </div>
               </>
           }
           </>,
@@ -137,6 +143,29 @@ const useGame = (roomId: any) => {
           </div>
         }));
       }
+
+      socketRef.current.emit('game:getState');
+    });
+
+    socketRef.current.on('game:allReadyStartShift', () => {
+      dispatch(hideGameInfo());
+      dispatch(showPopup({
+        title: <> {
+          <>
+            <div style={{textAlign: "center"}}>Смена началась!</div>
+          </>
+        }
+        </>,
+        content: <div style={
+          {minWidth: 300, marginTop: 20, marginBottom: 20, textAlign: "center",}
+        }><img src={shiftClockIcon} alt="shift clock icon"/>
+          <div style={
+            {marginTop: 10, marginBottom: 10,}
+          }>
+            <Button variant="contained" onClick={() => dispatch(hidePopup())}>Ok</Button>
+          </div>
+        </div>
+      }));
     });
 
     socketRef.current.on('game:gameFinished', () => {
@@ -207,6 +236,10 @@ const useGame = (roomId: any) => {
     socketRef.current.emit('game:buy_defends', {userId, defendsCount});
   }
 
+  const changeReadyStatus = (userId: number, readyStatus: boolean) => {
+    socketRef.current.emit('game:change_ready_status', {userId, readyStatus});
+  }
+
   return { game,
     joinGame,
     createRoll,
@@ -216,7 +249,9 @@ const useGame = (roomId: any) => {
     stopAnswers,
     stopGame,
     updateWorkerData,
-    buyDefends }
+    buyDefends,
+    changeReadyStatus,
+  }
 }
 
 export default useGame;

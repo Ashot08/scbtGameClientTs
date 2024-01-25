@@ -87,6 +87,11 @@
         font-size: 18px;
         min-width: 150px;
         font-family: system-ui, sans-serif;
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
       }
     }
   }

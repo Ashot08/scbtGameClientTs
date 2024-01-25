@@ -3,7 +3,7 @@ import {getCurrentPlayerState} from "../../../../utils/game.ts";
 import coinIcon from '../img/money.svg';
 import shieldIcon from '../img/shield.svg';
 import closeIcon from './img/close.svg';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useAppDispatch} from "../../../../hooks.ts";
 import {show} from "../../../../store/reducers/notificationSlice.ts";
 import {hideBuyResourcesWindow} from "../../../../store/reducers/buyResourcesWindowSlice.ts";
@@ -12,6 +12,16 @@ function BuyResourcesWindow (props: any) {
   const dispatch = useAppDispatch();
   const playerState = getCurrentPlayerState(props.playersState, props.userId);
   const [defendsToBeAdded, setDefendsToBeAdded] = useState(0);
+  const [saveLoading, setSaveLoading] = useState(false);
+
+  useEffect(() => {
+    setSaveLoading(false);
+    // const workersData = getWorkerDataByIndex(playerState, workerIndex);
+    // if(workersData.workerIsSet) {
+    //   setWorkerIsSet(true);
+    // }
+  }, [playerState]);
+
   const addDefend = () => {
     if(defendsToBeAdded < playerState.money) {
       setDefendsToBeAdded(defendsToBeAdded + 1);
@@ -30,7 +40,10 @@ function BuyResourcesWindow (props: any) {
   }
 
   const onBuyDefends = () => {
-
+    if(defendsToBeAdded > 0) {
+      setSaveLoading(true);
+      props.buyDefends(props.userId, defendsToBeAdded);
+    }
   }
 
   return <div className={classes.window}>
@@ -54,7 +67,14 @@ function BuyResourcesWindow (props: any) {
       </div>
 
       <div className={classes.buyButton}>
-        <button onClick={onBuyDefends} disabled={!defendsToBeAdded}>Купить</button>
+        <button onClick={onBuyDefends} disabled={!defendsToBeAdded || saveLoading}>
+          {saveLoading
+            ?
+            'Обработка...'
+            :
+            'Купить'
+          }
+        </button>
       </div>
     </div>
   </div>

@@ -276,3 +276,17 @@
     display: none;
   }
 }
+
+.readyCheckbox {
+  position: absolute;
+  right: 40px;
+  top: 85px;
+  font-family: "Oswald", sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  text-transform: uppercase;
+
+  input {
+    margin-left: 5px;
+  }
+}

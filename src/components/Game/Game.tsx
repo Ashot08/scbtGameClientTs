@@ -24,7 +24,7 @@ import {useEffect, useState} from "react";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import DangerousIcon from '@mui/icons-material/Dangerous';
 import HourglassTopIcon from '@mui/icons-material/HourglassTop';
-import {getActivePlayer, getLastTurn} from "../../utils/game.ts";
+import {getActivePlayer, getCurrentPlayerState, getLastTurn} from "../../utils/game.ts";
 import {
   Bar,
   BarChart,
@@ -42,7 +42,6 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import StartPage from "../StartPage/StartPage.tsx";
 import gameIcon from './img/gameIcon.png';
 import placeholder_2 from './img/placeholder_2.png';
-import placeholder_3 from './img/placeholder_3.png';
 import lockIcon from './img/lock.png';
 import peopleIcon from './img/people.png';
 import CheckIcon from '@mui/icons-material/Check';
@@ -76,7 +75,9 @@ function Game() {
     updateAnswer,
     stopAnswers,
     stopGame,
-    updateWorkerData
+    updateWorkerData,
+    buyDefends,
+    changeReadyStatus,
   } = useGame(params.gameId);
   const lastRollResult = useAppSelector(selectResult);
   const lastRollPlayerName = useAppSelector(selectPlayerName);
@@ -88,8 +89,8 @@ function Game() {
   const gameInfoOpen = useAppSelector(selectGameInfoIsShown);
   const [controllsOpen, setControllsOpen] = useState(false);
   const [controlsAnimate, setControlsAnimate] = useState(false);
-  // const [questionsCats, setQuestionsCats] = useState([]);
-
+  const [isLoadingReadyStatus, setIsLoadingReadyStatus] = useState(false);
+  const playerState = getCurrentPlayerState(game.playersState, userId);
 
   const onNextPlayer = () => {
     dispatch(showPopup({
@@ -127,30 +128,12 @@ function Game() {
     }))
   }
 
-  // const swipeHandlers = useSwipeable({
-  //   onSwipedUp: () => {
-  //     if (getActivePlayer(game).id === userId || game.moderator == userId) {
-  //       setSwipedControllsOpen(true);
-  //       setTimeout(() => {
-  //         setSwipedControlsAnimate(true);
-  //       })
-  //     }
-  //   },
-  //   onSwipedDown: () => {
-  //     if (getActivePlayer(game).id === userId || game.moderator == userId) {
-  //       setSwipedControllsOpen(false);
-  //       setTimeout(() => {
-  //         setSwipedControlsAnimate(false);
-  //       })
-  //     }
-  //   }
-  // });
   const handleChange = (event: any, newValue: number) => {
     console.log(event)
     setActiveTabNumber(newValue);
   };
   useEffect(() => {
-
+    setIsLoadingReadyStatus(false);
 
     if (game.status === 'created') {
       dispatch(hideGameInfo());
@@ -160,13 +143,6 @@ function Game() {
       dispatch(show());
     }
   }, [game, userId, dispatch]);
-
-  // const getQuestionsCats = async () => {
-  //   if(params.gameId) {
-  //     const result = await QuestionApi.getQuestionCatsByGameId(+params.gameId, Token.getToken().token);
-  //     console.log(result);
-  //   }
-  // }
 
   const toggleControlButtons = () => {
     setControllsOpen(!controllsOpen);
@@ -269,6 +245,11 @@ function Game() {
       }
     }
     return result;
+  }
+
+  const onReady = () => {
+    setIsLoadingReadyStatus(true);
+    changeReadyStatus(userId, !(playerState.ready === 'true'));
   }
 
   return (
@@ -552,20 +533,35 @@ function Game() {
 
 
                           {
-                            (buyResourcesWindowOpen && game.shiftChangeMode) && <BuyResourcesWindow playersState={game.playersState} userId={userId} />
+                            (buyResourcesWindowOpen && game.shiftChangeMode) && <BuyResourcesWindow buyDefends={buyDefends} playersState={game.playersState} userId={userId} />
                           }
 
                             <div className={'game_desk'}>
 
                               {
-                                (buyWindowOpen && game.shiftChangeMode) && <BuyWindow updateWorkerData={updateWorkerData} playersState={game.playersState} userId={userId} />
+                                (buyWindowOpen && game.shiftChangeMode) &&
+                                  <BuyWindow updateWorkerData={updateWorkerData} playersState={game.playersState}
+                                             userId={userId}/>
                               }
 
                                 <div className={`${gameInfoOpen ? 'blured_object ' : ''} ${classes.shiftIndicator}`}>
-                                    Смена {getLastTurn(game)?.shift || ''}
+                                  {(game.shiftChangeMode === 'true')
+                                    ?
+                                    'Скоро начнется Смена ' + (getLastTurn(game)?.shift || '')
+                                    :
+                                    'Смена' + (getLastTurn(game)?.shift || '')
+                                  }
+
                                 </div>
+
+                                <div className={classes.readyCheckbox + ` ${gameInfoOpen ? 'blured_object ' : ''}`}>
+                                  {(game.shiftChangeMode === 'true') && <label>Готов
+                                      <input disabled={isLoadingReadyStatus} onChange={onReady} checked={playerState.ready === 'true'} type="checkbox" name={'isReadyToStartShift'}/>
+                                  </label>}
+                                </div>
+
                                 <div className={`${gameInfoOpen ? 'blured_object ' : ''} ${classes.playerResources}`}>
-                                    <Resources playersState={game.playersState} userId={userId} />
+                                    <Resources playersState={game.playersState} userId={userId}/>
                                 </div>
                               {
 
@@ -593,18 +589,15 @@ function Game() {
                             </div>
 
 
-                          {
-                            (mobileCheck() && !quizActive) &&
-                              <div className={'game_desk'}>
-                                  <div
-                                      className={`${gameInfoOpen ? 'blured_object ' : ''} ${classes.playersFieldWrapper}`}>
-                                      <div className={classes.tilesField}>
-                                          <img src={placeholder_3} alt="Игровое поле" title={'Игровое поле'}/>
-                                          <div className={classes.lock}>
-                                              <img src={lockIcon} alt="lock"/>
-                                          </div>
-                                      </div>
+                        {
+                          (mobileCheck() && !quizActive) &&
 
+                            <div className={'game_desk'}>
+                                <div className={classes.asideInnerContent}>
+                                    <div className={classes.tilesField}>
+                                        <WorkersCount playersState={game.playersState} userId={userId}/>
+                                        <WorkersField game={game} userId={userId}/>
+                                      </div>
                                   </div>
                               </div>
                           }
