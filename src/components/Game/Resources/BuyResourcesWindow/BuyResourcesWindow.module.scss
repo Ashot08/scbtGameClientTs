@@ -1,0 +1,93 @@
+.window {
+  margin-top: 20px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  background-color: rgba(0, 0, 0, 0.6);
+  text-align: center;
+  color: #828282;
+
+  .overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+  }
+
+  .board {
+    position: relative;
+    z-index: 3;
+    background-color: #fff;
+    padding: 20px;
+    min-width: 240px;
+
+    .close {
+      position: absolute;
+      right: 8px;
+      top: 8px;
+      cursor: pointer;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+
+    .moneyInfo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 20px 0;
+
+      span {
+        margin-left: 5px;
+        margin-right: 5px;
+        font-weight: 600;
+        color: orange;
+      }
+
+      img {
+        margin-left: 5px;
+      }
+    }
+
+    .buyDefend {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 20px 0;
+
+      button {
+
+      }
+
+      .defendsCounter {
+        display: flex;
+        align-items: center;
+        margin-left: 5px;
+        margin-right: 5px;
+      }
+    }
+
+    .buyButton {
+      button {
+        cursor: pointer;
+        border: none;
+        border-radius: 26px;
+        background: #00ABAB;
+        color: #fff;
+        padding: 0 20px;
+        height: 40px;
+        font-size: 18px;
+        min-width: 150px;
+        font-family: system-ui, sans-serif;
+      }
+    }
+  }
+}

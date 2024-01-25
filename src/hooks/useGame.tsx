@@ -203,7 +203,20 @@ const useGame = (roomId: any) => {
     socketRef.current.emit('game:update_worker_data', {userId, data});
   }
 
-  return { game, joinGame, createRoll, goNextTurn, startAnswers, updateAnswer, stopAnswers, stopGame, updateWorkerData }
+  const buyDefends = (userId: number, defendsCount: number) => {
+    socketRef.current.emit('game:buy_defends', {userId, defendsCount});
+  }
+
+  return { game,
+    joinGame,
+    createRoll,
+    goNextTurn,
+    startAnswers,
+    updateAnswer,
+    stopAnswers,
+    stopGame,
+    updateWorkerData,
+    buyDefends }
 }
 
 export default useGame;

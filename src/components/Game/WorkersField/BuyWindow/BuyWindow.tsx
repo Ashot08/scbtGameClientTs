@@ -8,6 +8,7 @@ import shieldIcon from './img/shield.svg';
 import shieldIconActive from './img/shieldActive.svg';
 import workerEmptyIcon from './img/workerEmpty.svg';
 import workerIcon from './img/worker.svg';
+import closeIcon from './img/close.svg';
 import {useEffect, useState} from "react";
 import {show} from "../../../../store/reducers/notificationSlice.ts";
 function BuyWindow (props: any) {
@@ -76,7 +77,7 @@ function BuyWindow (props: any) {
     if(addedDefendsCount >= 6 - (workersData.notActiveDefends + workersData.activeDefends)) return;
     if(addedDefendsCount >= 6) return;
     if(addedDefendsCount >= playerState.defends) {
-      dispatch(show({text: 'Недостаточно купленных защит!', status: 'error'}));
+      dispatch(show({text: 'Недостаточно защит!', status: 'error'}));
       return;
     }
     setAddedDefendsCount(addedDefendsCount + 1);
@@ -87,6 +88,9 @@ function BuyWindow (props: any) {
     setAddedDefendsCount(0);
   }
   return <div className={classes.buyWindow}>
+    <div onClick={() => dispatch(hideBuyWindow())} className={classes.close}>
+      <img src={closeIcon} alt="Закрыть"/>
+    </div>
     <div>
       <div>
         <div className={classes.board}>
@@ -109,10 +113,10 @@ function BuyWindow (props: any) {
         <button onClick={onClose}>Назад</button>
         {
           saveLoading
-          ?
-          <button disabled={true} >Сохранение...</button>
-          :
-          <button disabled={!workerIsSet && !addedDefendsCount} onClick={onSave}>Сохранить {workerIndex}</button>
+            ?
+            <button disabled={true}>Сохранение...</button>
+            :
+            <button disabled={!workerIsSet && !addedDefendsCount} onClick={onSave}>Сохранить {workerIndex}</button>
         }
         <button disabled={!workerIsSet && !addedDefendsCount} onClick={onRefresh}>Сбросить</button>
       </div>

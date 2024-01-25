@@ -7,6 +7,8 @@ import rouletteReducer from "./reducers/rouletteSlice.ts";
 import quizReducer from "./reducers/quizSlice.ts";
 import gameInfoReducer from "./reducers/gameInfoSlice.ts";
 import buyWindowReducer from "./reducers/buyWindowSlice.ts";
+import buyResourcesWindowReducer from "./reducers/buyResourcesWindowSlice.ts";
+
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +20,7 @@ export const store = configureStore({
     quiz: quizReducer,
     gameInfo: gameInfoReducer,
     buyWindow: buyWindowReducer,
+    buyResourcesWindow: buyResourcesWindowReducer,
   },
   devTools: false,
 });

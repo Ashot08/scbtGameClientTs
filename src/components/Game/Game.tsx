@@ -58,6 +58,8 @@ import WorkersCount from "./WorkersCount/WorkersCount.tsx";
 import WorkersField from "./WorkersField/WorkersField.tsx";
 import BuyWindow from "./WorkersField/BuyWindow/BuyWindow.tsx";
 import {selectBuyWindowIsShown} from "../../store/reducers/buyWindowSlice.ts";
+import {selectBuyResourcesWindowIsShown} from "../../store/reducers/buyResourcesWindowSlice.ts";
+import BuyResourcesWindow from "./Resources/BuyResourcesWindow/BuyResourcesWindow.tsx";
 
 function Game() {
   const dispatch = useAppDispatch();
@@ -81,6 +83,7 @@ function Game() {
   const quizActive = useAppSelector(selectIsActive);
   const timerOn = useAppSelector(selectTimerOn);
   const buyWindowOpen = useAppSelector(selectBuyWindowIsShown);
+  const buyResourcesWindowOpen = useAppSelector(selectBuyResourcesWindowIsShown);
   const [activeTabNumber, setActiveTabNumber] = useState(mobileCheck() ? 1 : 0);
   const gameInfoOpen = useAppSelector(selectGameInfoIsShown);
   const [controllsOpen, setControllsOpen] = useState(false);
@@ -547,10 +550,16 @@ function Game() {
                             </aside>
                           }
 
+
+                          {
+                            (buyResourcesWindowOpen && game.shiftChangeMode) && <BuyResourcesWindow playersState={game.playersState} userId={userId} />
+                          }
+
                             <div className={'game_desk'}>
-                                {
-                                  (buyWindowOpen && game.shiftChangeMode) && <BuyWindow updateWorkerData={updateWorkerData} playersState={game.playersState} userId={userId} />
-                                }
+
+                              {
+                                (buyWindowOpen && game.shiftChangeMode) && <BuyWindow updateWorkerData={updateWorkerData} playersState={game.playersState} userId={userId} />
+                              }
 
                                 <div className={`${gameInfoOpen ? 'blured_object ' : ''} ${classes.shiftIndicator}`}>
                                     Смена {getLastTurn(game)?.shift || ''}
