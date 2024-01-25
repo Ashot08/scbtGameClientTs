@@ -1,0 +1,131 @@
+.hexagon {
+  position: absolute;
+  width: 76px;
+
+  &:hover {
+    opacity: 0.4;
+  }
+
+  .plus {
+    position: absolute;
+    width: 20px !important;
+    height: 20px !important;
+    left: calc(50% - 9px);
+    top: calc(50% - 11px);
+  }
+
+  .defend {
+    position: absolute;
+    opacity: 0.3;
+
+    &.active {
+      opacity: 1;
+    }
+
+    .defendIcon {
+      width: 10px !important;
+    }
+
+    &:first-child {
+      left: 5px;
+      bottom: 22px;
+    }
+    &:nth-child(2) {
+      left: 5px;
+      top: 22px;
+    }
+    &:nth-child(3) {
+      left: 33px;
+      top: 5px;
+    }
+    &:nth-child(4) {
+      right: 5px;
+      top: 22px;
+    }
+    &:nth-child(5) {
+      right: 5px;
+      bottom: 22px;
+    }
+    &:nth-child(6) {
+      left: 33px;
+      bottom: 5px;
+    }
+  }
+
+}
+
+.hexagon_0 {
+  top: calc(50% - 50px);
+  //top: calc(50% - 49px);
+  //transform: rotate(45deg);
+  //
+  //img {
+  //  transform: rotate(-45deg);
+  //}
+}
+
+.hexagon_1 {
+  top: 0;
+  left: 42px;
+  //top: 0;
+  //left: 44px;
+  //transform: rotate(-45deg);
+  //
+  //img {
+  //  transform: rotate(45deg);
+  //}
+}
+
+.hexagon_2 {
+  top: 0;
+  right: 40px;
+  //top: 0;
+  //right: 42px;
+  //transform: rotate(80deg);
+  //
+  //img {
+  //  transform: rotate(-80deg);
+  //}
+}
+
+.hexagon_3 {
+  top: calc(50% - 49px);
+  right: 0;
+  //top: calc(50% - 48px);
+  //right: 0;
+  //transform: rotate(-26deg);
+  //
+  //img {
+  //  transform: rotate(26deg);
+  //}
+}
+
+.hexagon_4 {
+  bottom: 10px;
+  right: 42px;
+  //transform: rotate(-26deg);
+  //
+  //img {
+  //  transform: rotate(26deg);
+  //}
+}
+
+.hexagon_5 {
+  bottom: 10px;
+  left: 40px;
+  //bottom: 10px;
+  //left: 41px;
+  //transform: rotate(-26deg);
+  //
+  //img {
+  //  transform: rotate(26deg);
+  //}
+}
+
+.worker {
+  position: absolute;
+  width: 36px !important;
+  left: calc(50% - 18px);
+  top: calc(50% - 18px);
+}
+

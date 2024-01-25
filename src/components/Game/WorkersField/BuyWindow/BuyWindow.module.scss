@@ -1,0 +1,67 @@
+.buyWindow {
+  margin-top: 20px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  background-color: rgba(0, 0, 0, 0.6);
+  text-align: center;
+
+  .buttons {
+    margin-top: 20px;
+  }
+
+  .board {
+    position: relative;
+
+    .worker {
+      position: absolute;
+      left: calc(50% - 66px);
+      top: calc(50% - 64px);
+      cursor: pointer;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+
+    .defend {
+      position: absolute;
+      cursor: pointer;
+
+      &:hover {
+        opacity: 0.8;
+      }
+
+      &:first-child{
+        left: 90px;
+        bottom: 124px;
+      }
+      &:nth-child(2){
+        left: 90px;
+        top: 124px;
+      }
+      &:nth-child(3){
+        left: 190px;
+        top: 70px;
+      }
+      &:nth-child(4){
+        right: 90px;
+        top: 124px;
+      }
+      &:nth-child(5){
+        right: 90px;
+        bottom: 124px;
+      }
+      &:nth-child(6){
+        left: 190px;
+        bottom: 70px;
+      }
+    }
+  }
+}

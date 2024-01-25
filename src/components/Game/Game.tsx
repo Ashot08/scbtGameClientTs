@@ -41,7 +41,6 @@ import classes from './Game.module.scss';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import StartPage from "../StartPage/StartPage.tsx";
 import gameIcon from './img/gameIcon.png';
-import placeholder_1 from './img/placeholder_1.png';
 import placeholder_2 from './img/placeholder_2.png';
 import placeholder_3 from './img/placeholder_3.png';
 import lockIcon from './img/lock.png';
@@ -57,6 +56,8 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import Resources from "./Resources/Resources.tsx";
 import WorkersCount from "./WorkersCount/WorkersCount.tsx";
 import WorkersField from "./WorkersField/WorkersField.tsx";
+import BuyWindow from "./WorkersField/BuyWindow/BuyWindow.tsx";
+import {selectBuyWindowIsShown} from "../../store/reducers/buyWindowSlice.ts";
 
 function Game() {
   const dispatch = useAppDispatch();
@@ -78,6 +79,7 @@ function Game() {
   const lastRollPlayerName = useAppSelector(selectPlayerName);
   const quizActive = useAppSelector(selectIsActive);
   const timerOn = useAppSelector(selectTimerOn);
+  const buyWindowOpen = useAppSelector(selectBuyWindowIsShown);
   const [activeTabNumber, setActiveTabNumber] = useState(mobileCheck() ? 1 : 0);
   const gameInfoOpen = useAppSelector(selectGameInfoIsShown);
   const [controllsOpen, setControllsOpen] = useState(false);
@@ -362,10 +364,8 @@ function Game() {
                                   !mobileCheck() && <div className={classes.asideInnerContent}>
                                         <div className={classes.tilesField}>
                                             <WorkersCount playersState={game.playersState} userId={userId} />
-                                            <WorkersField playersState={game.playersState} userId={userId} />
-                                            <img src={placeholder_1} alt="Игровое поле" title={'Игровое поле'}/>
+                                            <WorkersField game={game} userId={userId} />
                                         </div>
-
                                     </div>
                                 }
 
@@ -547,6 +547,10 @@ function Game() {
                           }
 
                             <div className={'game_desk'}>
+                                {
+                                  buyWindowOpen && <BuyWindow playersState={game.playersState} userId={userId} />
+                                }
+
                                 <div className={`${gameInfoOpen ? 'blured_object ' : ''} ${classes.shiftIndicator}`}>
                                     Смена {getLastTurn(game)?.shift || ''}
                                 </div>

@@ -1,15 +1,20 @@
 import classes from './WorkersField.module.scss';
-import hexagonIcon from './img/hexagon.svg';
+import Field from "./Field/Field.tsx";
+
 
 function WorkersField (props: any) {
+
+
+
   return <div className={classes.workers_field}>
-    {props.userId}
-    <div className={classes.hexagon + ' ' + classes.hexagon_0}>
-      <img src={hexagonIcon} alt="Поле"/>
-    </div>
-    <div className={classes.hexagon + ' ' + classes.hexagon_1}>
-      <img src={hexagonIcon} alt="Поле"/>
-    </div>
+
+    <Field shiftChangeMode={props.game.shiftChangeMode} index={0} worker={true} />
+    <Field shiftChangeMode={props.game.shiftChangeMode} index={1} />
+    <Field shiftChangeMode={props.game.shiftChangeMode} index={2} />
+    <Field shiftChangeMode={props.game.shiftChangeMode} index={3} />
+    <Field shiftChangeMode={props.game.shiftChangeMode} index={4} />
+    <Field shiftChangeMode={props.game.shiftChangeMode} index={5} />
+
   </div>
 }
 
