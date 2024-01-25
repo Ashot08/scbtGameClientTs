@@ -260,7 +260,7 @@ export default function Roulette(props: any) {
           <div className={'mobileTopPanel'}>
             <div className={'mobileTopPanel_placeholder_1'}><img src={placeholder_1} alt=""/></div>
             {
-              (props.activePlayer.id == props.userId || game.moderator == props.userId)
+              ((game.shiftChangeMode === 'false') && (props.activePlayer.id == props.userId || game.moderator == props.userId))
               &&
                 <div>
                     <button style={{marginRight: 10}} className={'mobileRollButton'} disabled={mustSpin || gameInfoOpen}
@@ -294,7 +294,7 @@ export default function Roulette(props: any) {
       <div className="rouletteButtonWrapper">
 
         {
-          (props.activePlayer.id == props.userId || game.moderator == props.userId)
+          ((game.shiftChangeMode === 'false') && (props.activePlayer.id == props.userId || game.moderator == props.userId))
           &&
             <ButtonGroup className={'rouletteButtons'} variant="contained"
                          aria-label="outlined primary button group">

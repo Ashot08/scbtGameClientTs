@@ -29,3 +29,21 @@ export const getCurrentPlayerState = (playersState: any, playerId: number) => {
   }
   return currentPlayer;
 }
+
+export const getAvailableWorkers = (playerState: any) => {
+  const aliveCount = playerState.workers_alive;
+  const usedWorkersCount = playerState.workers_positions_scheme.split(',').filter((w: any) => w !== '0').length;
+  return aliveCount - usedWorkersCount;
+}
+
+export const getWorkerDataByIndex = (playerState: any, workerIndex: number) => {
+  const notActiveDefendsArray = playerState.not_active_defends_scheme.split(',');
+  const activeDefendsArray = playerState.active_defends_scheme.split(',');
+  const workersPositionsArray = playerState.workers_positions_scheme.split(',');
+
+  return {
+    notActiveDefends: +notActiveDefendsArray[workerIndex],
+    activeDefends: +activeDefendsArray[workerIndex],
+    workerIsSet: +workersPositionsArray[workerIndex],
+  }
+}

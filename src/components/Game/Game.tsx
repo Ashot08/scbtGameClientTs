@@ -73,7 +73,8 @@ function Game() {
     startAnswers,
     updateAnswer,
     stopAnswers,
-    stopGame
+    stopGame,
+    updateWorkerData
   } = useGame(params.gameId);
   const lastRollResult = useAppSelector(selectResult);
   const lastRollPlayerName = useAppSelector(selectPlayerName);
@@ -548,7 +549,7 @@ function Game() {
 
                             <div className={'game_desk'}>
                                 {
-                                  buyWindowOpen && <BuyWindow playersState={game.playersState} userId={userId} />
+                                  (buyWindowOpen && game.shiftChangeMode) && <BuyWindow updateWorkerData={updateWorkerData} playersState={game.playersState} userId={userId} />
                                 }
 
                                 <div className={`${gameInfoOpen ? 'blured_object ' : ''} ${classes.shiftIndicator}`}>

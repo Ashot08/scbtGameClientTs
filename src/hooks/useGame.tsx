@@ -108,21 +108,8 @@ const useGame = (roomId: any) => {
 
     socketRef.current.on('game:nextShift', (result: any, activePlayer: any) => {
       dispatch(hideGameInfo());
-      if(result.shift > 300) {
-        // dispatch(showPopup({
-        //   title:
-        //     <><div style={{marginTop: 20, marginBottom: 20, textAlign: "center"}}><strong>Игра окончена!</strong></div></>
-        //   ,
-        //   content: <div style={
-        //     {minWidth: 300, marginTop: 20, marginBottom: 20, textAlign: "center",}
-        //   }><img src={shiftCupIcon} alt="shift cup icon"/>
-        //     <div style={
-        //       {marginTop: 10, marginBottom: 10,}
-        //     }>
-        //       <Button variant="contained" onClick={() => dispatch(hidePopup())}>К итогам!</Button>
-        //     </div>
-        //   </div>
-        // }));
+      if(result.shift > 100) {
+        // end game
       } else {
         dispatch(showPopup({
           title: <> {
@@ -212,7 +199,11 @@ const useGame = (roomId: any) => {
     dispatch(hidePopup());
   }
 
-  return { game, joinGame, createRoll, goNextTurn, startAnswers, updateAnswer, stopAnswers, stopGame }
+  const updateWorkerData = (userId: number, data: {workerIndex: number, addedDefendsCount: number, workerIsSet: boolean}) => {
+    socketRef.current.emit('game:update_worker_data', {userId, data});
+  }
+
+  return { game, joinGame, createRoll, goNextTurn, startAnswers, updateAnswer, stopAnswers, stopGame, updateWorkerData }
 }
 
 export default useGame;
