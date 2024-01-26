@@ -14,6 +14,8 @@ function Field(props: any) {
   const selectedWorkerIndex = useAppSelector(selectBuyWindowIndex);
   const playerState = getCurrentPlayerState(props.playersState, props.userId);
   const workersData = getWorkerDataByIndex(playerState, props.index);
+  const isActive = ((selectedWorkerIndex === props.index) && props.shiftChangeMode === 'true') ||
+    (props.isActivePlayer && (props.index === playerState.active_worker) && props.shiftChangeMode === 'false')
   const onFieldClick = () => {
     if(props.shiftChangeMode === 'true') {
       dispatch(showBuyWindow({index: props.index}))
@@ -41,9 +43,15 @@ function Field(props: any) {
 
   }
 
-  return <div onClick={onFieldClick} className={classes.hexagon + ' ' + classes['hexagon_' + props.index] + ' ' + (selectedWorkerIndex === props.index ? classes.active : '')}>
+  return <div onClick={onFieldClick} className={classes.hexagon
+    + ' '
+    + classes['hexagon_' + props.index]
+    + ' '
+    + (isActive ? classes.active : '')
+  }
+  >
     <Defends/>
-    <img src={(selectedWorkerIndex === props.index) ? hexagonActiveIcon : hexagonIcon} alt="Поле"/>
+    <img src={(isActive) ? hexagonActiveIcon : hexagonIcon} alt="Поле"/>
     {props.worker
       ?
       <img className={classes.worker} src={workerIcon} alt="Рабочий"/>

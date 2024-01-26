@@ -47,3 +47,8 @@ export const getWorkerDataByIndex = (playerState: any, workerIndex: number) => {
     workerIsSet: +workersPositionsArray[workerIndex],
   }
 }
+
+export const getWorkersUsedOnFieldsCount = (playerState: any) => {
+  const usedWorkersCount = playerState.workers_positions_scheme.split(',').filter((w: any) => w !== '0').length;
+  return usedWorkersCount;
+}

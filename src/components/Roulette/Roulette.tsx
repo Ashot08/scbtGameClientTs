@@ -22,6 +22,7 @@ import placeholder_1 from './img/placeholder_1.png';
 import {selectGameInfoIsShown, showGameInfo} from "../../store/reducers/gameInfoSlice.ts";
 import coinsIcon from './img/coins.png';
 import alertIcon from './img/alert.png';
+import {getCurrentPlayerState, getWorkersUsedOnFieldsCount} from "../../utils/game.ts";
 
 const data = [
   {
@@ -130,17 +131,8 @@ export default function Roulette(props: any) {
   const dispatch = useAppDispatch();
   const game = useAppSelector(selectGame);
   const gameInfoOpen = useAppSelector(selectGameInfoIsShown);
-  //const [yourTurnWasShown, setYourTurnWasShown] = useState(false);
-
-  // useEffect(() => {
-  //     if(!yourTurnWasShown) {
-  //         if (props.userId === props.activePlayer?.id) {
-  //             dispatch(showPopup({title: 'Ваш ход', content: 'success'}));
-  //             setYourTurnWasShown(true);
-  //         }
-  //     }
-  // }, [game]);
-
+  const playerState = getCurrentPlayerState(game.playersState, props.userId);
+  const isRollAvailable = (props.activePlayer.id == props.userId) && getWorkersUsedOnFieldsCount(playerState) && (playerState.no_more_rolls === 'false');
 
   const onRoll = () => {
     props.handleSpinClick();
@@ -216,31 +208,6 @@ export default function Roulette(props: any) {
       disasterType,
     }))
 
-    // dispatch(showPopup({
-    //         title: <>
-    //             Ход  <strong>{props.activePlayer.name || props.activePlayer.username}</strong>
-    //         </>,
-    //         content: <BasicCard
-    //             style={{textAlign: 'center'}}
-    //             name={''}
-    //             id={<div className={'roll_result_content'}>
-    //                 <div>
-    //                     <img src={data[prizeNumber].icon} alt={data[prizeNumber].fullName}/>
-    //                 </div>
-    //                 <div>
-    //                     {data[prizeNumber].fullName}
-    //                 </div>
-    //                 <div style={{textTransform: 'none', color: '#000'}}>
-    //                     {(prizeNumber === 1) ?
-    //                         'Вы получаете 1 защиту'
-    //                         :
-    //                         'Тяжесть: ' + data[prizeNumber].category
-    //                     }
-    //
-    //                 </div>
-    //             </div>} />,
-    //     }
-    // ));
 
     dispatch(stopRoll());
     dispatch(setMeta({
@@ -263,12 +230,20 @@ export default function Roulette(props: any) {
               ((game.shiftChangeMode === 'false') && (props.activePlayer.id == props.userId || game.moderator == props.userId))
               &&
                 <div>
-                    <button style={{marginRight: 10}} className={'mobileRollButton'} disabled={mustSpin || gameInfoOpen}
-                            onClick={props.onNextPlayer}>Передать ход
+                  {
+                    (playerState.no_more_rolls === 'true' || game.moderator == props.userId)
+                    &&
+                      <button style={{marginRight: 10}} className={'mobileRollButton'}
+                              disabled={mustSpin || gameInfoOpen}
+                              onClick={props.onNextPlayer}>Передать ход
+                      </button>
+                  }
+
+                  {
+                    isRollAvailable && <button className={'mobileRollButton'} disabled={mustSpin || gameInfoOpen}
+                                               onClick={onRoll}>Крутить
                     </button>
-                    <button className={'mobileRollButton'} disabled={mustSpin || gameInfoOpen}
-                            onClick={onRoll}>Крутить
-                    </button>
+                  }
                 </div>
             }
           </div>
@@ -298,8 +273,15 @@ export default function Roulette(props: any) {
           &&
             <ButtonGroup className={'rouletteButtons'} variant="contained"
                          aria-label="outlined primary button group">
-                <Button disabled={mustSpin} onClick={onRoll}>Крутить</Button>
-                <Button disabled={mustSpin} onClick={props.onNextPlayer}>Передать ход</Button>
+              {isRollAvailable &&
+                  <Button disabled={mustSpin} onClick={onRoll}>Крутить</Button>
+              }
+              {
+                (playerState.no_more_rolls === 'true' || game.moderator == props.userId)
+                &&
+                  <Button disabled={mustSpin} onClick={props.onNextPlayer}>Передать ход</Button>
+              }
+
             </ButtonGroup>
         }
 
