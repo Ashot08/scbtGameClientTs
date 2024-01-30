@@ -13,7 +13,7 @@ import FaceIcon from '@mui/icons-material/Face';
 import Button from "@mui/material/Button";
 import useGame from "../../hooks/useGame.tsx";
 import CasinoIcon from '@mui/icons-material/Casino';
-import {selectPlayerName, selectResult} from "../../store/reducers/rouletteSlice.ts";
+import {selectIsRoll, selectPlayerName, selectResult} from "../../store/reducers/rouletteSlice.ts";
 import {hide, selectIsActive, selectTimerOn, show} from "../../store/reducers/quizSlice.ts";
 import {Quiz} from "../Quiz/Quiz.tsx";
 import {
@@ -91,6 +91,7 @@ function Game() {
   const [controlsAnimate, setControlsAnimate] = useState(false);
   const [isLoadingReadyStatus, setIsLoadingReadyStatus] = useState(false);
   const playerState = getCurrentPlayerState(game.playersState, userId);
+  const mustSpin = useAppSelector(selectIsRoll);
 
   const onNextPlayer = () => {
     dispatch(showPopup({
@@ -426,7 +427,8 @@ function Game() {
                                                     рулетке</button>
                                               :
                                               <>
-                                                <button onClick={onShowQuiz} className={'button'}>Взять вопрос</button>
+                                                {/*<button onClick={onShowQuiz} className={'button'}>Взять вопрос</button>*/}
+                                                <button onClick={startAnswers} className={'button'}>Взять вопрос</button>
                                                 {
                                                   (game.moderator == userId)
                                                   &&
@@ -535,14 +537,12 @@ function Game() {
                           {
                             (buyResourcesWindowOpen && game.shiftChangeMode) && <BuyResourcesWindow buyDefends={buyDefends} playersState={game.playersState} userId={userId} />
                           }
-
-                            <div className={'game_desk'}>
-
-                              {
-                                (buyWindowOpen && game.shiftChangeMode) &&
-                                  <BuyWindow updateWorkerData={updateWorkerData} playersState={game.playersState}
-                                             userId={userId}/>
-                              }
+                          {
+                            (buyWindowOpen && game.shiftChangeMode) &&
+                              <BuyWindow updateWorkerData={updateWorkerData} playersState={game.playersState}
+                                         userId={userId}/>
+                          }
+                            <div className={'game_desk top'}>
 
                                 <div className={`${gameInfoOpen ? 'blured_object ' : ''} ${classes.shiftIndicator}`}>
                                   {(game.shiftChangeMode === 'true')
@@ -565,7 +565,7 @@ function Game() {
                                 </div>
                               {
 
-                                (game?.answersMode === 'true' || quizActive)
+                                (game?.answersMode === 'true')
                                   ?
                                   <Quiz quizTimer={timerOn} startAnswers={startAnswers}
                                         isMyTurn={getActivePlayer(game).username === player}
@@ -576,10 +576,11 @@ function Game() {
                                       <Roulette userId={userId} activePlayer={getActivePlayer(game)}
                                                 handleSpinClick={createRoll} onNextPlayer={onNextPlayer}/>
                                     </div>
-                                    {gameInfoOpen &&
+                                    {(game.showRollResultMode === 'true' && !mustSpin) &&
                                         <>
-
                                             <GameInfoModal
+                                                userId={userId}
+                                                activePlayer={getActivePlayer(game)}
                                                 showButtons={(getActivePlayer(game).id === userId || game.moderator == userId)}
                                                 onShowQuiz={onShowQuiz} goNextTurn={onNextPlayer}/>
                                         </>

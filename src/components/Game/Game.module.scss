@@ -290,3 +290,13 @@
     margin-left: 5px;
   }
 }
+
+@media (max-width: 769px) {
+  .readyCheckbox {
+    top: 65px;
+  }
+  .playerResources {
+    left: 15px;
+    top: 67px;
+  }
+}

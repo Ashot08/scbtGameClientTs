@@ -6,47 +6,76 @@ import successIcon from './img/success.png';
 import infoIcon from './img/info.png';
 import coinsIcon from './img/coins.png';
 import {useAppSelector} from "../../hooks.ts";
-import {selectGameInfoContent, selectGameInfoIsShown} from "../../store/reducers/gameInfoSlice.ts";
+import {selectGame} from "../../store/reducers/gameSlice.ts";
+import {getCurrentPlayerState} from "../../utils/game.ts";
+import {data} from "../../constants/data.ts";
 
 export default function GameInfoModal(props: any) {
   const [isShowBox, setIsShowBox] = useState(false);
-  const data = useAppSelector(selectGameInfoContent);
-  const open = useAppSelector(selectGameInfoIsShown);
+  const game = useAppSelector(selectGame);
+  const activePlayerState = getCurrentPlayerState(game.playersState, props.activePlayer.id);
+  const prizeNumber = game.lastTurnRolls[game.lastTurnRolls.length - 1].result_id;
+  let status = '';
 
   useEffect(() => {
-    setTimeout(() => setIsShowBox(true));
+    setTimeout(() => setIsShowBox(true), 100);
   }, []);
 
   let image = infoIcon;
-  if (data.status === 'disaster') {
+  if (activePlayerState.accident_difficultly > 0) {
     image = disasterIcon;
+    status = 'disaster';
   }
-  if (data.status === 'success') {
+  if (activePlayerState.accident_difficultly === 0) {
     image = successIcon;
+    status = 'success';
   }
 
   return (
     <>
       {
-        open
-        &&
           <div className={`${classes.gameInfo} ${isShowBox ? classes.blockShow : ""}`}>
               <div className={classes.leftCorner}>
                   <img src={leftCornerIcon} alt="фон 1"/>
               </div>
               <div className={classes.leftText}>
                   <div className={classes.leftTextTitle}>
-                    {data.title}
+                    {data[prizeNumber].option}
                   </div>
                   <div className={classes.leftTextContent}>
-                    {data.content}
+                    {(status === 'success' && props.activePlayer.id == props.userId)
+                      &&
+                        <>
+                            У вас Бонус (+1 защита)!
+                        </>
+                    }
+                    {(status === 'success' && props.activePlayer.id != props.userId)
+                      &&
+                        <>
+                            У {props.activePlayer.name || props.activePlayer.username} Бонус!
+                        </>
+                    }
+
+                    {(status === 'disaster' && props.activePlayer.id == props.userId)
+                      &&
+                        <>
+                            У вас может произойти несчастный случай!
+                        </>
+                    }
+                    {(status === 'disaster' && props.activePlayer.id != props.userId)
+                      &&
+                        <>
+                            У {props.activePlayer.name || props.activePlayer.username} может произойти несчастный случай!
+                        </>
+                    }
+
                   </div>
               </div>
               <div className={classes.image}>
-                  <img src={image} alt={data.title}/>
+                  <img src={image} alt={'title'}/>
               </div>
             {
-              ( data.status === 'info')
+              ( status === 'info')
               &&
                 <div className={classes.info}>
                     <div className={classes.infoText}>
@@ -60,14 +89,34 @@ export default function GameInfoModal(props: any) {
             }
 
             {
-              ( data.status === 'disaster')
+              ( status === 'disaster')
               &&
                 <div className={`${classes.info} ${classes.disasterInfo}`}>
                     <div className={classes.infoText}>
-                        Требуется активных
+
+                      {activePlayerState.questions_to_active_def_count
+                        ?
                         <div>
-                            защит: <span style={{fontWeight: 600, color: 'gold'}}>{data.needBonusesCount}</span>
+                          Доступно защит для
+                          <div>
+                            активации: <span style={{fontWeight: 600, color: 'gold'}}>{activePlayerState.questions_to_active_def_count}</span>
+                          </div>
                         </div>
+                          :
+                        ''
+                      }
+                      {activePlayerState.questions_without_def_count ?
+                        <>
+                            Ответы без права на
+                            <div>ошибку: <span style={{
+                              fontWeight: 600,
+                              color: 'gold'
+                            }}>{activePlayerState.questions_without_def_count}</span>
+                            </div>
+                        </>
+                        :
+                        ''
+                      }
                     </div>
                     <div className={classes.infoCoins}>
                         <img src={coinsIcon} alt="Монеты на защиту"/>

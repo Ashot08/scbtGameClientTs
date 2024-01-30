@@ -18,6 +18,7 @@ export interface GameState {
   moderatorMode?: boolean | string,
   answersMode?: 'true' | 'false',
   shiftChangeMode?: 'true' | 'false',
+  showRollResultMode?: 'true' | 'false',
   playersState?: any,
 }
 
@@ -50,6 +51,7 @@ export const gameSlice = createSlice({
       state.lastTurnRolls = action.payload.lastTurnRolls;
       state.answersMode = action.payload.answersMode;
       state.shiftChangeMode = action.payload.shiftChangeMode;
+      state.showRollResultMode = action.payload.showRollResultMode;
       state.playersState = action.payload.playersState;
     },
   },

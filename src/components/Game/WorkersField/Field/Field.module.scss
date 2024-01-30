@@ -129,3 +129,17 @@
   top: calc(50% - 18px);
 }
 
+
+@media (max-width: 768px) {
+  .hexagon {
+    img {
+      width: 76px;
+    }
+
+    .defend{
+      img {
+        width: 14px;
+      }
+    }
+  }
+}

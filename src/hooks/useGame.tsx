@@ -10,9 +10,12 @@ import {hidePopup, showPopup} from "../store/reducers/popupSlice.ts";
 import {hide, onTimer} from "../store/reducers/quizSlice.ts";
 import shiftClockIcon from '../assets/shift_clock.png'
 import shiftCupIcon from '../assets/shift_cup.png'
-import playerIcon from '../assets/player.png'
+import playerIcon from '../assets/player.png';
+import failIcon from '../components/Game/img/fail.png';
 import { Button } from '@mui/material';
 import {hideGameInfo} from "../store/reducers/gameInfoSlice.ts";
+
+
 
 // import { useBeforeUnload } from './useBeforeUnload.ts';
 
@@ -59,6 +62,7 @@ const useGame = (roomId: any) => {
         moderatorMode: state.state.game.moderator_mode,
         answersMode: state.state.game.answers_mode,
         shiftChangeMode: state.state.game.shift_change_mode,
+        showRollResultMode: state.state.game.show_roll_result_mode,
         playersState: state.state.playersState,
       }));
     })
@@ -180,6 +184,25 @@ const useGame = (roomId: any) => {
             {marginTop: 10, marginBottom: 10,}
           }>
             <Button variant="contained" onClick={() => dispatch(hidePopup())}>К итогам!</Button>
+          </div>
+        </div>
+      }));
+    });
+
+    socketRef.current.on('game:workerFail', () => {
+      dispatch(hideGameInfo());
+      dispatch(hide());
+      dispatch(showPopup({
+        title:
+          <><div style={{marginTop: 20, marginBottom: 20, textAlign: "center"}}><strong>Работник травмирован!</strong></div></>
+        ,
+        content: <div style={
+          {minWidth: 300, marginTop: 20, marginBottom: 20, textAlign: "center",}
+        }><img style={{maxWidth: '200px'}} src={failIcon} alt="shift cup icon"/>
+          <div style={
+            {marginTop: 10, marginBottom: 10,}
+          }>
+            <Button variant="contained" onClick={() => dispatch(hidePopup())}>Ок!</Button>
           </div>
         </div>
       }));

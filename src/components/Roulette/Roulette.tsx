@@ -3,14 +3,6 @@ import './Roulette.scss';
 import arrowImage from './img/arrow.svg';
 import {ButtonGroup} from "@mui/material";
 import Button from "@mui/material/Button";
-import bonusIcon from './img/icons/bonus.png';
-import microIcon from './img/icons/micro.png';
-import lightIcon from './img/icons/light.png';
-import hardIcon from './img/icons/hard.png';
-import groupIcon from './img/icons/group.png';
-import letalIcon from './img/icons/letal.png';
-import groupLetalIcon from './img/icons/group_letal.png';
-
 import {mobileCheck} from "../../utils/mobileCheck.ts";
 
 import {useAppDispatch, useAppSelector} from "../../hooks.ts";
@@ -19,112 +11,12 @@ import {selectIsRoll, selectPrizeNumber, setMeta, stopRoll} from "../../store/re
 import RouletteMobile2 from "../RouletteMobile/RouletteMobile2.tsx";
 // import RouletteMobile from "../RouletteMobile/RouletteMobile.tsx";
 import placeholder_1 from './img/placeholder_1.png';
-import {selectGameInfoIsShown, showGameInfo} from "../../store/reducers/gameInfoSlice.ts";
-import coinsIcon from './img/coins.png';
-import alertIcon from './img/alert.png';
-import {getCurrentPlayerState, getWorkersUsedOnFieldsCount} from "../../utils/game.ts";
+import {selectGameInfoIsShown} from "../../store/reducers/gameInfoSlice.ts";
 
-const data = [
-  {
-    option: 'Групповой, летальный',
-    optionSize: 2,
-    // image: {
-    //     uri: '/src/assets/logo.svg',
-    // },
-    style: {
-      backgroundColor: '#660000',
-      fontSize: 14,
-      textColor: '#fff'
-    },
-    fullName: 'Групповой, летальный НС',
-    icon: groupLetalIcon,
-    category: '6 + 1',
-  },
-  {
-    option: 'Бонус',
-    optionSize: 5,
-    style: {
-      backgroundColor: 'green',
-      fontSize: 16,
-      textColor: '#fff'
-    },
-    fullName: 'Бонус!',
-    icon: bonusIcon,
-    category: '',
-  },
-  {
-    option: 'Тяжелый',
-    optionSize: 4,
-    style: {
-      backgroundColor: '#c50000',
-      fontSize: 16,
-      textColor: '#fff'
-    },
-    fullName: 'Тяжелый НС',
-    icon: hardIcon,
-    category: '4',
-  },
-  {
-    option: 'Микротравма',
-    optionSize: 5,
-    style: {
-      backgroundColor: 'orange',
-      fontSize: 16,
-      textColor: '#333'
-    },
-    fullName: 'Микротравма',
-    icon: microIcon,
-    category: '1',
-  },
-  {
-    option: 'Летальный',
-    optionSize: 3,
-    style: {
-      backgroundColor: '#660000',
-      fontSize: 16,
-      textColor: '#fff'
-    },
-    fullName: 'Летальный НС',
-    icon: letalIcon,
-    category: '5',
-  },
-  {
-    option: 'Легкий',
-    optionSize: 5,
-    style: {
-      backgroundColor: '#ffae42',
-      fontSize: 16,
-      textColor: '#333'
-    },
-    fullName: 'Легкий НС',
-    icon: lightIcon,
-    category: '2',
-  },
-  {
-    option: 'Групповой',
-    optionSize: 5,
-    style: {
-      backgroundColor: '#c50000',
-      fontSize: 16,
-      textColor: '#fff'
-    },
-    fullName: 'Групповой НС',
-    icon: groupIcon,
-    category: '3 + 1',
-  },
-  {
-    option: 'Микротравма',
-    optionSize: 5,
-    style: {
-      backgroundColor: 'orange',
-      fontSize: 16,
-      textColor: '#333'
-    },
-    fullName: 'Микротравма',
-    icon: microIcon,
-    category: '1',
-  },
-]
+import {getCurrentPlayerState, getWorkersUsedOnFieldsCount} from "../../utils/game.ts";
+import {data} from '../../constants/data.ts';
+
+
 export default function Roulette(props: any) {
   const mustSpin = useAppSelector(selectIsRoll);
   const prizeNumber = useAppSelector(selectPrizeNumber);
@@ -132,81 +24,101 @@ export default function Roulette(props: any) {
   const game = useAppSelector(selectGame);
   const gameInfoOpen = useAppSelector(selectGameInfoIsShown);
   const playerState = getCurrentPlayerState(game.playersState, props.userId);
+  // const activePlayerState = getCurrentPlayerState(game.playersState, props.activePlayer.id);
   const isRollAvailable = (props.activePlayer.id == props.userId) && getWorkersUsedOnFieldsCount(playerState) && (playerState.no_more_rolls === 'false');
 
   const onRoll = () => {
     props.handleSpinClick();
   }
+/*
+  useEffect(() => {
+    let content: any = '';
+    let disasterType: any = '';
 
+    if(Array.isArray(game.lastTurnRolls) && game.lastTurnRolls.length &&
+      (activePlayerState.accident_difficultly < 100 )){
+
+      const prizeNumber = game.lastTurnRolls[game.lastTurnRolls.length - 1].result_id;
+
+      const status = data[prizeNumber].option === 'Бонус' ? 'success' : 'disaster';
+      if (data[prizeNumber].option === 'Бонус') {
+        content = <div>
+          {
+            props.activePlayer.id == props.userId
+              ?
+              <>
+                <div>Ура!</div>
+                <div>Вы получили</div>
+              </>
+              : <>
+                <div>Игрок <strong>{props.activePlayer.name || props.activePlayer.username}</strong></div>
+                <div>Получил</div>
+              </>
+          }
+
+          <div style={{
+            color: '#3894CE',
+            fontSize: '28px',
+            textTransform: 'uppercase', fontFamily: 'Oswald', fontWeight: 600
+          }}>БОНУС
+          </div>
+        </div>
+      } else {
+        disasterType = data[prizeNumber].fullName;
+        content = <div>
+          {
+            props.activePlayer.id == props.userId
+              ? <div>Внимание!</div>
+              : <div>У игрока <strong>{props.activePlayer.name || props.activePlayer.username}</strong></div>
+          }
+          <div>Может произойти</div>
+          <div className={'disasterInfo'} style={{color: '#3894CE', fontSize: '18px', fontWeight: 600}}>
+            <img src={alertIcon} alt="Опасность!"/>
+            <div>
+              <div className={'disasterType'}>{disasterType}</div>
+              <div className={'disasterSubtitle'}>на производстве</div>
+            </div>
+          </div>
+          <div style={{marginTop: 20}} className={'onlyMobile'}>
+            {(activePlayerState.questions_to_active_def_count > 0)
+              ?
+              'Доступно защит для активации:' + activePlayerState.questions_to_active_def_count
+              : ''
+            }
+            {activePlayerState.questions_without_def_count ?
+
+              'Ответы без права на ошибку: ' + activePlayerState.questions_without_def_count
+              :
+              ''
+            }
+            <div style={{marginTop: 10, marginBottom: 10}}>
+              <img src={coinsIcon} alt="Требуется защит"/>
+            </div>
+
+            <div style={{fontSize: '12px', opacity: 0.4, paddingTop: 10, paddingBottom: 10, borderBottom: '2px solid #5554A0'}}>
+              {props.activePlayer.id == props.userId
+                ?
+                'Чтобы избежать - отвечайте на вопросы'
+                :
+                'Отвечайте на вопросы, чтобы набрать дополнительные очки'
+              }
+            </div>
+          </div>
+        </div>;
+      }
+      dispatch(showGameInfo({
+        title: '',
+        status,
+        content,
+        needBonusesCount: data[prizeNumber].category,
+        disasterType,
+      }))
+    }
+  }, [game])
+*/
   const onStopSpinning = () => {
 
     if (prizeNumber === undefined) return;
-
-    let content: any = '';
-    let disasterType: any = '';
-    const status = data[prizeNumber].option === 'Бонус' ? 'success' : 'disaster';
-    if (data[prizeNumber].option === 'Бонус') {
-      content = <div>
-        {
-          props.activePlayer.id == props.userId
-            ?
-            <>
-              <div>Ура!</div>
-              <div>Вы получили</div>
-            </>
-            : <>
-              <div>Игрок <strong>{props.activePlayer.name || props.activePlayer.username}</strong></div>
-              <div>Получил</div>
-            </>
-        }
-
-        <div style={{
-          color: '#3894CE',
-          fontSize: '28px',
-          textTransform: 'uppercase', fontFamily: 'Oswald', fontWeight: 600
-        }}>БОНУС
-        </div>
-      </div>
-    } else {
-      disasterType = data[prizeNumber].fullName;
-      content = <div>
-        {
-          props.activePlayer.id == props.userId
-            ? <div>Внимание!</div>
-            : <div>У игрока <strong>{props.activePlayer.name || props.activePlayer.username}</strong></div>
-        }
-        <div>Может произойти</div>
-        <div className={'disasterInfo'} style={{color: '#3894CE', fontSize: '18px', fontWeight: 600}}>
-          <img src={alertIcon} alt="Опасность!"/>
-          <div>
-            <div className={'disasterType'}>{disasterType}</div>
-            <div className={'disasterSubtitle'}>на производстве</div>
-          </div>
-        </div>
-        <div style={{marginTop: 20}} className={'onlyMobile'}>Требуется активных защит: {data[prizeNumber].category}
-          <div style={{marginTop: 10, marginBottom: 10}}>
-            <img src={coinsIcon} alt="Требуется защит"/>
-          </div>
-
-          <div style={{fontSize: '12px', opacity: 0.4, paddingTop: 10, paddingBottom: 10, borderBottom: '2px solid #5554A0'}}>
-            {props.activePlayer.id == props.userId
-              ?
-              'Чтобы избежать - отвечайте на вопросы'
-              :
-              'Отвечайте на вопросы, чтобы набрать дополнительные очки'
-            }
-          </div>
-        </div>
-      </div>;
-    }
-
-    dispatch(showGameInfo({
-      title: '',
-      status,
-      content,
-      needBonusesCount: data[prizeNumber].category,
-      disasterType,
-    }))
 
 
     dispatch(stopRoll());
@@ -219,8 +131,6 @@ export default function Roulette(props: any) {
 
   return (
     <>
-
-
       {mobileCheck() ?
         <div style={{marginTop: 67}}>
           <RouletteMobile2 game={game} onStopSpinning={onStopSpinning} mustSpin={mustSpin} prizeNumber={prizeNumber}/>
@@ -240,9 +150,9 @@ export default function Roulette(props: any) {
                   }
 
                   {
-                    isRollAvailable && <button className={'mobileRollButton'} disabled={mustSpin || gameInfoOpen}
+                    isRollAvailable ? <button className={'mobileRollButton'} disabled={mustSpin || gameInfoOpen}
                                                onClick={onRoll}>Крутить
-                    </button>
+                    </button> : ''
                   }
                 </div>
             }
