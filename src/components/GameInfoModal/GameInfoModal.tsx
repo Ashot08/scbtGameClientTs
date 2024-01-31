@@ -47,11 +47,13 @@ export default function GameInfoModal(props: any) {
                   <div className={classes.leftTextTitle}>
                     {
                       isNextWorkerAvailable(activePlayerState)
-                      ? 'К следующему работнику'
+                      ?
+                        'К следующему работнику'
                         :
                         <>
                           {isNextTurnAvailable(activePlayerState)
-                            ? 'Ход завершен'
+                            ?
+                            'Ход завершен'
                             :
                             <>{data[prizeNumber].option}</>
                           }
@@ -60,19 +62,13 @@ export default function GameInfoModal(props: any) {
                   </div>
                   <div className={classes.leftTextContent}>
 
-                    {isNextTurnAvailable(activePlayerState)
+                    {isNextWorkerAvailable(activePlayerState)
                       ?
-                      <></>
-                      :
                       <>
                         {(status === 'success' && props.activePlayer.id == props.userId)
                           &&
                             <>
-                              {isNextTurnAvailable(activePlayerState)
-                                ? 'Передайте ход следующему игроку'
-                                :
-                                'У вас Бонус (+1 защита)!'
-                              }
+                                 У вас Бонус (+1 защита)!
                             </>
                         }
                         {(status === 'success' && props.activePlayer.id != props.userId)
@@ -81,7 +77,9 @@ export default function GameInfoModal(props: any) {
                                 У {props.activePlayer.name || props.activePlayer.username} Бонус!
                             </>
                         }
-
+                      </>
+                      :
+                      <>
                         {(status === 'disaster' && props.activePlayer.id == props.userId)
                           &&
                             <>

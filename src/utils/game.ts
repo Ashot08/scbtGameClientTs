@@ -55,11 +55,11 @@ export const getWorkersUsedOnFieldsCount = (playerState: any) => {
 
 export const isNextTurnAvailable = (playerState: any) => {
   return (
-    //playerState.no_more_rolls === 'true' &&
+    playerState.no_more_rolls === 'true' &&
     playerState.questions_to_next_worker_count === 0 &&
     playerState.questions_without_def_count === 0 &&
     playerState.questions_to_active_def_count === 0 &&
-    playerState.next_worker_index === 0
+    playerState.next_worker_index <= playerState.active_worker
   );
 }
 
