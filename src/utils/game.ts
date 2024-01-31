@@ -52,3 +52,50 @@ export const getWorkersUsedOnFieldsCount = (playerState: any) => {
   const usedWorkersCount = playerState.workers_positions_scheme.split(',').filter((w: any) => w !== '0').length;
   return usedWorkersCount;
 }
+
+export const isNextTurnAvailable = (playerState: any) => {
+  return (
+    //playerState.no_more_rolls === 'true' &&
+    playerState.questions_to_next_worker_count === 0 &&
+    playerState.questions_without_def_count === 0 &&
+    playerState.questions_to_active_def_count === 0 &&
+    playerState.next_worker_index === 0
+  );
+}
+
+export const isGetQuestionAvailable = (playerState: any) => {
+  return (
+    playerState.questions_to_next_worker_count > 0 ||
+    playerState.questions_without_def_count > 0 ||
+    playerState.questions_to_active_def_count > 0
+  );
+}
+
+export const isNextWorkerAvailable = (playerState: any) => {
+  return (
+    playerState.no_more_rolls === 'false' &&
+    playerState.questions_to_next_worker_count === 0 &&
+    playerState.questions_without_def_count === 0 &&
+    playerState.questions_to_active_def_count <= 0 &&
+    playerState.next_worker_index > 0
+  );
+}
+
+export const getQuestionsCountInfo = (playerState: any) => {
+  let subject = '';
+  let count = 0;
+  if(playerState.questions_to_active_def_count > 0) {
+    subject = 'Вопросы для активации защит: ';
+    count = playerState.questions_to_active_def_count;
+  } else if(playerState.questions_without_def_count > 0) {
+    subject = 'Ответы без права на ошибку: ';
+    count = playerState.questions_without_def_count;
+  } else if(playerState.questions_to_next_worker_count > 0) {
+    subject = 'Вопросы для соседнего рабочего (групповой НС): ';
+    count = playerState.questions_to_next_worker_count;
+  }
+  return {
+    subject,
+    count,
+  }
+}

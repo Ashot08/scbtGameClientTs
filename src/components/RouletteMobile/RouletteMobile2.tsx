@@ -13,8 +13,6 @@ import lightIcon from "./images/light.png";
 import groupIcon from "./images/group.png";
 import defendIcon from "./images/defend.png";
 import arrowIcon from "./images/arrow.png";
-import {useAppSelector} from "../../hooks.ts";
-import {selectGameInfoIsShown} from "../../store/reducers/gameInfoSlice.ts";
 
 const data = [
   {
@@ -108,8 +106,6 @@ const data = [
 ]
 export default function RouletteMobile2(props: any) {
   const [swiper, setSwiper] = useState(null);
-  // const [blur, setBlur] = useState(false);
-  const gameInfoOpen = useAppSelector(selectGameInfoIsShown);
 
   useEffect(() => {
     if (!props.mustSpin) {
@@ -147,7 +143,7 @@ export default function RouletteMobile2(props: any) {
   }
   return (
     <>
-      <div className={gameInfoOpen ? 'blur' : ''} style={{marginTop: 67, marginBottom: 16}}>
+      <div className={(props.game.showRollResultMode === 'true' && !props.mustSpin) ? 'blur' : ''} style={{marginTop: 67, marginBottom: 16}}>
         <div className={classes.swiperWrapper}>
           <div className={classes.swiperArrow}>
             <img src={arrowIcon} alt="Стрелка"/>

@@ -1,5 +1,5 @@
 .gameInfo {
-  height: 160px;
+  min-height: 160px;
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
   position: fixed;
@@ -12,9 +12,11 @@
   font-weight: 400;
   color: #fff;
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-start;
   justify-content: space-between;
   padding-top: 32px;
+  padding-bottom: 10px;
   z-index: 15;
 
   .leftText {
@@ -62,7 +64,25 @@
   }
 
   .buttons {
-    display: none;
+    display: block;
+    margin-top: 32px;
+    text-align: center;
+    width: 100%;
+    z-index: 2;
+
+    button{
+      padding: 8px 16px;
+      font-size: 16px;
+      font-weight: 700;
+      border-radius: 26px;
+      background: #00ABAB;
+      color: #fff;
+      border: none;
+
+      &:first-child {
+        margin-right: 20px;
+      }
+    }
   }
 }
 
@@ -83,7 +103,6 @@
     width: 560px;
     left: calc(50% - 280px);
     background-color: #2A2958;
-    padding-bottom: 40px;
 
     .leftCorner {
       width: 100px;
@@ -110,8 +129,15 @@
 
 @media (max-width: 768px) {
   .disasterInfo {
-    display: none;
+    &.info {
+      max-width: 100%;
+      text-align: center;
+      margin-right: 0;
+      margin-top: 10px;
+      color: lightgray;
+    }
   }
+
   .gameInfo {
     width: 100%;
     height: auto;
@@ -122,25 +148,7 @@
     border-top-left-radius: 32px;
     padding-left: 30px;
     padding-right: 30px;
-
-    .buttons {
-      display: block;
-      margin-top: 32px;
-
-      button{
-        padding: 8px 16px;
-        font-size: 12px;
-        font-weight: 700;
-        border-radius: 26px;
-        background: #00ABAB;
-        color: #fff;
-        border: none;
-
-        &:first-child {
-          margin-right: 20px;
-        }
-      }
-    }
+    padding-bottom: 20px;
 
     .image {
       display: none;

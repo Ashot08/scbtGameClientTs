@@ -48,7 +48,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import historyIcon from './img/history.png';
 import chatIcon from './img/chat.png';
 import GameInfoModal from "../GameInfoModal/GameInfoModal.tsx";
-import {hideGameInfo, selectGameInfoIsShown} from "../../store/reducers/gameInfoSlice.ts";
+import {hideGameInfo} from "../../store/reducers/gameInfoSlice.ts";
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import CloseIcon from '@mui/icons-material/Close';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
@@ -78,6 +78,7 @@ function Game() {
     updateWorkerData,
     buyDefends,
     changeReadyStatus,
+    goNextWorker
   } = useGame(params.gameId);
   const lastRollResult = useAppSelector(selectResult);
   const lastRollPlayerName = useAppSelector(selectPlayerName);
@@ -86,7 +87,6 @@ function Game() {
   const buyWindowOpen = useAppSelector(selectBuyWindowIsShown);
   const buyResourcesWindowOpen = useAppSelector(selectBuyResourcesWindowIsShown);
   const [activeTabNumber, setActiveTabNumber] = useState(mobileCheck() ? 1 : 0);
-  const gameInfoOpen = useAppSelector(selectGameInfoIsShown);
   const [controllsOpen, setControllsOpen] = useState(false);
   const [controlsAnimate, setControlsAnimate] = useState(false);
   const [isLoadingReadyStatus, setIsLoadingReadyStatus] = useState(false);
@@ -542,9 +542,64 @@ function Game() {
                               <BuyWindow updateWorkerData={updateWorkerData} playersState={game.playersState}
                                          userId={userId}/>
                           }
+
+
+                            <div>
+                              {
+                                (userId == game.playersState[0].player_id)
+                                &&
+                                  <ul style={{listStyle: 'none', fontSize: 12, paddingTop: 60}}>
+                                    {/*<li>{game.playersState[0].id}</li>*/}
+                                    {/*<li>{game.playersState[0].player_id}</li>*/}
+                                    {/*<li>{game.playersState[0].game_id}</li>*/}
+                                      <li>workers_alive: {game.playersState[0].workers_alive}</li>
+                                      <li>active_worker: {game.playersState[0].active_worker}</li>
+                                      <li>next_worker_index: {game.playersState[0].next_worker_index}</li>
+                                      <li>next_worker_mode: {game.playersState[0].next_worker_mode}</li>
+                                      <li>money: {game.playersState[0].money}</li>
+                                      <li>defends: {game.playersState[0].defends}</li>
+                                      <li>active_defends_scheme: {game.playersState[0].active_defends_scheme}</li>
+                                      <li>not_active_defends_scheme: {game.playersState[0].not_active_defends_scheme}</li>
+                                      <li>workers_positions_scheme: {game.playersState[0].workers_positions_scheme}</li>
+                                      <li>accident_difficultly: {game.playersState[0].accident_difficultly}</li>
+                                      <li>ready: {game.playersState[0].ready}</li>
+                                      <li>questions_to_active_def_count: {game.playersState[0].questions_to_active_def_count}</li>
+                                      <li>questions_without_def_count: {game.playersState[0].questions_without_def_count}</li>
+                                      <li>questions_to_next_worker_count: {game.playersState[0].questions_to_next_worker_count}</li>
+                                      <li>no_more_rolls: {game.playersState[0].no_more_rolls}</li>
+                                  </ul>
+                              }
+                              {
+                                (userId == game.playersState[1].player_id)
+                                &&
+                                  <ul style={{listStyle: 'none', fontSize: 12, paddingTop: 60}}>
+                                    {/*<li>{game.playersState[1].id}</li>*/}
+                                    {/*<li>{game.playersState[1].player_id}</li>*/}
+                                    {/*<li>{game.playersState[1].game_id}</li>*/}
+                                      <li>workers_alive: {game.playersState[1].workers_alive}</li>
+                                      <li>active_worker: {game.playersState[1].active_worker}</li>
+                                      <li>next_worker_index: {game.playersState[1].next_worker_index}</li>
+                                      <li>next_worker_mode: {game.playersState[1].next_worker_mode}</li>
+                                      <li>money: {game.playersState[1].money}</li>
+                                      <li>defends: {game.playersState[1].defends}</li>
+                                      <li>active_defends_scheme: {game.playersState[1].active_defends_scheme}</li>
+                                      <li>not_active_defends_scheme: {game.playersState[1].not_active_defends_scheme}</li>
+                                      <li>workers_positions_scheme: {game.playersState[1].workers_positions_scheme}</li>
+                                      <li>accident_difficultly: {game.playersState[1].accident_difficultly}</li>
+                                      <li>ready: {game.playersState[1].ready}</li>
+                                      <li>questions_to_active_def_count: {game.playersState[1].questions_to_active_def_count}</li>
+                                      <li>questions_without_def_count: {game.playersState[1].questions_without_def_count}</li>
+                                      <li>questions_to_next_worker_count: {game.playersState[1].questions_to_next_worker_count}</li>
+                                      <li>no_more_rolls: {game.playersState[1].no_more_rolls}</li>
+                                  </ul>
+                              }
+
+                            </div>
+
                             <div className={'game_desk top'}>
 
-                                <div className={`${gameInfoOpen ? 'blured_object ' : ''} ${classes.shiftIndicator}`}>
+                                <div className={`${(game.showRollResultMode === 'true' && !mustSpin) 
+                                  ? 'blured_object ' : ''} ${classes.shiftIndicator}`}>
                                   {(game.shiftChangeMode === 'true')
                                     ?
                                     'Скоро начнется Смена ' + (getLastTurn(game)?.shift || '')
@@ -554,13 +609,17 @@ function Game() {
 
                                 </div>
 
-                                <div className={classes.readyCheckbox + ` ${gameInfoOpen ? 'blured_object ' : ''}`}>
+                                <div className={classes.readyCheckbox + ` ${(game.showRollResultMode === 'true' && !mustSpin) 
+                                  ? 
+                                  'blured_object ' : ''}`}>
                                   {(game.shiftChangeMode === 'true') && <label>Готов
-                                      <input disabled={isLoadingReadyStatus} onChange={onReady} checked={playerState.ready === 'true'} type="checkbox" name={'isReadyToStartShift'}/>
+                                      <input disabled={isLoadingReadyStatus} onChange={onReady}
+                                             checked={playerState.ready === 'true'} type="checkbox"
+                                             name={'isReadyToStartShift'}/>
                                   </label>}
                                 </div>
 
-                                <div className={`${gameInfoOpen ? 'blured_object ' : ''} ${classes.playerResources}`}>
+                                <div className={`${(game.showRollResultMode === 'true' && !mustSpin) ? 'blured_object ' : ''} ${classes.playerResources}`}>
                                     <Resources playersState={game.playersState} userId={userId}/>
                                 </div>
                               {
@@ -582,7 +641,7 @@ function Game() {
                                                 userId={userId}
                                                 activePlayer={getActivePlayer(game)}
                                                 showButtons={(getActivePlayer(game).id === userId || game.moderator == userId)}
-                                                onShowQuiz={onShowQuiz} goNextTurn={onNextPlayer}/>
+                                                onShowQuiz={startAnswers} goNextTurn={onNextPlayer} goNextWorker={() => goNextWorker(getActivePlayer(game).id)}/>
                                         </>
                                     }
                                   </>
@@ -596,7 +655,8 @@ function Game() {
                             <div className={'game_desk'}>
                                 <div className={classes.asideInnerContent}>
                                     <div className={classes.tilesField}>
-                                        <WorkersCount playersState={game.playersState} userId={userId}/>
+                                        <WorkersCount blured={(game.showRollResultMode === 'true' && !mustSpin)}
+                                                      playersState={game.playersState} userId={userId}/>
                                         <WorkersField game={game} userId={userId}/>
                                       </div>
                                   </div>

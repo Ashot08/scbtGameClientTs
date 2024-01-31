@@ -7,7 +7,12 @@ import infoIcon from './img/info.png';
 import coinsIcon from './img/coins.png';
 import {useAppSelector} from "../../hooks.ts";
 import {selectGame} from "../../store/reducers/gameSlice.ts";
-import {getCurrentPlayerState} from "../../utils/game.ts";
+import {
+  getCurrentPlayerState,
+  isGetQuestionAvailable,
+  isNextTurnAvailable,
+  isNextWorkerAvailable
+} from "../../utils/game.ts";
 import {data} from "../../constants/data.ts";
 
 export default function GameInfoModal(props: any) {
@@ -40,34 +45,67 @@ export default function GameInfoModal(props: any) {
               </div>
               <div className={classes.leftText}>
                   <div className={classes.leftTextTitle}>
-                    {data[prizeNumber].option}
+                    {
+                      isNextWorkerAvailable(activePlayerState)
+                      ? 'К следующему работнику'
+                        :
+                        <>
+                          {isNextTurnAvailable(activePlayerState)
+                            ? 'Ход завершен'
+                            :
+                            <>{data[prizeNumber].option}</>
+                          }
+                        </>
+                    }
                   </div>
                   <div className={classes.leftTextContent}>
-                    {(status === 'success' && props.activePlayer.id == props.userId)
-                      &&
-                        <>
-                            У вас Бонус (+1 защита)!
-                        </>
-                    }
-                    {(status === 'success' && props.activePlayer.id != props.userId)
-                      &&
-                        <>
-                            У {props.activePlayer.name || props.activePlayer.username} Бонус!
-                        </>
+
+                    {isNextTurnAvailable(activePlayerState)
+                      ?
+                      <></>
+                      :
+                      <>
+                        {(status === 'success' && props.activePlayer.id == props.userId)
+                          &&
+                            <>
+                              {isNextTurnAvailable(activePlayerState)
+                                ? 'Передайте ход следующему игроку'
+                                :
+                                'У вас Бонус (+1 защита)!'
+                              }
+                            </>
+                        }
+                        {(status === 'success' && props.activePlayer.id != props.userId)
+                          &&
+                            <>
+                                У {props.activePlayer.name || props.activePlayer.username} Бонус!
+                            </>
+                        }
+
+                        {(status === 'disaster' && props.activePlayer.id == props.userId)
+                          &&
+                            <>
+                              {isNextTurnAvailable(activePlayerState)
+                                ? 'Передайте ход следующему игроку'
+                                :
+                                'У вас может произойти несчастный случай!'
+                              }
+                            </>
+                        }
+                        {(status === 'disaster' && props.activePlayer.id != props.userId)
+                          &&
+                            <>
+                              {isNextTurnAvailable(activePlayerState)
+                                ? <>У {props.activePlayer.name || props.activePlayer.username} смена окончена</>
+                                :
+                                <>У {props.activePlayer.name || props.activePlayer.username} может произойти несчастный случай!</>
+                              }
+                            </>
+                        }
+                      </>
                     }
 
-                    {(status === 'disaster' && props.activePlayer.id == props.userId)
-                      &&
-                        <>
-                            У вас может произойти несчастный случай!
-                        </>
-                    }
-                    {(status === 'disaster' && props.activePlayer.id != props.userId)
-                      &&
-                        <>
-                            У {props.activePlayer.name || props.activePlayer.username} может произойти несчастный случай!
-                        </>
-                    }
+
 
                   </div>
               </div>
@@ -126,9 +164,19 @@ export default function GameInfoModal(props: any) {
 
             {
               props.showButtons && <div className={classes.buttons}>
-                <button onClick={props.onShowQuiz}>Взять вопрос</button>
-                <button onClick={props.goNextTurn}>Передать ход</button>
-            </div>
+                {
+                  isGetQuestionAvailable(activePlayerState) &&
+                  <button onClick={props.onShowQuiz}>Спасти работника!</button>
+                }
+                {
+                  isNextTurnAvailable(activePlayerState) &&
+                  <button onClick={props.goNextTurn}>Передать ход</button>
+                }
+                {
+                  isNextWorkerAvailable(activePlayerState) &&
+                  <button onClick={props.goNextWorker}>Следующий работник</button>
+                }
+                </div>
             }
 
           </div>

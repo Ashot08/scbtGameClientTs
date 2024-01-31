@@ -232,6 +232,11 @@ const useGame = (roomId: any) => {
     dispatch(hidePopup());
   }
 
+  const goNextWorker = (activePlayerId: number) => {
+    socketRef.current.emit('game:go_next_worker', {activePlayerId});
+    dispatch(hidePopup());
+  }
+
   const startAnswers = () => {
     socketRef.current.emit('game:start_answers');
   }
@@ -274,6 +279,7 @@ const useGame = (roomId: any) => {
     updateWorkerData,
     buyDefends,
     changeReadyStatus,
+    goNextWorker
   }
 }
 
