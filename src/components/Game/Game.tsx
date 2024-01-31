@@ -370,7 +370,7 @@ function Game() {
                                       return (
                                         <div
                                           className={'game_state_player' + (getActivePlayer(game).id === p.id ? ' active' : '')}
-                                          key={'players' + p.id}>
+                                          key={'players_' + p.id}>
                                           {
                                             (getActivePlayer(game).id === p.id)
                                               ?
@@ -381,10 +381,13 @@ function Game() {
                                           {p.name ? p.name : p.username}{p.username === player ? '(Вы)' : ''}
                                           {(getActivePlayer(game).id === p.id) && getLastRollMainAnswers(game)?.map((a) => {
                                             if (a.status === 'success') return <CheckCircleOutlineIcon
+                                              key={'answer_icon_' + Math.random()}
                                               sx={{color: 'green'}}/>;
                                             if (a.status === 'error') return <DangerousIcon
+                                              key={'answer_icon_' + Math.random()}
                                               sx={{color: 'red'}}/>;
                                             if (a.status === 'in_process') return <HourglassTopIcon
+                                              key={'answer_icon_' + Math.random()}
                                               sx={{color: 'gray'}}/>;
                                           })}
                                         </div>

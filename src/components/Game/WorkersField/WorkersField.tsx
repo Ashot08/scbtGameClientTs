@@ -10,6 +10,7 @@ function WorkersField (props: any) {
 
   return <div className={classes.workers_field}>
     <Field
+      key={'workers_field_1'}
       isActivePlayer={activePlayerId === props.userId}
       userId={props.userId}
       playersState={props.game.playersState}
@@ -18,6 +19,7 @@ function WorkersField (props: any) {
       worker={workersSchemeArray[0] === '1'}
     />
     <Field
+      key={'workers_field_2'}
       isActivePlayer={activePlayerId === props.userId}
       userId={props.userId}
       playersState={props.game.playersState}
@@ -26,6 +28,7 @@ function WorkersField (props: any) {
       worker={workersSchemeArray[1] === '1'}
     />
     <Field
+      key={'workers_field_3'}
       isActivePlayer={activePlayerId === props.userId}
       userId={props.userId}
       playersState={props.game.playersState}
@@ -34,6 +37,7 @@ function WorkersField (props: any) {
       worker={workersSchemeArray[2] === '1'}
     />
     <Field
+      key={'workers_field_4'}
       isActivePlayer={activePlayerId === props.userId}
       userId={props.userId}
       playersState={props.game.playersState}
@@ -42,6 +46,7 @@ function WorkersField (props: any) {
       worker={workersSchemeArray[3] === '1'}
     />
     <Field
+      key={'workers_field_5'}
       isActivePlayer={activePlayerId === props.userId}
       userId={props.userId}
       playersState={props.game.playersState}
@@ -50,6 +55,7 @@ function WorkersField (props: any) {
       worker={workersSchemeArray[4] === '1'}
     />
     <Field
+      key={'workers_field_6'}
       isActivePlayer={activePlayerId === props.userId}
       userId={props.userId}
       playersState={props.game.playersState}

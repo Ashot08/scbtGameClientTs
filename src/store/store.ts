@@ -22,7 +22,8 @@ export const store = configureStore({
     buyWindow: buyWindowReducer,
     buyResourcesWindow: buyResourcesWindowReducer,
   },
-  devTools: false,
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
+  //devTools: false,
 });
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

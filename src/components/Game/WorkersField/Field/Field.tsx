@@ -25,17 +25,17 @@ function Field(props: any) {
 
     const defends = [];
     for(let i = 0; i < workersData.activeDefends; i++){
-      defends.push(<div className={classes.defend}>
+      defends.push(<div key={'defend_' + Math.random()} className={classes.defend}>
         <img src={defendActiveIcon} alt="Защита Активная"/>
       </div>);
     }
     for(let i = 0; i < (workersData.notActiveDefends); i++){
-      defends.push(<div className={classes.defend}>
+      defends.push(<div key={'defend_' + Math.random()} className={classes.defend}>
         <img src={defendIcon} alt="Защита Неактивная"/>
       </div>);
     }
     for(let i = 0; i < (6 - (workersData.notActiveDefends + workersData.activeDefends)); i++){
-      defends.push(<div className={classes.defend + ' ' + classes.empty}>
+      defends.push(<div key={'defend_' + Math.random()} className={classes.defend + ' ' + classes.empty}>
         <img src={defendIcon} alt="Защита Пустая"/>
       </div>);
     }
