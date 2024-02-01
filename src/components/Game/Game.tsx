@@ -337,6 +337,7 @@ function Game() {
                                     </div>}
 
                                 {
+                                  !(game.moderatorMode === '1' && userId === game.moderator) &&
                                   !mobileCheck() && <div className={classes.asideInnerContent}>
                                         <div className={classes.tilesField}>
                                             <WorkersCount playersState={game.playersState} userId={userId} />
@@ -443,9 +444,12 @@ function Game() {
 
 
                           {
-                            (buyResourcesWindowOpen && game.shiftChangeMode) && <BuyResourcesWindow buyDefends={buyDefends} playersState={game.playersState} userId={userId} />
+                            !(game.moderatorMode === '1' && userId === game.moderator) &&
+                            (buyResourcesWindowOpen && game.shiftChangeMode) &&
+                              <BuyResourcesWindow buyDefends={buyDefends} playersState={game.playersState} userId={userId} />
                           }
                           {
+                            !(game.moderatorMode === '1' && userId === game.moderator) &&
                             (buyWindowOpen && game.shiftChangeMode) &&
                               <BuyWindow updateWorkerData={updateWorkerData} playersState={game.playersState}
                                          userId={userId}/>
