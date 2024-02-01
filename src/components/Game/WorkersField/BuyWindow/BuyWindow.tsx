@@ -125,9 +125,9 @@ function BuyWindow (props: any) {
             ?
             <button disabled={true}>Сохранение...</button>
             :
-            <button disabled={!workerIsSet && !addedDefendsCount} onClick={onSave}>Сохранить {workerIndex}</button>
+            <button disabled={!workerIsSet && !addedDefendsCount} onClick={onSave}>Сохранить</button>
         }
-        <button disabled={!workerIsSet && !addedDefendsCount} onClick={onRefresh}>Сбросить</button>
+        <button disabled={!workerIsSet && !addedDefendsCount} onClick={onRefresh}>Сброс</button>
         <button onClick={nextWorker}> {'-->'} </button>
       </div>
     </div>
