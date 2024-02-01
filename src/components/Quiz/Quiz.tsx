@@ -290,10 +290,10 @@ export const Quiz = (props: any) => {
                                              disabled={props.quizTimer || oneMoreQuestionDisabled}
                                              onClick={props.startAnswers}
                                              variant={'contained'}>Следующий вопрос</Button></div>
-                                <div className={'onlyMobile'}><Button className={'oneMoreQuestionButton'}
-                                                                      sx={{marginTop: 2}} onClick={props.onHideQuiz}
-                                                                      disabled={props.quizTimer}
-                                                                      variant={'contained'}>Завершить</Button></div>
+                                {/*<div className={'onlyMobile'}><Button className={'oneMoreQuestionButton'}*/}
+                                {/*                                      sx={{marginTop: 2}} onClick={props.onHideQuiz}*/}
+                                {/*                                      disabled={props.quizTimer}*/}
+                                {/*                                      variant={'contained'}>Завершить</Button></div>*/}
                             </>
                         }
                       </div>

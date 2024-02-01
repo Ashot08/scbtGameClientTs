@@ -16,6 +16,9 @@ function Field(props: any) {
   const workersData = getWorkerDataByIndex(playerState, props.index);
   const isActive = ((selectedWorkerIndex === props.index) && props.shiftChangeMode === 'true') ||
     (props.isActivePlayer && (props.index === playerState.active_worker) && props.shiftChangeMode === 'false')
+  const isNeighbour = (playerState.next_worker_mode === 'true')
+    && (props.index === playerState.next_worker_index)
+    && (playerState.questions_to_next_worker_count > 0);
   const onFieldClick = () => {
     if(props.shiftChangeMode === 'true') {
       dispatch(showBuyWindow({index: props.index}))
@@ -48,6 +51,8 @@ function Field(props: any) {
     + classes['hexagon_' + props.index]
     + ' '
     + (isActive ? classes.active : '')
+    + ' '
+    + (isNeighbour ? classes.neighbour : '')
   }
   >
     <Defends/>

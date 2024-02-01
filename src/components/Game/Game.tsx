@@ -24,7 +24,12 @@ import {useEffect, useState} from "react";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import DangerousIcon from '@mui/icons-material/Dangerous';
 import HourglassTopIcon from '@mui/icons-material/HourglassTop';
-import {getActivePlayer, getCurrentPlayerState, getLastTurn} from "../../utils/game.ts";
+import {
+  getActivePlayer,
+  getCurrentPlayerState,
+  getLastTurn,
+  getPlayersTotalMoneyAndDefsTable
+} from "../../utils/game.ts";
 import {
   Bar,
   BarChart,
@@ -49,8 +54,6 @@ import historyIcon from './img/history.png';
 import chatIcon from './img/chat.png';
 import GameInfoModal from "../GameInfoModal/GameInfoModal.tsx";
 import {hideGameInfo} from "../../store/reducers/gameInfoSlice.ts";
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import CloseIcon from '@mui/icons-material/Close';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import Resources from "./Resources/Resources.tsx";
 import WorkersCount from "./WorkersCount/WorkersCount.tsx";
@@ -87,8 +90,6 @@ function Game() {
   const buyWindowOpen = useAppSelector(selectBuyWindowIsShown);
   const buyResourcesWindowOpen = useAppSelector(selectBuyResourcesWindowIsShown);
   const [activeTabNumber, setActiveTabNumber] = useState(mobileCheck() ? 1 : 0);
-  const [controllsOpen, setControllsOpen] = useState(false);
-  const [controlsAnimate, setControlsAnimate] = useState(false);
   const [isLoadingReadyStatus, setIsLoadingReadyStatus] = useState(false);
   const playerState = getCurrentPlayerState(game.playersState, userId);
   const mustSpin = useAppSelector(selectIsRoll);
@@ -144,13 +145,6 @@ function Game() {
       dispatch(show());
     }
   }, [game, userId, dispatch]);
-
-  const toggleControlButtons = () => {
-    setControllsOpen(!controllsOpen);
-    setTimeout(() => {
-      setControlsAnimate(!controlsAnimate);
-    })
-  }
 
   const onGetGameLink = () => {
     dispatch(showPopup({
@@ -230,10 +224,6 @@ function Game() {
       }))
     }
     dispatch(hide());
-  }
-
-  const onShowQuiz = () => {
-    dispatch(show());
   }
 
   const getStillNotJoinedPlayers = () => {
@@ -444,95 +434,10 @@ function Game() {
                                           }
                                         </div>
 
-
-                                        <div onClick={toggleControlButtons} className={classes.controlButtonsToggle}>
-                                          {
-                                            controllsOpen
-                                              ?
-                                              <CloseIcon/>
-                                              :
-                                              <MoreHorizIcon/>
-                                          }
-                                        </div>
                                     </>
                                 }
 
                               </div>
-
-                              {
-                                (getActivePlayer(game).id === userId || game.moderator == userId)
-                                && <>
-                                  {controllsOpen
-                                    &&
-                                      <div
-                                          className={`${classes.controlButtons} ${controlsAnimate ? classes.controlButtonsBlockShown : ''}`}>
-
-                                          <div className={'game_state_players'}>
-                                            {game.players.map((p: any) => {
-                                              return (
-                                                <div
-                                                  className={'game_state_player' + (getActivePlayer(game).id === p.id ? ' active' : '')}
-                                                  key={'players' + p.id}>
-                                                  {
-                                                    (getActivePlayer(game).id === p.id)
-                                                      ?
-                                                      <CasinoIcon sx={{width: 15}}/>
-                                                      :
-                                                      <CheckIcon sx={{width: 15}}/>
-                                                  }
-                                                  {p.name ? p.name : p.username}{p.username === player ? '(Вы)' : ''}
-                                                  {(getActivePlayer(game).id === p.id) && getLastRollMainAnswers(game)?.map((a) => {
-                                                    if (a.status === 'success') return <CheckCircleOutlineIcon
-                                                      sx={{color: 'green'}}/>;
-                                                    if (a.status === 'error') return <DangerousIcon
-                                                      sx={{color: 'red'}}/>;
-                                                    if (a.status === 'in_process') return <HourglassTopIcon
-                                                      sx={{color: 'gray'}}/>;
-                                                  })}
-                                                </div>
-                                              )
-                                            })}
-                                          </div>
-
-                                          <div>
-                                            {
-                                              (game?.answersMode === 'true'
-                                                &&
-                                                (getActivePlayer(game).username === player || userId === game.moderator)
-                                              )
-                                              ||
-                                              quizActive
-                                                ?
-                                                !timerOn &&
-                                                  <button onClick={() => {
-                                                    onHideQuiz();
-                                                    setControllsOpen(false);
-                                                    setControlsAnimate(false);
-                                                  }}>Перейти к
-                                                      рулетке</button>
-                                                :
-                                                <>
-                                                  <button onClick={() => {
-                                                    onShowQuiz();
-                                                    setControllsOpen(false);
-                                                    setControlsAnimate(false);
-                                                  }}>Взять вопрос
-                                                  </button>
-                                                  <button onClick={() => {
-                                                    onNextPlayer();
-                                                    setControllsOpen(false);
-                                                    setControlsAnimate(false);
-                                                  }}>Передать ход
-                                                  </button>
-                                                </>
-                                            }
-                                          </div>
-                                      </div>
-                                  }
-                                  </>
-                              }
-
-
                             </aside>
                           }
 
@@ -547,7 +452,7 @@ function Game() {
                           }
 
 
-                            <div>
+                          {false && <div>
                               {
                                 (userId == game.playersState[0].player_id)
                                 &&
@@ -598,7 +503,7 @@ function Game() {
                               }
 
                             </div>
-
+                          }
                             <div className={'game_desk top'}>
 
                                 <div className={`${(game.showRollResultMode === 'true' && !mustSpin) 
@@ -658,8 +563,14 @@ function Game() {
                             <div className={'game_desk'}>
                                 <div className={classes.asideInnerContent}>
                                     <div className={classes.tilesField}>
-                                        <WorkersCount blured={(game.showRollResultMode === 'true' && !mustSpin)}
-                                                      playersState={game.playersState} userId={userId}/>
+                                      {
+                                        game.shiftChangeMode === 'true'
+                                        ?
+                                          <WorkersCount blured={(game.showRollResultMode === 'true' && !mustSpin)}
+                                                        playersState={game.playersState} userId={userId}/>
+                                          :
+                                          ''
+                                      }
                                         <WorkersField game={game} userId={userId}/>
                                       </div>
                                   </div>
@@ -713,7 +624,6 @@ function Game() {
                     {(game.status === 'finished')
                       &&
                         <div className={'game_desk_finished'}>
-
                             <div style={{marginTop: 100}}>
                                 <h1 style={{textAlign: 'center'}}>Игра окончена</h1>
                                 <h2 style={{textAlign: 'center', opacity: 0.5}}>Итоги игры:</h2>
@@ -732,6 +642,36 @@ function Game() {
                                     id={`simple-tabpanel-${0}`}
                                     aria-labelledby={`simple-tab-${0}`}
                                 >
+
+                                    <h3 style={{opacity: 0.5, textAlign: 'center'}}>Деньги + активные защиты</h3>
+                                  {activeTabNumber === 0 && (
+
+                                    <BarChart
+                                      width={mobileCheck() ? 600 : 800}
+                                      height={300}
+                                      data={getPlayersTotalMoneyAndDefsTable(game)}
+                                      margin={{
+                                        top: 5,
+                                        right: 30,
+                                        left: 0,
+                                        bottom: 5,
+                                      }}
+                                    >
+                                      <CartesianGrid strokeDasharray="3 3"/>
+                                      <XAxis dataKey="name"/>
+                                      <YAxis/>
+                                      <Tooltip/>
+                                      <Legend/>
+                                      <Bar dataKey="Деньги" fill="orange"
+                                           activeBar={<Rectangle fill="gold" stroke="#920000"/>}/>
+                                      <Bar dataKey="Активные защиты" fill="green"
+                                           activeBar={<Rectangle fill="green" stroke="#920000"/>}/>
+                                      <Bar dataKey="Итого" fill="gray"
+                                           activeBar={<Rectangle fill="gray" stroke="#920000"/>}/>
+                                    </BarChart>
+
+                                  )}
+
                                     <h3 style={{opacity: 0.5, textAlign: 'center'}}>Общее количество верных ответов</h3>
                                   {activeTabNumber === 0 && (
 
@@ -767,7 +707,49 @@ function Game() {
                                 >
                                   {activeTabNumber === 1 && (
                                     <>
-                                      <h3 style={{opacity: 0.5, textAlign: 'center'}}>Общее количество верных ответов</h3>
+
+                                      <h3 style={{opacity: 0.5, textAlign: 'center'}}>Деньги + активные защиты</h3>
+                                      <Box sx={{p: 3}}>
+                                        <table className={'players_result_table'}>
+                                          <tbody>
+                                          <tr>
+                                            <th>Игрок</th>
+                                            <th>Защиты + Деньги</th>
+                                          </tr>
+                                          {
+                                            getPlayersTotalMoneyAndDefsTable(game)
+                                              .map((p: any, index: number) => {
+                                                return <tr key={'players_table_item_' + p.id}>
+                                                  <td>
+                                                    {p.name}:
+                                                  </td>
+                                                  <td style={{
+                                                    fontWeight: 600,
+                                                    textAlign: 'center'
+                                                  }}>
+                                                    <div style={{
+                                                      display: 'flex',
+                                                      justifyContent: 'center',
+                                                      alignItems: 'center'
+                                                    }}>
+                                                      {p['Итого']}
+                                                      {index === 0 &&
+                                                          <EmojiEventsIcon sx={{color: 'gold', marginLeft: 1}}/>}
+                                                      {index === 1 && <EmojiEventsIcon
+                                                          sx={{color: 'silver', marginLeft: 1, width: 22}}/>}
+                                                      {index === 2 && <EmojiEventsIcon
+                                                          sx={{color: '#cd7f32', marginLeft: 1, width: 20}}/>}
+                                                    </div>
+                                                  </td>
+                                                </tr>
+                                              })
+                                          }
+                                          </tbody>
+                                        </table>
+                                      </Box>
+
+                                      <h3 style={{opacity: 0.5, textAlign: 'center'}}>Общее количество верных
+                                        ответов</h3>
                                       <Box sx={{p: 3}}>
                                         <table className={'players_result_table'}>
                                           <tbody>
@@ -777,26 +759,33 @@ function Game() {
                                           </tr>
                                           {
                                             [...game.players].sort((p1: any, p2: any) => {
-                                              return  +getTotalAnswersResults(game)[p2.id]?.length - +getTotalAnswersResults(game)[p1.id]?.length;
+                                              return +getTotalAnswersResults(game)[p2.id]?.length - +getTotalAnswersResults(game)[p1.id]?.length;
                                             })
                                               .map((p: any, index: number) => {
-                                              return <tr key={'players_table_item_' + p.id}>
-                                                <td>
-                                                  {p.name || p.username}:
-                                                </td>
-                                                <td style={{
-                                                  fontWeight: 600,
-                                                  textAlign: 'center'
-                                                }}>
-                                                  <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                                                    {getTotalAnswersResults(game)[p.id]?.length}
-                                                    {index === 0 && <EmojiEventsIcon sx={{color: 'gold', marginLeft: 1}} />}
-                                                    {index === 1 && <EmojiEventsIcon sx={{color: 'silver', marginLeft: 1, width: 22}} />}
-                                                    {index === 2 && <EmojiEventsIcon sx={{color: '#cd7f32', marginLeft: 1, width: 20}} />}
-                                                  </div>
-                                                </td>
-                                              </tr>
-                                            })
+                                                return <tr key={'players_table_item_' + p.id}>
+                                                  <td>
+                                                    {p.name || p.username}:
+                                                  </td>
+                                                  <td style={{
+                                                    fontWeight: 600,
+                                                    textAlign: 'center'
+                                                  }}>
+                                                    <div style={{
+                                                      display: 'flex',
+                                                      justifyContent: 'center',
+                                                      alignItems: 'center'
+                                                    }}>
+                                                      {getTotalAnswersResults(game)[p.id]?.length}
+                                                      {index === 0 &&
+                                                          <EmojiEventsIcon sx={{color: 'gold', marginLeft: 1}}/>}
+                                                      {index === 1 && <EmojiEventsIcon
+                                                          sx={{color: 'silver', marginLeft: 1, width: 22}}/>}
+                                                      {index === 2 && <EmojiEventsIcon
+                                                          sx={{color: '#cd7f32', marginLeft: 1, width: 20}}/>}
+                                                    </div>
+                                                  </td>
+                                                </tr>
+                                              })
                                           }
                                           </tbody>
                                         </table>

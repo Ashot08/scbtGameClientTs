@@ -23,6 +23,7 @@ export const buyWindowSlice = createSlice({
       state.isShown = false;
       state.index = 0;
     },
+
   }
 });
 

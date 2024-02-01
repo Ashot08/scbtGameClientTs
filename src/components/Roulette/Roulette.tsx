@@ -1,20 +1,15 @@
-import {Wheel} from 'react-custom-roulette';
 import './Roulette.scss';
-import arrowImage from './img/arrow.svg';
 import {ButtonGroup} from "@mui/material";
 import Button from "@mui/material/Button";
 import {mobileCheck} from "../../utils/mobileCheck.ts";
-
 import {useAppDispatch, useAppSelector} from "../../hooks.ts";
 import {selectGame} from "../../store/reducers/gameSlice.ts";
 import {selectIsRoll, selectPrizeNumber, setMeta, stopRoll} from "../../store/reducers/rouletteSlice.ts";
 import RouletteMobile2 from "../RouletteMobile/RouletteMobile2.tsx";
-// import RouletteMobile from "../RouletteMobile/RouletteMobile.tsx";
-import placeholder_1 from './img/placeholder_1.png';
 import {selectGameInfoIsShown} from "../../store/reducers/gameInfoSlice.ts";
-
 import {getCurrentPlayerState, getWorkersUsedOnFieldsCount} from "../../utils/game.ts";
 import {data} from '../../constants/data.ts';
+import RouletteMobileToDesktop from "../RouletteMobile/RouletteMobileToDesktop.tsx";
 
 
 export default function Roulette(props: any) {
@@ -50,22 +45,24 @@ export default function Roulette(props: any) {
         <div style={{marginTop: 67}}>
           <RouletteMobile2 game={game} onStopSpinning={onStopSpinning} mustSpin={mustSpin} prizeNumber={prizeNumber}/>
           <div className={'mobileTopPanel'}>
-            <div className={'mobileTopPanel_placeholder_1'}><img src={placeholder_1} alt=""/></div>
+            <div></div>
             {
-              ((game.shiftChangeMode === 'false') && (props.activePlayer.id == props.userId || game.moderator == props.userId))
+              (game.shiftChangeMode === 'false') && (props.activePlayer.id == props.userId || game.moderator == props.userId)
               &&
                 <div>
                   {
-                    (playerState.no_more_rolls === 'true' || game.moderator == props.userId)
-                    &&
+                    (game.moderator == props.userId || !getWorkersUsedOnFieldsCount(playerState))
+                    ?
                       <button style={{marginRight: 10}} className={'mobileRollButton'}
                               disabled={mustSpin || gameInfoOpen}
                               onClick={props.onNextPlayer}>Передать ход
                       </button>
+                      :
+                      ''
                   }
 
                   {
-                    isRollAvailable ? <button className={'mobileRollButton'} disabled={mustSpin || gameInfoOpen}
+                    isRollAvailable && (game.showRollResultMode === 'false') ? <button className={'mobileRollButton'} disabled={mustSpin || gameInfoOpen}
                                                onClick={onRoll}>Крутить
                     </button> : ''
                   }
@@ -76,17 +73,24 @@ export default function Roulette(props: any) {
         </div>
         :
         <div className="rouletteWrapper">
-          <Wheel
-            mustStartSpinning={mustSpin}
-            prizeNumber={prizeNumber as number}
-            data={data}
-            innerRadius={8}
-            radiusLineWidth={1}
-            textDistance={55}
-            spinDuration={0.4}
-            pointerProps={{src: arrowImage}}
-            onStopSpinning={onStopSpinning}
-          />
+
+          <div className={'mobileRouletteToDesktop'}>
+            <RouletteMobileToDesktop game={game} onStopSpinning={onStopSpinning} mustSpin={mustSpin} prizeNumber={prizeNumber}/>
+          </div>
+
+          {/*<Wheel*/}
+          {/*  mustStartSpinning={mustSpin}*/}
+          {/*  prizeNumber={prizeNumber as number}*/}
+          {/*  data={data}*/}
+          {/*  innerRadius={8}*/}
+          {/*  radiusLineWidth={1}*/}
+          {/*  textDistance={55}*/}
+          {/*  spinDuration={0.4}*/}
+          {/*  pointerProps={{src: arrowImage}}*/}
+          {/*  onStopSpinning={onStopSpinning}*/}
+          {/*/>*/}
+
+
         </div>
       }
 

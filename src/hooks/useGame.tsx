@@ -12,6 +12,7 @@ import shiftClockIcon from '../assets/shift_clock.png'
 import shiftCupIcon from '../assets/shift_cup.png'
 import playerIcon from '../assets/player.png';
 import failIcon from '../components/Game/img/fail.png';
+import successIcon from '../components/Game/img/success.png';
 import { Button } from '@mui/material';
 import {hideGameInfo} from "../store/reducers/gameInfoSlice.ts";
 
@@ -189,16 +190,44 @@ const useGame = (roomId: any) => {
       }));
     });
 
-    socketRef.current.on('game:workerFail', () => {
+    socketRef.current.on('game:workerFail', (data: any) => {
       dispatch(hideGameInfo());
       dispatch(hide());
       dispatch(showPopup({
         title:
-          <><div style={{marginTop: 20, marginBottom: 20, textAlign: "center"}}><strong>Работник травмирован!</strong></div></>
+          <><div style={{marginTop: 20, marginBottom: 20, textAlign: "center"}}><strong>
+            {data.status === 'Потеря'
+            ?
+              'Работник травмирован!'
+              :
+              'ШТРАФ - 1 монета!'
+            }
+
+          </strong>
+        </div></>
         ,
         content: <div style={
           {minWidth: 300, marginTop: 20, marginBottom: 20, textAlign: "center",}
         }><img style={{maxWidth: '200px'}} src={failIcon} alt="shift cup icon"/>
+          <div style={
+            {marginTop: 10, marginBottom: 10,}
+          }>
+            <Button variant="contained" onClick={() => dispatch(hidePopup())}>Ок!</Button>
+          </div>
+        </div>
+      }));
+    });
+
+    socketRef.current.on('game:workerSaved', () => {
+      dispatch(hideGameInfo());
+      dispatch(hide());
+      dispatch(showPopup({
+        title:
+          <><div style={{marginTop: 20, marginBottom: 20, textAlign: "center"}}><strong>Работник спасен!</strong></div></>
+        ,
+        content: <div style={
+          {minWidth: 300, marginTop: 20, marginBottom: 20, textAlign: "center",}
+        }><img style={{maxWidth: '200px'}} src={successIcon} alt="shift cup icon"/>
           <div style={
             {marginTop: 10, marginBottom: 10,}
           }>

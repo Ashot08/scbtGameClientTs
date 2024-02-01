@@ -77,3 +77,48 @@
     }
   }
 }
+
+@media (max-width: 768px) {
+  .boardImage {
+    max-width: 320px;
+  }
+
+  .buyWindow {
+    .buttons {
+      padding: 0 20px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .board {
+      .defend {
+
+        &:first-child{
+          left: 50px;
+          bottom: 90px;
+        }
+        &:nth-child(2){
+          left: 50px;
+          top: 90px;
+        }
+        &:nth-child(3){
+          left: 143px;
+          top: 33px;
+        }
+        &:nth-child(4){
+          right: 50px;
+          top: 90px;
+        }
+        &:nth-child(5){
+          right: 50px;
+          bottom: 90px;
+        }
+        &:nth-child(6){
+          left: 143px;
+          bottom: 33px;
+        }
+      }
+    }
+  }
+}
+

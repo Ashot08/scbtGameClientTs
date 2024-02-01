@@ -1,13 +1,13 @@
 import classes from "./BuyWindow.module.scss";
 import {useAppDispatch, useAppSelector} from "../../../../hooks.ts";
-import {hideBuyWindow, selectBuyWindowIndex} from "../../../../store/reducers/buyWindowSlice.ts";
+import {hideBuyWindow, selectBuyWindowIndex, showBuyWindow} from "../../../../store/reducers/buyWindowSlice.ts";
 import {getAvailableWorkers, getCurrentPlayerState, getWorkerDataByIndex} from "../../../../utils/game.ts";
 import hexagonIcon from './img/hexagon.png';
-import shieldEmptyIcon from './img/shieldEmpty.svg';
+import shieldEmptyIcon from './img/shieldEmpty.png';
 import shieldIcon from './img/shield.svg';
 import shieldIconActive from './img/shieldActive.svg';
 import workerEmptyIcon from './img/workerEmpty.svg';
-import workerIcon from './img/worker.svg';
+import workerIcon from './img/worker.png';
 import closeIcon from './img/close.svg';
 import {useEffect, useState} from "react";
 import {show} from "../../../../store/reducers/notificationSlice.ts";
@@ -87,6 +87,15 @@ function BuyWindow (props: any) {
     setWorkerIsSet(false);
     setAddedDefendsCount(0);
   }
+
+  const nextWorker = () => {
+    let newIndex = 0;
+    if(workerIndex < 5) {
+      newIndex = workerIndex + 1;
+    }
+    dispatch(showBuyWindow({index: newIndex}));
+  }
+
   return <div className={classes.buyWindow}>
     <div onClick={() => dispatch(hideBuyWindow())} className={classes.close}>
       <img src={closeIcon} alt="Закрыть"/>
@@ -106,11 +115,11 @@ function BuyWindow (props: any) {
             }
           </div>
 
-          <img src={hexagonIcon} alt="Фон"/>
+          <img className={classes.boardImage} src={hexagonIcon} alt="Фон"/>
         </div>
       </div>
       <div className={classes.buttons}>
-        <button onClick={onClose}>Назад</button>
+        <button onClick={onClose}>Закрыть</button>
         {
           saveLoading
             ?
@@ -119,6 +128,7 @@ function BuyWindow (props: any) {
             <button disabled={!workerIsSet && !addedDefendsCount} onClick={onSave}>Сохранить {workerIndex}</button>
         }
         <button disabled={!workerIsSet && !addedDefendsCount} onClick={onRefresh}>Сбросить</button>
+        <button onClick={nextWorker}> {'-->'} </button>
       </div>
     </div>
   </div>;

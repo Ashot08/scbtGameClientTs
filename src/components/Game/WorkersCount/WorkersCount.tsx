@@ -9,7 +9,7 @@ function WorkersCount(props: any) {
     workers[i] = 1;
   }
 
-  return <div className={props.blured ? 'blured_object' : ''}>
+  return <div className={ classes.countWrapper + ' ' + (props.blured ? 'blured_object' : '')}>
     <div className={classes.info}>Вам доступно <span>{workersCount}</span> рабочих</div>
     <div className={classes.workers_count}>
       {workers.map((w: number) => {

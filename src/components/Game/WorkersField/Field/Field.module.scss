@@ -129,6 +129,21 @@
   top: calc(50% - 18px);
 }
 
+.neighbour {
+  &::before {
+    content: "";
+    width: 50px;
+    height: 50px;
+    background-color: red;
+    position: absolute;
+    border-radius: 50%;
+    left: calc(50% - 25px);
+    top: calc(50% - 25px);
+    opacity: 0.4;
+    transition: 0.7s;
+  }
+
+}
 
 @media (max-width: 768px) {
   .hexagon {

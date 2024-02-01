@@ -99,3 +99,39 @@ export const getQuestionsCountInfo = (playerState: any) => {
     count,
   }
 }
+
+export const getActiveDefendsCount = (
+  playerState: any,
+  workerIndex: number,
+) => {
+  const activeDefendsArray = playerState.active_defends_scheme.split(',');
+  return +activeDefendsArray[workerIndex];
+};
+
+export const getPlayerNameById = (id: number, game: GameState) => {
+  for(const p of game.players) {
+    if(p.id === id) {
+      return p.name || p.username;
+    }
+  }
+}
+
+export const getPlayersTotalMoneyAndDefsTable = (game: GameState) => {
+  const resultsTable = [];
+  for (const p of game.playersState) {
+    const playerResults = {
+      name: getPlayerNameById(p.player_id, game),
+      'Деньги': p.money,
+      'Активные защиты': 0,
+      'Итого': 0
+    }
+    for(let i = 0; i < 6; i++) {
+      playerResults['Активные защиты'] += getActiveDefendsCount(p, i);
+    }
+    playerResults['Итого'] = playerResults['Активные защиты'] + playerResults['Деньги']
+    resultsTable.push(playerResults);
+  }
+
+  return resultsTable.sort((p1, p2) => {return p2['Итого'] - p1['Итого']});
+}
+
