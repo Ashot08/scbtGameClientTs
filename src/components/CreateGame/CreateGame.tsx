@@ -107,7 +107,7 @@ export const CreateGame = () => {
         setSubmitDisabled(false);
       });
     } catch(error) {
-      console.log(error);
+      console.log(error, 'Create game error');
     }
   }
 

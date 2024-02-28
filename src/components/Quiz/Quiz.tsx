@@ -33,6 +33,7 @@ export const Quiz = (props: any) => {
   const activePlayer = getActivePlayer(game);
   const activePlayerState = getCurrentPlayerState(game.playersState, activePlayer.id);
   const questionsInfo = getQuestionsCountInfo(activePlayerState);
+  const [showTrueAnswer, setShowTrueAnswer] = useState(false);
 
   let orderNumber = 0;
   if (questionNumber < 400) {
@@ -178,6 +179,7 @@ export const Quiz = (props: any) => {
         setAnswerResultText('Ответ неверный! (Вы не успели ответить).')
       }
     }
+    setShowTrueAnswer(true);
 
     if (answerStatus !== 'success') {
       setAnswerStatus('error')
@@ -234,7 +236,7 @@ export const Quiz = (props: any) => {
                       }}>{questionsInfo.subject} {questionsInfo.count}</div>
                     </div>
                     <div className={'questionText'}>{quiz.questions[questionNumber]?.question}</div>
-                    <div className={'questionsWrapper'}>
+                    <div className={`questionsWrapper ${showTrueAnswer ? 'show-true-answer' : ''}`}>
                       <RadioGroup
                         sx={{display: 'grid'}}
                         aria-labelledby="demo-radio-buttons-group-label"
@@ -267,10 +269,17 @@ export const Quiz = (props: any) => {
                       ?
                       <div>Игроки находятся в режиме ответов на вопросы...</div>
                       :
-                      <div className={'answerButtonWrapper'}><Button
-                        sx={{color: '#fff', border: '1px solid rgba(255, 255, 255, 0.5)'}}
-                        disabled={answerStatus !== 'in_process'} type={'submit'}
-                        variant={'outlined'}>Ответить</Button></div>
+                      <>
+                        {props.isMyTurn
+                          ?
+                          <div className={'answerButtonWrapper'}><Button
+                          sx={{color: '#fff', border: '1px solid rgba(255, 255, 255, 0.5)'}}
+                          disabled={answerStatus !== 'in_process'} type={'submit'}
+                          variant={'outlined'}>Ответить</Button></div>
+                           :
+                          ''
+                        }
+                      </>
                   }
 
                   {
@@ -306,7 +315,7 @@ export const Quiz = (props: any) => {
                   {
                     props.isMyTurn
                       ?
-                      <Button sx={{backgroundColor: '#00ABAB', marginTop: 1}} onClick={props.onHideQuiz}
+                      <Button sx={{backgroundColor: '#00ABAB', marginTop: 1}} onClick={props.onStopAnswers}
                               disabled={false}
                               variant={'contained'}>Завершить</Button>
                       : <div>

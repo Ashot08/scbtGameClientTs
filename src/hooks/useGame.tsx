@@ -22,8 +22,8 @@ import {hideGameInfo} from "../store/reducers/gameInfoSlice.ts";
 
 // адрес сервера
 // требуется перенаправление запросов - смотрите ниже
-// const SERVER_URL = 'http://localhost:3001'
-const SERVER_URL = 'ws://80.90.189.247:3001/';
+const SERVER_URL = 'http://localhost:3001'
+// const SERVER_URL = 'ws://80.90.189.247:3001/';
 
 // хук принимает название комнаты
 const useGame = (roomId: any) => {
@@ -37,7 +37,8 @@ const useGame = (roomId: any) => {
     // и записываем объект с названием комнаты в строку запроса "рукопожатия"
     // socket.handshake.query.roomId
     socketRef.current = io(SERVER_URL, {
-      query: { roomId }
+      query: { roomId },
+      transports: ["websocket"]
     })
 
     if(isLogin) {

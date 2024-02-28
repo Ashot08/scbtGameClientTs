@@ -159,8 +159,8 @@ function Game() {
       dispatch(showPopup({
         title: '',
         content: <BasicCard
-          name={'Вы уверены, что хотите завершить ответ?'}
-          id={`Если вы не ответили на вопрос, то будет засчитана ошибка`}
+          name={'Вы уверены, что хотите завершить?'}
+          id={``}
           content={
             <List>
               <ListItem key={'sdfsa'} disablePadding>
@@ -540,7 +540,7 @@ function Game() {
                                   ?
                                   <Quiz quizTimer={timerOn} startAnswers={startAnswers}
                                         isMyTurn={getActivePlayer(game).username === player}
-                                        userId={userId} updateAnswer={updateAnswer} onHideQuiz={onHideQuiz}/>
+                                        userId={userId} updateAnswer={updateAnswer} onHideQuiz={onHideQuiz} onStopAnswers={stopAnswers}/>
                                   :
                                   <>
                                     <div style={{width: '100%'}}>
