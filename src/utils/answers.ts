@@ -84,16 +84,14 @@ export const getAnswersResults = (game: GameState) => {
 
 export const getTotalAnswersResults = (game: GameState) => {
   const result = [];
-
   for (const answer of game.answers) {
+    if (!Array.isArray(result[answer.player_id])) {
+      result[answer.player_id] = [];
+    }
     if (answer.status === 'success') {
-      if (!Array.isArray(result[answer.player_id])) {
-        result[answer.player_id] = [];
-      }
       if (!result[answer.player_id].includes(answer.id as never)) {
         result[answer.player_id].push(answer.id as never);
       }
-
     }
   }
   return result;

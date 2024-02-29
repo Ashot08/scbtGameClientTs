@@ -28,7 +28,7 @@ import {
   getActivePlayer,
   getCurrentPlayerState,
   getLastTurn,
-  getPlayersTotalMoneyAndDefsTable
+  getPlayersTotalMoneyAndDefsTable, getPlayersTotalMoneyDefsAnswersTable
 } from "../../utils/game.ts";
 import {
   Bar,
@@ -89,7 +89,7 @@ function Game() {
   const timerOn = useAppSelector(selectTimerOn);
   const buyWindowOpen = useAppSelector(selectBuyWindowIsShown);
   const buyResourcesWindowOpen = useAppSelector(selectBuyResourcesWindowIsShown);
-  const [activeTabNumber, setActiveTabNumber] = useState(mobileCheck() ? 1 : 0);
+  const [activeTabNumber, setActiveTabNumber] = useState(0);
   const [isLoadingReadyStatus, setIsLoadingReadyStatus] = useState(false);
   const playerState = getCurrentPlayerState(game.playersState, userId);
   const mustSpin = useAppSelector(selectIsRoll);
@@ -634,83 +634,67 @@ function Game() {
                                 <Box sx={{borderBottom: 1, borderColor: 'divider', marginBottom: 2}}>
                                     <Tabs className={'tabs'} value={activeTabNumber} onChange={handleChange}
                                           aria-label="basic tabs example">
-                                        <Tab label="График"/>
                                         <Tab label="Таблица"/>
+                                        <Tab label="График"/>
                                     </Tabs>
                                 </Box>
 
                                 <div
-                                    className={'graph_wrapper'}
                                     role="tabpanel"
                                     hidden={activeTabNumber !== 0}
                                     id={`simple-tabpanel-${0}`}
                                     aria-labelledby={`simple-tab-${0}`}
                                 >
-
-                                    <h3 style={{opacity: 0.5, textAlign: 'center'}}>Деньги + активные защиты</h3>
                                   {activeTabNumber === 0 && (
-
-                                    <BarChart
-                                      width={mobileCheck() ? 600 : 800}
-                                      height={300}
-                                      data={getPlayersTotalMoneyAndDefsTable(game)}
-                                      margin={{
-                                        top: 5,
-                                        right: 30,
-                                        left: 0,
-                                        bottom: 5,
-                                      }}
-                                    >
-                                      <CartesianGrid strokeDasharray="3 3"/>
-                                      <XAxis dataKey="name"/>
-                                      <YAxis/>
-                                      <Tooltip/>
-                                      <Legend/>
-                                      <Bar dataKey="Деньги" fill="orange"
-                                           activeBar={<Rectangle fill="gold" stroke="#920000"/>}/>
-                                      <Bar dataKey="Активные защиты" fill="green"
-                                           activeBar={<Rectangle fill="green" stroke="#920000"/>}/>
-                                      <Bar dataKey="Итого" fill="gray"
-                                           activeBar={<Rectangle fill="gray" stroke="#920000"/>}/>
-                                    </BarChart>
-
-                                  )}
-
-                                    <h3 style={{opacity: 0.5, textAlign: 'center'}}>Общее количество верных ответов</h3>
-                                  {activeTabNumber === 0 && (
-
-                                    <BarChart
-                                      width={mobileCheck() ? 600 : 800}
-                                      height={300}
-                                      data={getTotalAnswersResultsToGraph(game)}
-                                      margin={{
-                                        top: 5,
-                                        right: 30,
-                                        left: 0,
-                                        bottom: 5,
-                                      }}
-                                    >
-                                      <CartesianGrid strokeDasharray="3 3"/>
-                                      <XAxis dataKey="name"/>
-                                      <YAxis/>
-                                      <Tooltip/>
-                                      <Legend/>
-                                      <Bar dataKey="Баллы" fill="#c50000"
-                                           activeBar={<Rectangle fill="#920000" stroke="#920000"/>}/>
-
-                                    </BarChart>
-
-                                  )}
-                                </div>
-
-                                <div
-                                    role="tabpanel"
-                                    hidden={activeTabNumber !== 1}
-                                    id={`simple-tabpanel-${1}`}
-                                    aria-labelledby={`simple-tab-${1}`}
-                                >
-                                  {activeTabNumber === 1 && (
                                     <>
+
+                                      <h3 style={{opacity: 0.5, textAlign: 'center'}}>Общий результат</h3>
+                                      <Box sx={{p: 3}}>
+                                        <table className={'players_result_table'}>
+                                          <tbody>
+                                          <tr>
+                                            <th>Игрок</th>
+                                            <th>Защиты + Деньги</th>
+                                          </tr>
+                                          {
+                                            getPlayersTotalMoneyDefsAnswersTable(game)
+                                              .map((p: any, index: number) => {
+                                                return <tr key={'players_table_item_' + p.id}>
+                                                  <td>
+                                                    {p.name}:
+                                                  </td>
+                                                  <td style={{
+                                                    fontWeight: 600,
+                                                    textAlign: 'center'
+                                                  }}>
+                                                    <div style={{
+                                                      display: 'flex',
+                                                      justifyContent: 'center',
+                                                      alignItems: 'center'
+                                                    }}>
+                                                      {p['Итого']}
+
+                                                      {index === 0 && <> ({p['Деньги + защиты'] + ' + ' + p['Доп. баллы за ответы']})
+                                                          <EmojiEventsIcon sx={{color: 'gold', marginLeft: 1}}/>
+                                                      </>}
+
+                                                      {index === 1 && <> ({p['Деньги + защиты'] + ' + ' + p['Доп. баллы за ответы']})
+                                                          <EmojiEventsIcon
+                                                              sx={{color: 'silver', marginLeft: 1, width: 22}}/>
+                                                      </>}
+
+                                                      {index === 2 && <> ({p['Деньги + защиты'] + ' + ' + p['Доп. баллы за ответы']})
+                                                          <EmojiEventsIcon
+                                                              sx={{color: '#cd7f32', marginLeft: 1, width: 20}}/>
+                                                      </>}
+                                                    </div>
+                                                  </td>
+                                                </tr>
+                                              })
+                                          }
+                                          </tbody>
+                                        </table>
+                                      </Box>
 
                                       <h3 style={{opacity: 0.5, textAlign: 'center'}}>Деньги + активные защиты</h3>
                                       <Box sx={{p: 3}}>
@@ -795,6 +779,70 @@ function Game() {
                                         </table>
                                       </Box>
                                     </>
+
+                                  )}
+                                </div>
+
+                                <div
+                                    className={'graph_wrapper'}
+                                    role="tabpanel"
+                                    hidden={activeTabNumber !== 1}
+                                    id={`simple-tabpanel-${1}`}
+                                    aria-labelledby={`simple-tab-${1}`}
+                                >
+
+                                    <h3 style={{opacity: 0.5, textAlign: 'center'}}>Деньги + активные защиты</h3>
+                                  {activeTabNumber === 1 && (
+
+                                    <BarChart
+                                      width={mobileCheck() ? 600 : 800}
+                                      height={300}
+                                      data={getPlayersTotalMoneyAndDefsTable(game)}
+                                      margin={{
+                                        top: 5,
+                                        right: 30,
+                                        left: 0,
+                                        bottom: 5,
+                                      }}
+                                    >
+                                      <CartesianGrid strokeDasharray="3 3"/>
+                                      <XAxis dataKey="name"/>
+                                      <YAxis/>
+                                      <Tooltip/>
+                                      <Legend/>
+                                      <Bar dataKey="Деньги" fill="orange"
+                                           activeBar={<Rectangle fill="gold" stroke="#920000"/>}/>
+                                      <Bar dataKey="Активные защиты" fill="green"
+                                           activeBar={<Rectangle fill="green" stroke="#920000"/>}/>
+                                      <Bar dataKey="Итого" fill="gray"
+                                           activeBar={<Rectangle fill="gray" stroke="#920000"/>}/>
+                                    </BarChart>
+
+                                  )}
+
+                                    <h3 style={{opacity: 0.5, textAlign: 'center'}}>Общее количество верных ответов</h3>
+                                  {activeTabNumber === 0 && (
+
+                                    <BarChart
+                                      width={mobileCheck() ? 600 : 800}
+                                      height={300}
+                                      data={getTotalAnswersResultsToGraph(game)}
+                                      margin={{
+                                        top: 5,
+                                        right: 30,
+                                        left: 0,
+                                        bottom: 5,
+                                      }}
+                                    >
+                                      <CartesianGrid strokeDasharray="3 3"/>
+                                      <XAxis dataKey="name"/>
+                                      <YAxis/>
+                                      <Tooltip/>
+                                      <Legend/>
+                                      <Bar dataKey="Баллы" fill="#c50000"
+                                           activeBar={<Rectangle fill="#920000" stroke="#920000"/>}/>
+
+                                    </BarChart>
 
                                   )}
                                 </div>

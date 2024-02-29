@@ -1,4 +1,5 @@
 import {GameState} from "../store/reducers/gameSlice.ts";
+import {getTotalAnswersResults} from "./answers.ts";
 
 export const getActivePlayer = (game: GameState) => {
   if(game) {
@@ -135,3 +136,39 @@ export const getPlayersTotalMoneyAndDefsTable = (game: GameState) => {
   return resultsTable.sort((p1, p2) => {return p2['Итого'] - p1['Итого']});
 }
 
+export const getPlayersTotalMoneyDefsAnswersTable = (game: GameState) => {
+  const answersResult = getTotalAnswersResults(game);
+  const sortedByAnswersCountPlayers = [...game.players].sort((p1: any, p2: any) => {
+    return +answersResult[p2.id]?.length - +answersResult[p1.id]?.length;
+  })
+
+  const resultsTable = [];
+  for (const p of game.playersState) {
+    const playerResults = {
+      name: getPlayerNameById(p.player_id, game),
+      'Деньги': +p.money,
+      'Активные защиты': 0,
+      'Деньги + защиты': p.money,
+      'Доп. баллы за ответы': 0,
+      'Итого': 0
+    }
+    for(let i = 0; i < 6; i++) {
+      playerResults['Активные защиты'] += getActiveDefendsCount(p, i);
+    }
+
+    if(+p.player_id === +sortedByAnswersCountPlayers[0].id) {
+      playerResults['Доп. баллы за ответы'] = 5;
+    } else if(+p.player_id === +sortedByAnswersCountPlayers[1].id) {
+      playerResults['Доп. баллы за ответы'] = 3;
+    } else if(+p.player_id === +sortedByAnswersCountPlayers[2].id) {
+      playerResults['Доп. баллы за ответы'] = 1;
+    }
+
+    playerResults['Деньги + защиты'] = playerResults['Активные защиты'] + playerResults['Деньги'];
+    playerResults['Итого'] = playerResults['Активные защиты'] + playerResults['Деньги'] + playerResults['Доп. баллы за ответы'];
+    resultsTable.push(playerResults);
+  }
+
+  console.log(sortedByAnswersCountPlayers);
+  return resultsTable.sort((p1, p2) => {return p2['Итого'] - p1['Итого']});
+}
