@@ -90,7 +90,7 @@
     display: none;
 }
 .show-true-answer label:first-child {
-    border: 1px solid green;
+
 }
 @media (max-width: 1440px) {
     .variants {

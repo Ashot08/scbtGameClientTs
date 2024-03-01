@@ -98,7 +98,9 @@ export default function Roulette(props: any) {
       <div className="rouletteButtonWrapper">
 
         {
-          ((game.shiftChangeMode === 'false') && (props.activePlayer.id == props.userId || game.moderator == props.userId))
+          ((game.shiftChangeMode === 'false')
+            && (props.activePlayer.id == props.userId || game.moderator == props.userId))
+            && (game.showRollResultMode === 'false')
           &&
             <ButtonGroup className={'rouletteButtons'} variant="contained"
                          aria-label="outlined primary button group">

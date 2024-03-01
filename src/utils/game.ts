@@ -140,7 +140,33 @@ export const getPlayersTotalMoneyDefsAnswersTable = (game: GameState) => {
   const answersResult = getTotalAnswersResults(game);
   const sortedByAnswersCountPlayers = [...game.players].sort((p1: any, p2: any) => {
     return +answersResult[p2.id]?.length - +answersResult[p1.id]?.length;
-  })
+  });
+  const places: any = [];
+
+  for(let i = 0; i < sortedByAnswersCountPlayers.length; i++) {
+
+    if(i === 0) {
+      // sortedByAnswersCountPlayers[i]['place'] = 1;
+      places.push({
+          player_id: sortedByAnswersCountPlayers[i].id,
+          place: 1,
+        });
+    } else {
+      if(answersResult[sortedByAnswersCountPlayers[i].id].length === answersResult[sortedByAnswersCountPlayers[i - 1].id].length) {
+        // sortedByAnswersCountPlayers[i]['place'] = sortedByAnswersCountPlayers[i - 1]['place'];
+        places.push({
+          player_id: sortedByAnswersCountPlayers[i].id,
+          place: places[i - 1]['place'],
+        });
+      } else {
+        // sortedByAnswersCountPlayers[i]['place'] = sortedByAnswersCountPlayers[i - 1]['place'] + 1;
+        places.push({
+          player_id: sortedByAnswersCountPlayers[i].id,
+          place: places[i - 1]['place'] + 1,
+        });
+      }
+    }
+  }
 
   const resultsTable = [];
   for (const p of game.playersState) {
@@ -154,6 +180,18 @@ export const getPlayersTotalMoneyDefsAnswersTable = (game: GameState) => {
     }
     for(let i = 0; i < 6; i++) {
       playerResults['Активные защиты'] += getActiveDefendsCount(p, i);
+    }
+    console.log('places', places)
+    for(const player of places) {
+      if(+p.player_id === +player.player_id) {
+        if(player.place === 1) {
+          playerResults['Доп. баллы за ответы'] = 5;
+        } else if(player.place === 2) {
+          playerResults['Доп. баллы за ответы'] = 3;
+        } else if(player.place === 3) {
+          playerResults['Доп. баллы за ответы'] = 1;
+        }
+      }
     }
 
     if(+p.player_id === +sortedByAnswersCountPlayers[0].id) {

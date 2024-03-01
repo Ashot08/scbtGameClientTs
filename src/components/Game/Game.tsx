@@ -260,7 +260,8 @@ function Game() {
               {
                 (
                   game.status &&
-                  isLogin &&
+                  isLogin
+                  &&
                   (
                     game.players.find((p: any) => p.username == player
                       ||
@@ -673,17 +674,19 @@ function Game() {
                                                       alignItems: 'center'
                                                     }}>
                                                       {p['Итого']}
+                                                      {p['Доп. баллы за ответы'] ? '(' + p['Деньги + защиты'] + ' + ' + p['Доп. баллы за ответы'] + ')' : ''}
 
-                                                      {index === 0 && <> ({p['Деньги + защиты'] + ' + ' + p['Доп. баллы за ответы']})
+
+                                                      {index === 0 && <>
                                                           <EmojiEventsIcon sx={{color: 'gold', marginLeft: 1}}/>
                                                       </>}
 
-                                                      {index === 1 && <> ({p['Деньги + защиты'] + ' + ' + p['Доп. баллы за ответы']})
+                                                      {index === 1 && <>
                                                           <EmojiEventsIcon
                                                               sx={{color: 'silver', marginLeft: 1, width: 22}}/>
                                                       </>}
 
-                                                      {index === 2 && <> ({p['Деньги + защиты'] + ' + ' + p['Доп. баллы за ответы']})
+                                                      {index === 2 && <>
                                                           <EmojiEventsIcon
                                                               sx={{color: '#cd7f32', marginLeft: 1, width: 20}}/>
                                                       </>}
@@ -852,53 +855,460 @@ function Game() {
                     }
                   </>
                   :
-                  <div className={'game_desk game_desk_centered'}>
-
-                    <div className={classes.gameWait}>
-                      <>
-                        <h1>ИГРА {game && game.title}</h1>
-                        {/*{isLogin && <BasicCard name={playerName || player} id={'id: ' + userId} />}*/}
-                      </>
-
-                      <div>
-                        <List component="nav" aria-label="mailbox folders">
-                          <ListItem sx={{justifyContent: 'center'}}>
-                            <div>
-                              <h4>Присоединиться к игре '{game && game.title}'</h4>
-                              <form onSubmit={(e) => {
-                                e.preventDefault();
-                                joinGame(userId);
-                              }} action="">
+                  //Если пользователь не в игре:
+                  <>
+                    {
+                      (game.status === 'created') &&
+                        <div className={'game_desk game_desk_centered'}>
+                            <div className={classes.gameWait}>
+                                <>
+                                    <h1>ИГРА {game && game.title}</h1>
+                                  {/*{isLogin && <BasicCard name={playerName || player} id={'id: ' + userId} />}*/}
+                                </>
 
                                 <div>
-                                  <label htmlFor="">
-                                    <TextField
-                                      required={true}
-                                      id={'name-input'}
-                                      label={'Id игры'}
-                                      variant={'outlined'}
-                                      type={'text'}
-                                      name={'game_id'}
-                                      value={params.gameId}
-                                      disabled={true}
-                                      fullWidth={true}
-                                    />
-                                  </label>
+                                    <List component="nav" aria-label="mailbox folders">
+                                        <ListItem sx={{justifyContent: 'center'}}>
+                                            <div>
+                                                <h4>Присоединиться к игре '{game && game.title}'</h4>
+                                                <form onSubmit={(e) => {
+                                                  e.preventDefault();
+                                                  joinGame(userId);
+                                                }} action="">
+
+                                                    <div>
+                                                        <label htmlFor="">
+                                                            <TextField
+                                                                required={true}
+                                                                id={'name-input'}
+                                                                label={'Id игры'}
+                                                                variant={'outlined'}
+                                                                type={'text'}
+                                                                name={'game_id'}
+                                                                value={params.gameId}
+                                                                disabled={true}
+                                                                fullWidth={true}
+                                                            />
+                                                        </label>
+                                                    </div>
+                                                    <Button sx={{my: 2, width: '100%'}} type="submit"
+                                                            variant="contained">Присоединиться</Button>
+
+                                                    <br/>
+                                                </form>
+                                            </div>
+                                        </ListItem>
+                                    </List>
+
                                 </div>
-                                <Button sx={{my: 2, width: '100%'}} type="submit"
-                                        variant="contained">Присоединиться</Button>
-
-                                <br/>
-                              </form>
+                                <Button sx={{backgroundColor: '#00A4A4'}} onClick={onGetGameLink} type="submit"
+                                        variant="contained" fullWidth={true}>Ссылка на игру</Button>
                             </div>
-                          </ListItem>
-                        </List>
+                        </div>
+                    }
 
-                      </div>
-                      <Button sx={{backgroundColor: '#00A4A4'}} onClick={onGetGameLink} type="submit"
-                              variant="contained" fullWidth={true}>Ссылка на игру</Button>
-                    </div>
-                  </div>
+                    {(game.status === 'in_process')
+                      &&
+                        <>
+                          {
+                            <aside className={'game_state'}>
+                              <div className={classes.asideInner}>
+                                {
+                                  !mobileCheck() && <div className={classes.asideInnerHead}>
+                                        <img src={gameIcon} alt="Название игры" title={'Название игры'}/>
+                                        <span>{game.title}</span>
+                                    </div>}
+
+                                {
+                                  !(game.moderatorMode === '1' && userId === game.moderator) &&
+                                  !mobileCheck() && <div className={classes.asideInnerContent}>
+                                        <div className={classes.tilesField}>
+                                            <WorkersCount playersState={game.playersState} userId={getActivePlayer(game).id} />
+                                            <WorkersField game={game} userId={getActivePlayer(game).id} />
+                                        </div>
+                                    </div>
+                                }
+
+                                {
+                                  !mobileCheck() && <div className={classes.asideInnerHead}>
+                                        <img src={peopleIcon} alt="Участники игры" title={'Участники игры'}/>
+                                        <span>В игре</span>
+                                    </div>
+                                }
+
+
+                                <div
+                                  className={`${classes.asideInnerContent} ${(game.answersMode === 'true') ? classes.mobileAnswersMode : ''}`}>
+                                  <div className={'game_state_players'}>
+                                    {game.players.map((p: any) => {
+                                      return (
+                                        <div
+                                          className={'game_state_player' + (getActivePlayer(game).id === p.id ? ' active' : '')}
+                                          key={'players_' + p.id}>
+                                          {
+                                            (getActivePlayer(game).id === p.id)
+                                              ?
+                                              <CasinoIcon sx={{width: 15}}/>
+                                              :
+                                              <CheckIcon sx={{width: 15}}/>
+                                          }
+                                          {p.name ? p.name : p.username}
+                                          {(getActivePlayer(game).id === p.id) && getLastRollMainAnswers(game)?.map((a) => {
+                                            if (a.status === 'success') return <CheckCircleOutlineIcon
+                                              key={'answer_icon_' + Math.random()}
+                                              sx={{color: 'green'}}/>;
+                                            if (a.status === 'error') return <DangerousIcon
+                                              key={'answer_icon_' + Math.random()}
+                                              sx={{color: 'red'}}/>;
+                                            if (a.status === 'in_process') return <HourglassTopIcon
+                                              key={'answer_icon_' + Math.random()}
+                                              sx={{color: 'gray'}}/>;
+                                          })}
+                                        </div>
+                                      )
+                                    })}
+                                  </div>
+                                </div>
+
+                              </div>
+                            </aside>
+                          }
+
+                            <div className={'game_desk top'}>
+
+                                <div className={`${(game.showRollResultMode === 'true' && !mustSpin)
+                                  ? 'blured_object ' : ''} ${classes.shiftIndicator}`}>
+                                  {(game.shiftChangeMode === 'true')
+                                    ?
+                                    'Скоро начнется Смена ' + (getLastTurn(game)?.shift || '')
+                                    :
+                                    'Смена' + (getLastTurn(game)?.shift || '')
+                                  }
+
+                                </div>
+
+                                <div className={`${(game.showRollResultMode === 'true' && !mustSpin) ? 'blured_object ' : ''} ${classes.playerResources}`}>
+                                    <Resources playersState={game.playersState} userId={userId}/>
+                                </div>
+                              {
+
+                                (game?.answersMode === 'true')
+                                  ?
+                                  <Quiz quizTimer={timerOn} startAnswers={startAnswers}
+                                        isMyTurn={getActivePlayer(game).username === player}
+                                        userId={userId} updateAnswer={updateAnswer} onHideQuiz={onHideQuiz} onStopAnswers={stopAnswers}/>
+                                  :
+                                  <>
+                                    <div style={{width: '100%'}}>
+                                      <Roulette userId={userId} activePlayer={getActivePlayer(game)}
+                                                handleSpinClick={createRoll} onNextPlayer={onNextPlayer}/>
+                                    </div>
+                                    {(game.showRollResultMode === 'true' && !mustSpin) &&
+                                        <>
+                                            <GameInfoModal
+                                                userId={userId}
+                                                activePlayer={getActivePlayer(game)}
+                                                showButtons={false}
+                                                onShowQuiz={startAnswers} goNextTurn={onNextPlayer} goNextWorker={() => goNextWorker(getActivePlayer(game).id)}/>
+                                        </>
+                                    }
+                                  </>
+                              }
+                            </div>
+
+
+                          {
+                            (mobileCheck() && !quizActive) &&
+
+                              <div className={'game_desk'}>
+                                  <div className={classes.asideInnerContent}>
+                                      <div className={classes.tilesField}>
+                                        {
+                                          game.shiftChangeMode === 'true'
+                                            ?
+                                            <WorkersCount blured={(game.showRollResultMode === 'true' && !mustSpin)}
+                                                          playersState={game.playersState} userId={getActivePlayer(game).id}/>
+                                            :
+                                            ''
+                                        }
+                                          <WorkersField game={game} userId={getActivePlayer(game).id}/>
+                                      </div>
+                                  </div>
+                              </div>
+                          }
+
+
+                          {
+                            !mobileCheck() && <aside className={'game_state'}>
+                                  <div className={classes.asideInner + ' ' + classes.asideInnerRight}>
+                                      <div className={classes.asideInnerHead}>
+                                          <img src={historyIcon} alt="История игры" title={'История игры'}/>
+                                          <span>История</span>
+                                      </div>
+
+                                      <div className={classes.asideInnerContent}>
+                                          <div className={'game_state_history'}>
+                                            {lastRollResult ?
+                                              <div>Результат
+                                                предыдущего: {lastRollPlayerName} - {lastRollResult}
+                                              </div>
+                                              :
+                                              'Тут будет история ходов'
+                                            }
+                                          </div>
+                                      </div>
+
+                                      <div className={classes.asideInnerHead}>
+                                          <img src={chatIcon} alt="Чат игры" title={'Чат игры'}/>
+                                          <span>Чат</span>
+                                      </div>
+
+                                      <div className={classes.asideInnerContent}>
+                                          <div className={classes.tilesField}>
+                                              <img src={placeholder_2} alt="Чат игры" title={'Чат игры'}/>
+                                              <div className={classes.lock}>
+                                                  <img src={lockIcon} alt="lock"/>
+                                              </div>
+                                          </div>
+                                      </div>
+                                      <div className={classes.asideInnerContent}>
+                                          <Button sx={{backgroundColor: '#00A4A4'}} onClick={onGetGameLink} type="submit"
+                                                  variant="contained" fullWidth={true}>Ссылка на игру</Button>
+                                      </div>
+                                  </div>
+                              </aside>
+                          }
+                        </>
+                    }
+
+                    {(game.status === 'finished')
+                      &&
+                        <div className={'game_desk_finished'}>
+                            <div style={{marginTop: 100}}>
+                                <h1 style={{textAlign: 'center'}}>Игра окончена</h1>
+                                <h2 style={{textAlign: 'center', opacity: 0.5}}>Итоги игры:</h2>
+                                <Box sx={{borderBottom: 1, borderColor: 'divider', marginBottom: 2}}>
+                                    <Tabs className={'tabs'} value={activeTabNumber} onChange={handleChange}
+                                          aria-label="basic tabs example">
+                                        <Tab label="Таблица"/>
+                                        <Tab label="График"/>
+                                    </Tabs>
+                                </Box>
+
+                                <div
+                                    role="tabpanel"
+                                    hidden={activeTabNumber !== 0}
+                                    id={`simple-tabpanel-${0}`}
+                                    aria-labelledby={`simple-tab-${0}`}
+                                >
+                                  {activeTabNumber === 0 && (
+                                    <>
+
+                                      <h3 style={{opacity: 0.5, textAlign: 'center'}}>Общий результат</h3>
+                                      <Box sx={{p: 3}}>
+                                        <table className={'players_result_table'}>
+                                          <tbody>
+                                          <tr>
+                                            <th>Игрок</th>
+                                            <th>Защиты + Деньги</th>
+                                          </tr>
+                                          {
+                                            getPlayersTotalMoneyDefsAnswersTable(game)
+                                              .map((p: any, index: number) => {
+                                                return <tr key={'players_table_item_' + p.id}>
+                                                  <td>
+                                                    {p.name}:
+                                                  </td>
+                                                  <td style={{
+                                                    fontWeight: 600,
+                                                    textAlign: 'center'
+                                                  }}>
+                                                    <div style={{
+                                                      display: 'flex',
+                                                      justifyContent: 'center',
+                                                      alignItems: 'center'
+                                                    }}>
+                                                      {p['Итого']}
+                                                      {p['Доп. баллы за ответы'] ? '(' + p['Деньги + защиты'] + ' + ' + p['Доп. баллы за ответы'] + ')' : ''}
+
+
+                                                      {index === 0 && <>
+                                                          <EmojiEventsIcon sx={{color: 'gold', marginLeft: 1}}/>
+                                                      </>}
+
+                                                      {index === 1 && <>
+                                                          <EmojiEventsIcon
+                                                              sx={{color: 'silver', marginLeft: 1, width: 22}}/>
+                                                      </>}
+
+                                                      {index === 2 && <>
+                                                          <EmojiEventsIcon
+                                                              sx={{color: '#cd7f32', marginLeft: 1, width: 20}}/>
+                                                      </>}
+                                                    </div>
+                                                  </td>
+                                                </tr>
+                                              })
+                                          }
+                                          </tbody>
+                                        </table>
+                                      </Box>
+
+                                      <h3 style={{opacity: 0.5, textAlign: 'center'}}>Деньги + активные защиты</h3>
+                                      <Box sx={{p: 3}}>
+                                        <table className={'players_result_table'}>
+                                          <tbody>
+                                          <tr>
+                                            <th>Игрок</th>
+                                            <th>Защиты + Деньги</th>
+                                          </tr>
+                                          {
+                                            getPlayersTotalMoneyAndDefsTable(game)
+                                              .map((p: any, index: number) => {
+                                                return <tr key={'players_table_item_' + p.id}>
+                                                  <td>
+                                                    {p.name}:
+                                                  </td>
+                                                  <td style={{
+                                                    fontWeight: 600,
+                                                    textAlign: 'center'
+                                                  }}>
+                                                    <div style={{
+                                                      display: 'flex',
+                                                      justifyContent: 'center',
+                                                      alignItems: 'center'
+                                                    }}>
+                                                      {p['Итого']}
+                                                      {index === 0 &&
+                                                          <EmojiEventsIcon sx={{color: 'gold', marginLeft: 1}}/>}
+                                                      {index === 1 && <EmojiEventsIcon
+                                                          sx={{color: 'silver', marginLeft: 1, width: 22}}/>}
+                                                      {index === 2 && <EmojiEventsIcon
+                                                          sx={{color: '#cd7f32', marginLeft: 1, width: 20}}/>}
+                                                    </div>
+                                                  </td>
+                                                </tr>
+                                              })
+                                          }
+                                          </tbody>
+                                        </table>
+                                      </Box>
+
+                                      <h3 style={{opacity: 0.5, textAlign: 'center'}}>Общее количество верных
+                                        ответов</h3>
+                                      <Box sx={{p: 3}}>
+                                        <table className={'players_result_table'}>
+                                          <tbody>
+                                          <tr>
+                                            <th>Игрок</th>
+                                            <th>Баллы</th>
+                                          </tr>
+                                          {
+                                            [...game.players].sort((p1: any, p2: any) => {
+                                              return +getTotalAnswersResults(game)[p2.id]?.length - +getTotalAnswersResults(game)[p1.id]?.length;
+                                            })
+                                              .map((p: any, index: number) => {
+                                                return <tr key={'players_table_item_' + p.id}>
+                                                  <td>
+                                                    {p.name || p.username}:
+                                                  </td>
+                                                  <td style={{
+                                                    fontWeight: 600,
+                                                    textAlign: 'center'
+                                                  }}>
+                                                    <div style={{
+                                                      display: 'flex',
+                                                      justifyContent: 'center',
+                                                      alignItems: 'center'
+                                                    }}>
+                                                      {getTotalAnswersResults(game)[p.id]?.length}
+                                                      {index === 0 &&
+                                                          <EmojiEventsIcon sx={{color: 'gold', marginLeft: 1}}/>}
+                                                      {index === 1 && <EmojiEventsIcon
+                                                          sx={{color: 'silver', marginLeft: 1, width: 22}}/>}
+                                                      {index === 2 && <EmojiEventsIcon
+                                                          sx={{color: '#cd7f32', marginLeft: 1, width: 20}}/>}
+                                                    </div>
+                                                  </td>
+                                                </tr>
+                                              })
+                                          }
+                                          </tbody>
+                                        </table>
+                                      </Box>
+                                    </>
+
+                                  )}
+                                </div>
+
+                                <div
+                                    className={'graph_wrapper'}
+                                    role="tabpanel"
+                                    hidden={activeTabNumber !== 1}
+                                    id={`simple-tabpanel-${1}`}
+                                    aria-labelledby={`simple-tab-${1}`}
+                                >
+
+                                    <h3 style={{opacity: 0.5, textAlign: 'center'}}>Деньги + активные защиты</h3>
+                                  {activeTabNumber === 1 && (
+
+                                    <BarChart
+                                      width={mobileCheck() ? 600 : 800}
+                                      height={300}
+                                      data={getPlayersTotalMoneyAndDefsTable(game)}
+                                      margin={{
+                                        top: 5,
+                                        right: 30,
+                                        left: 0,
+                                        bottom: 5,
+                                      }}
+                                    >
+                                      <CartesianGrid strokeDasharray="3 3"/>
+                                      <XAxis dataKey="name"/>
+                                      <YAxis/>
+                                      <Tooltip/>
+                                      <Legend/>
+                                      <Bar dataKey="Деньги" fill="orange"
+                                           activeBar={<Rectangle fill="gold" stroke="#920000"/>}/>
+                                      <Bar dataKey="Активные защиты" fill="green"
+                                           activeBar={<Rectangle fill="green" stroke="#920000"/>}/>
+                                      <Bar dataKey="Итого" fill="gray"
+                                           activeBar={<Rectangle fill="gray" stroke="#920000"/>}/>
+                                    </BarChart>
+
+                                  )}
+
+                                    <h3 style={{opacity: 0.5, textAlign: 'center'}}>Общее количество верных ответов</h3>
+                                  {activeTabNumber === 0 && (
+
+                                    <BarChart
+                                      width={mobileCheck() ? 600 : 800}
+                                      height={300}
+                                      data={getTotalAnswersResultsToGraph(game)}
+                                      margin={{
+                                        top: 5,
+                                        right: 30,
+                                        left: 0,
+                                        bottom: 5,
+                                      }}
+                                    >
+                                      <CartesianGrid strokeDasharray="3 3"/>
+                                      <XAxis dataKey="name"/>
+                                      <YAxis/>
+                                      <Tooltip/>
+                                      <Legend/>
+                                      <Bar dataKey="Баллы" fill="#c50000"
+                                           activeBar={<Rectangle fill="#920000" stroke="#920000"/>}/>
+
+                                    </BarChart>
+
+                                  )}
+                                </div>
+
+                            </div>
+                        </div>
+                    }
+                  </>
               }
             </div>
           </div>
