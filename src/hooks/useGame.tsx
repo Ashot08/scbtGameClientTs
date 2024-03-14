@@ -22,8 +22,8 @@ import {hideGameInfo} from "../store/reducers/gameInfoSlice.ts";
 
 // адрес сервера
 // требуется перенаправление запросов - смотрите ниже
-// const SERVER_URL = 'http://localhost:3001'
-const SERVER_URL = 'ws://80.90.189.247:3001/';
+const SERVER_URL = 'http://localhost:3001'
+// const SERVER_URL = 'ws://80.90.189.247:3001/';
 
 // хук принимает название комнаты
 const useGame = (roomId: any) => {
@@ -192,8 +192,11 @@ const useGame = (roomId: any) => {
     });
 
     socketRef.current.on('game:workerFail', (data: any) => {
-      dispatch(hideGameInfo());
-      dispatch(hide());
+      setTimeout(function(){
+        dispatch(hideGameInfo());
+        dispatch(hide());
+      }, 3000)
+
       dispatch(showPopup({
         title:
           <><div style={{marginTop: 20, marginBottom: 20, textAlign: "center"}}><strong>
@@ -220,8 +223,10 @@ const useGame = (roomId: any) => {
     });
 
     socketRef.current.on('game:workerSaved', () => {
-      dispatch(hideGameInfo());
-      dispatch(hide());
+      setTimeout(function(){
+        dispatch(hideGameInfo());
+        dispatch(hide());
+      }, 3000)
       dispatch(showPopup({
         title:
           <><div style={{marginTop: 20, marginBottom: 20, textAlign: "center"}}><strong>Работник спасен!</strong></div></>
@@ -267,6 +272,11 @@ const useGame = (roomId: any) => {
     dispatch(hidePopup());
   }
 
+  const deletePlayer = (id: number, nextTurn:boolean) => {
+    socketRef.current.emit('game:delete_player', {id, nextTurn});
+    dispatch(hidePopup());
+  }
+
   const startAnswers = () => {
     socketRef.current.emit('game:start_answers');
   }
@@ -309,7 +319,8 @@ const useGame = (roomId: any) => {
     updateWorkerData,
     buyDefends,
     changeReadyStatus,
-    goNextWorker
+    goNextWorker,
+    deletePlayer
   }
 }
 

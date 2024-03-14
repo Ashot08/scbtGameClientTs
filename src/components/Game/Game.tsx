@@ -28,7 +28,7 @@ import {
   getActivePlayer,
   getCurrentPlayerState,
   getLastTurn,
-  getPlayersTotalMoneyAndDefsTable, getPlayersTotalMoneyDefsAnswersTable
+  getPlayersTotalMoneyAndDefsTable, getPlayersTotalMoneyDefsAnswersTable, getWorkersUsedOnFieldsCount
 } from "../../utils/game.ts";
 import {
   Bar,
@@ -62,6 +62,8 @@ import BuyWindow from "./WorkersField/BuyWindow/BuyWindow.tsx";
 import {selectBuyWindowIsShown} from "../../store/reducers/buyWindowSlice.ts";
 import {selectBuyResourcesWindowIsShown} from "../../store/reducers/buyResourcesWindowSlice.ts";
 import BuyResourcesWindow from "./Resources/BuyResourcesWindow/BuyResourcesWindow.tsx";
+import instruction1 from './img/instruction_1.gif';
+import instruction2 from './img/instruction_2.gif';
 
 function Game() {
   const dispatch = useAppDispatch();
@@ -81,7 +83,8 @@ function Game() {
     updateWorkerData,
     buyDefends,
     changeReadyStatus,
-    goNextWorker
+    goNextWorker,
+    deletePlayer
   } = useGame(params.gameId);
   const lastRollResult = useAppSelector(selectResult);
   const lastRollPlayerName = useAppSelector(selectPlayerName);
@@ -93,6 +96,7 @@ function Game() {
   const [isLoadingReadyStatus, setIsLoadingReadyStatus] = useState(false);
   const playerState = getCurrentPlayerState(game.playersState, userId);
   const mustSpin = useAppSelector(selectIsRoll);
+  const [showBuyDefendsInstruction, setShowBuyDefendsInstruction] = useState(false);
 
   const onNextPlayer = () => {
     dispatch(showPopup({
@@ -130,8 +134,45 @@ function Game() {
     }))
   }
 
+  const onDeletePlayer = (e: any) => {
+
+    const nextTurn = getActivePlayer(game).id == e.target.dataset.id;
+
+    dispatch(showPopup({
+      title: '',
+      content: <BasicCard
+        name={'Вы уверены, что хотите удалить игрока ' + e.target.dataset.name}
+        id={`Отменить это действие будет нельзя`}
+        content={
+          <List>
+            <ListItem key={'sdfsa'} disablePadding>
+              <ListItemButton onClick={() => {
+                deletePlayer(e.target.dataset.id, nextTurn);
+              }}>
+                <ListItemIcon>
+                  <CheckCircleOutlineIcon/>
+                </ListItemIcon>
+                <Button sx={{my: 2}} type="submit"
+                        variant="contained">Да</Button>
+              </ListItemButton>
+            </ListItem>
+
+            <ListItem key={'sdfsa'} disablePadding>
+              <ListItemButton onClick={() => dispatch(hidePopup())}>
+                <ListItemIcon>
+                  <DangerousIcon/>
+                </ListItemIcon>
+                <Button sx={{my: 2}} type="submit"
+                        variant="contained">Нет</Button>
+              </ListItemButton>
+            </ListItem>
+          </List>
+        }
+      />,
+    }))
+  }
+
   const handleChange = (event: any, newValue: number) => {
-    console.log(event)
     setActiveTabNumber(newValue);
   };
   useEffect(() => {
@@ -239,8 +280,53 @@ function Game() {
   }
 
   const onReady = () => {
-    setIsLoadingReadyStatus(true);
-    changeReadyStatus(userId, !(playerState.ready === 'true'));
+    const workersCount = getWorkersUsedOnFieldsCount(playerState);
+
+    if (getLastTurn(game)?.shift === 1 && ((workersCount < 2))) {
+
+        dispatch(showPopup({
+          title: '',
+          content: <BasicCard
+            name={'Не забудьте вывести рабочих на смену!'}
+            id={`(В первую смену вы обязаны вывести двух рабочих)`}
+            content={<div style={{textAlign: 'center'}}>
+              <div className={classes.instructionImage}>
+                <img width={'450px'} height={'502px'} src={instruction1} alt="Инструкция 1"/>
+              </div>
+              <Button onClick={() => {
+                dispatch(hidePopup());
+                handleDefendsInfo();
+              }}
+                sx={{my: 2}} type="submit"
+                variant="contained">Как установить защиты?</Button>
+            </div>
+            }
+          />,
+        }))
+
+      const handleDefendsInfo = () => {
+        dispatch(showPopup({
+          title: '',
+          content: <BasicCard
+            name={'Купите и установите защиты!'}
+            id={``}
+            content={<div style={{textAlign: 'center'}}>
+
+              <div className={classes.instructionImage}>
+                <img width={'450px'} height={'502px'} src={instruction2} alt="Инструкция 2"/>
+              </div>
+              <Button onClick={() => dispatch(hidePopup())} sx={{my: 2}} type="submit"
+                      variant="contained">ОК</Button>
+
+            </div>
+            }
+          />,
+        }))
+      }
+    } else {
+      setIsLoadingReadyStatus(true);
+      changeReadyStatus(userId, !(playerState.ready === 'true'));
+    }
   }
 
   return (
@@ -348,6 +434,17 @@ function Game() {
                                 }
 
                                 {
+                                  // Если смотрит модератор
+                                  (game.moderatorMode === '1' && userId === game.moderator) &&
+                                  !mobileCheck() && <div className={classes.asideInnerContent}>
+                                        <div className={classes.tilesField}>
+                                            <WorkersCount playersState={game.playersState} userId={getActivePlayer(game).id} />
+                                            <WorkersField game={game} userId={getActivePlayer(game).id} />
+                                        </div>
+                                    </div>
+                                }
+
+                                {
                                   !mobileCheck() && <div className={classes.asideInnerHead}>
                                         <img src={peopleIcon} alt="Участники игры" title={'Участники игры'}/>
                                         <span>В игре</span>
@@ -382,6 +479,14 @@ function Game() {
                                               key={'answer_icon_' + Math.random()}
                                               sx={{color: 'gray'}}/>;
                                           })}
+                                          {
+                                            (userId === game.moderator && !(userId == p.id))
+                                              ?
+                                              <button onClick={onDeletePlayer} className={'delete_player'} data-id={p.id} data-name={p.name ? p.name : p.username}>+</button>
+                                              :
+                                              ''
+                                          }
+
                                         </div>
                                       )
                                     })}
@@ -452,7 +557,7 @@ function Game() {
                           {
                             !(game.moderatorMode === '1' && userId === game.moderator) &&
                             (buyWindowOpen && game.shiftChangeMode) &&
-                              <BuyWindow updateWorkerData={updateWorkerData} playersState={game.playersState}
+                              <BuyWindow game={game} updateWorkerData={updateWorkerData} playersState={game.playersState}
                                          userId={userId}/>
                           }
 
@@ -525,7 +630,11 @@ function Game() {
                                 <div className={classes.readyCheckbox + ` ${(game.showRollResultMode === 'true' && !mustSpin) 
                                   ? 
                                   'blured_object ' : ''}`}>
-                                  {(game.shiftChangeMode === 'true') && <label>Готов
+                                  {(
+                                    game.shiftChangeMode === 'true'
+                                    &&
+                                    !(game.moderatorMode === '1' && userId === game.moderator)
+                                  ) && <label>Готов
                                       <input disabled={isLoadingReadyStatus} onChange={onReady}
                                              checked={playerState.ready === 'true'} type="checkbox"
                                              name={'isReadyToStartShift'}/>
@@ -563,7 +672,7 @@ function Game() {
 
 
                         {
-                          (mobileCheck() && !quizActive) &&
+                            (mobileCheck() && !quizActive && !(game.moderatorMode === '1' && userId === game.moderator) ) &&
 
                             <div className={'game_desk'}>
                                 <div className={classes.asideInnerContent}>
@@ -577,6 +686,26 @@ function Game() {
                                           ''
                                       }
                                         <WorkersField game={game} userId={userId}/>
+                                      </div>
+                                  </div>
+                              </div>
+                          }
+
+                          {
+                            (mobileCheck() && !quizActive && (game.moderatorMode === '1' && userId === game.moderator) ) &&
+
+                              <div className={'game_desk'}>
+                                  <div className={classes.asideInnerContent}>
+                                      <div className={classes.tilesField}>
+                                        {
+                                          game.shiftChangeMode === 'true'
+                                            ?
+                                            <WorkersCount blured={(game.showRollResultMode === 'true' && !mustSpin)}
+                                                          playersState={game.playersState} userId={getActivePlayer(game).id}/>
+                                            :
+                                            ''
+                                        }
+                                          <WorkersField game={game} userId={getActivePlayer(game).id}/>
                                       </div>
                                   </div>
                               </div>
@@ -655,7 +784,7 @@ function Game() {
                                           <tbody>
                                           <tr>
                                             <th>Игрок</th>
-                                            <th>Защиты + Деньги</th>
+                                            <th>Итого</th>
                                           </tr>
                                           {
                                             getPlayersTotalMoneyDefsAnswersTable(game)
@@ -891,8 +1020,16 @@ function Game() {
                                                             />
                                                         </label>
                                                     </div>
-                                                    <Button sx={{my: 2, width: '100%'}} type="submit"
-                                                            variant="contained">Присоединиться</Button>
+                                                  {
+                                                    (game.moderatorMode === '1' && userId === game.moderator) ?
+                                                      <p>
+                                                        Вы не можете присоединиться к игре, так как вы модератор.<br/>
+                                                        Ожидайте игроков.
+                                                      </p>
+                                                      :
+                                                      <Button sx={{my: 2, width: '100%'}} type="submit"
+                                                              variant="contained">Присоединиться</Button>
+                                                  }
 
                                                     <br/>
                                                 </form>
@@ -1110,7 +1247,7 @@ function Game() {
                                           <tbody>
                                           <tr>
                                             <th>Игрок</th>
-                                            <th>Защиты + Деньги</th>
+                                            <th>Итого</th>
                                           </tr>
                                           {
                                             getPlayersTotalMoneyDefsAnswersTable(game)

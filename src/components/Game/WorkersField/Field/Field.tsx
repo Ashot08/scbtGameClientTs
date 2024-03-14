@@ -2,12 +2,17 @@ import classes from "./Field.module.scss";
 import defendIcon from "./img/defend.svg";
 import defendActiveIcon from "./img/shieldActive.svg";
 import hexagonIcon from "./img/hexagon.svg";
-import hexagonActiveIcon from "./img/hexagon_active.svg";
+// import hexagonActiveIcon from "./img/hexagon_active.svg";
+import hexagonActiveIcon2 from "./img/hexagon_active.png";
 import plusIcon from "./img/plus.svg";
 import workerIcon from "./img/worker.svg";
 import {useAppDispatch, useAppSelector} from "../../../../hooks.ts";
 import {selectBuyWindowIndex, showBuyWindow} from "../../../../store/reducers/buyWindowSlice.ts";
-import {getCurrentPlayerState, getWorkerDataByIndex} from "../../../../utils/game.ts";
+import {
+  getCurrentPlayerState,
+  getWorkerDataByIndex,
+} from "../../../../utils/game.ts";
+
 
 function Field(props: any) {
   const dispatch = useAppDispatch();
@@ -21,7 +26,7 @@ function Field(props: any) {
     && (playerState.questions_to_next_worker_count > 0);
   const onFieldClick = () => {
     if(props.shiftChangeMode === 'true') {
-      dispatch(showBuyWindow({index: props.index}))
+      dispatch(showBuyWindow({index: props.index}));
     }
   }
   const Defends = () => {
@@ -56,7 +61,7 @@ function Field(props: any) {
   }
   >
     <Defends/>
-    <img src={(isActive) ? hexagonActiveIcon : hexagonIcon} alt="Поле"/>
+    <img src={(isActive) ? hexagonActiveIcon2 : hexagonIcon} alt="Поле"/>
     {props.worker
       ?
       <img className={classes.worker} src={workerIcon} alt="Рабочий"/>

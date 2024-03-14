@@ -291,6 +291,17 @@
   }
 }
 
+.instructionImage {
+  margin: 30px 0;
+  text-align: center;
+
+  img {
+    max-width: 300px;
+    width: 100%;
+    height: auto;
+  }
+}
+
 @media (max-width: 769px) {
   .readyCheckbox {
     top: 65px;

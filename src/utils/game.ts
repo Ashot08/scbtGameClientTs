@@ -11,7 +11,8 @@ export const getActivePlayer = (game: GameState) => {
       return game.players[0];
     }
   }
-  return {name: '-'};
+  console.log('HUI')
+  return {name: '-', id: null};
 }
 
 export const getLastTurn = (game: GameState) => {

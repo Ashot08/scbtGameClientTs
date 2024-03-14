@@ -52,6 +52,11 @@
     position: relative;
     margin-right: 0;
 }
+
+.questionsWrapper.show-true-answer label:first-child {
+    border: 2px solid rgba(255, 255, 255, 1);
+}
+
 .questionsWrapper label .MuiTypography-root {
     font-size: 14px;
     font-weight: 400;

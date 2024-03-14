@@ -17,6 +17,7 @@ function WorkersField (props: any) {
       shiftChangeMode={props.game.shiftChangeMode}
       index={0}
       worker={workersSchemeArray[0] === '1'}
+      game={props.game}
     />
     <Field
       key={'workers_field_2'}
@@ -26,6 +27,7 @@ function WorkersField (props: any) {
       shiftChangeMode={props.game.shiftChangeMode}
       index={1}
       worker={workersSchemeArray[1] === '1'}
+      game={props.game}
     />
     <Field
       key={'workers_field_3'}
@@ -35,6 +37,7 @@ function WorkersField (props: any) {
       shiftChangeMode={props.game.shiftChangeMode}
       index={2}
       worker={workersSchemeArray[2] === '1'}
+      game={props.game}
     />
     <Field
       key={'workers_field_4'}
@@ -44,6 +47,7 @@ function WorkersField (props: any) {
       shiftChangeMode={props.game.shiftChangeMode}
       index={3}
       worker={workersSchemeArray[3] === '1'}
+      game={props.game}
     />
     <Field
       key={'workers_field_5'}
@@ -53,6 +57,7 @@ function WorkersField (props: any) {
       shiftChangeMode={props.game.shiftChangeMode}
       index={4}
       worker={workersSchemeArray[4] === '1'}
+      game={props.game}
     />
     <Field
       key={'workers_field_6'}
@@ -62,6 +67,7 @@ function WorkersField (props: any) {
       shiftChangeMode={props.game.shiftChangeMode}
       index={5}
       worker={workersSchemeArray[5] === '1'}
+      game={props.game}
     />
   </div>
 }

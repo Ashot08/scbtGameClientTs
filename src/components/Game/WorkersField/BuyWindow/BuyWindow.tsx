@@ -1,7 +1,13 @@
 import classes from "./BuyWindow.module.scss";
 import {useAppDispatch, useAppSelector} from "../../../../hooks.ts";
 import {hideBuyWindow, selectBuyWindowIndex, showBuyWindow} from "../../../../store/reducers/buyWindowSlice.ts";
-import {getAvailableWorkers, getCurrentPlayerState, getWorkerDataByIndex} from "../../../../utils/game.ts";
+import {
+  getAvailableWorkers,
+  getCurrentPlayerState,
+  getLastTurn,
+  getWorkerDataByIndex,
+  getWorkersUsedOnFieldsCount
+} from "../../../../utils/game.ts";
 import hexagonIcon from './img/hexagon.png';
 import shieldEmptyIcon from './img/shieldEmpty.png';
 import shieldIcon from './img/shield.svg';
@@ -11,6 +17,9 @@ import workerIcon from './img/worker.png';
 import closeIcon from './img/close.svg';
 import {useEffect, useState} from "react";
 import {show} from "../../../../store/reducers/notificationSlice.ts";
+import {hidePopup, showPopup} from "../../../../store/reducers/popupSlice.ts";
+import BasicCard from "../../../Card/BasicCard.tsx";
+import Button from "@mui/material/Button";
 function BuyWindow (props: any) {
   const dispatch = useAppDispatch();
   const workerIndex = useAppSelector(selectBuyWindowIndex);
@@ -70,6 +79,29 @@ function BuyWindow (props: any) {
   const onSetWorker = () => {
     if (workersData.workerIsSet) return;
     if(!availableWorkersCount) return;
+
+    if(getLastTurn(props.game)?.shift === 1) {
+      const workersCount = getWorkersUsedOnFieldsCount(playerState);
+      if(workersCount > 1) {
+        dispatch(showPopup({
+          title: '',
+          content: <BasicCard
+            name={'В первой смене нельзя выставить больше двух рабочих!'}
+            id={``}
+            content={<div style={{textAlign: 'center'}}>
+              <Button onClick={() => {
+                dispatch(hidePopup());
+              }}
+                      sx={{my: 2}} type="submit"
+                      variant="contained">Ок</Button>
+            </div>
+            }
+          />,
+        }))
+        return;
+      }
+    }
+
     setWorkerIsSet(!workerIsSet);
   }
 
